@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration scan="true" scanPeriod="60 seconds" debug="false">
+    <contextName>logback</contextName>
+    <property name="LOG_HOME" value="./logs"/>
+    <property name="AppName" value="datatools"/>
+    <!--输出到控制台-->
+    <appender name="console" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} %contextName [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!--输出到文件-->
+    <!--<appender name="file" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <filter class="com.wtkj.oa.common.interceptors.MyLogFilter"></filter>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_HOME}/info/${AppName}.%d{yyyy-MM-dd}.%i.log.zip</fileNamePattern>
+            <maxFileSize>50MB</maxFileSize>
+            <maxHistory>7</maxHistory>
+            <totalSizeCap>10GB</totalSizeCap>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} %contextName [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>-->
+
+    <!--输出ERROR到文件-->
+    <appender name="file-error" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <!--过滤器,只打ERROR级别的日志-->
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>ERROR</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_HOME}/error/${AppName}.%d{yyyy-MM-dd}.%i.log.zip</fileNamePattern>
+            <maxFileSize>36MB</maxFileSize>
+            <maxHistory>7</maxHistory>
+            <totalSizeCap>3GB</totalSizeCap>
+        </rollingPolicy>
+        <encoder charset="UTF-8">
+            <pattern>%d{HH:mm:ss.SSS} %contextName [%thread] %-5level %logger{36} - %msg%n</pattern>
+            <charset>UTF-8</charset>
+        </encoder>
+    </appender>
+
+    <!--每个线程一个文件-->
+    <appender name="file-thread" class="ch.qos.logback.classic.sift.SiftingAppender">
+        <!-- This is MDC value -->
+        <!-- We will assign a value to 'logFileName' via Java code -->
+        <discriminator>
+            <key>logFileName</key>
+            <defaultValue>info</defaultValue>
+        </discriminator>
+
+        <sift>
+            <!-- A standard RollingFileAppender, the log file is based on 'logFileName' at runtime  -->
+            <appender name="FILE-${logFileName}" class="ch.qos.logback.core.rolling.RollingFileAppender">
+                <fileNamePattern>${LOG_HOME}/${logFileName}/${AppName}.%d{yyyy-MM-dd}.%i.log.zip</fileNamePattern>
+
+                <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+                    <pattern>%d{HH:mm:ss.SSS} %contextName [%thread] %-5level %logger{36} - %msg%n</pattern>
+                </encoder>
+
+                <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+                    <fileNamePattern>${LOG_HOME}/${logFileName}/${AppName}.%d{yyyy-MM-dd}.%i.log.zip</fileNamePattern>
+                    <!-- each file should be at most 50MB, keep 7 days worth of history, but at most 10GB -->
+                    <maxFileSize>30MB</maxFileSize>
+                    <maxHistory>7</maxHistory>
+                    <totalSizeCap>5GB</totalSizeCap>
+                </rollingPolicy>
+            </appender>
+        </sift>
+    </appender>
+
+    <!-- mybatis日志打印 -->
+    <logger name="com.mybatis" level="info"/>
+    <logger name="com.mybatis.common.jdbc.SimpleDataSource" level="info"/>
+    <logger name="com.mybatis.common.jdbc.ScriptRunner" level="info"/>
+    <logger name="com.mybatis.sqlmap.engine.impl.SqlMapClientDelegate" level="info"/>
+    <logger name="java.sql.Connection" level="info"/>
+    <logger name="java.sql.Statement" level="info"/>
+    <logger name="java.sql.PreparedStatement" level="info"/>
+
+    <!-- 打印mapper下的sql 不显示:INFO 显示:DEBUG -->
+    <logger name="com.wtkj.oa" level="debug"></logger>
+
+    <root level="info">
+        <appender-ref ref="console"/>
+        <appender-ref ref="file-error"/>
+        <appender-ref ref="file-thread"/>
+    </root>
+</configuration>

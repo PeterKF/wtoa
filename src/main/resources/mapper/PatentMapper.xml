@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wtkj.oa.dao.PatentMapper">
+    <resultMap id="BaseResultMap" type="com.wtkj.oa.entity.Patent">
+        <result column="id" property="id" javaType="java.lang.String" jdbcType="VARCHAR"/>
+        <result column="patent_id" property="patentId" javaType="java.lang.String" jdbcType="VARCHAR"/>
+        <result column="company_id" property="companyId" javaType="java.lang.String" jdbcType="VARCHAR"/>
+        <result column="company_name" property="companyName" javaType="java.lang.String" jdbcType="VARCHAR"/>
+        <result column="patent_name" property="patentName" javaType="java.lang.String" jdbcType="VARCHAR"/>
+        <result column="patent_type" property="patentType" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+        <result column="user_id" property="userId" javaType="java.lang.String" jdbcType="VARCHAR"/>
+        <result column="collection" property="collection" javaType="java.lang.String" jdbcType="VARCHAR"/>
+        <result column="payment" property="payment" javaType="java.lang.String" jdbcType="VARCHAR"/>
+        <result column="application_date" property="applicationDate" javaType="java.lang.String" jdbcType="VARCHAR"/>
+        <result column="authorization_date" property="authorizationDate" javaType="java.lang.String" jdbcType="DATE"/>
+        <result column="create_time" property="createTime" javaType="java.lang.String" jdbcType="TIMESTAMP"/>
+        <result column="last_update_time" property="lastUpdateTime" javaType="java.lang.String" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        p.id, p.patent_id, p.company_id, c.company_name, p.patent_name, p.patent_type, p.user_id,
+        p.collection, p.payment, p.application_date, p.authorization_date,p.create_time, p.last_update_time
+    </sql>
+
+    <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from patent_info p
+        left join company_info c
+        on p.company_id = c.company_id
+        where p.id = #{id,jdbcType=VARCHAR}
+    </select>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from patent_info
+    where patent_id = #{patentId,jdbcType=VARCHAR}
+    </delete>
+
+    <select id="getId" resultType="java.lang.String">
+       select id from  patent_info where patent_id in
+       <foreach collection="patentIds" item="patentId" open="(" close=")" separator=",">
+           #{patentId,jdbcType=VARCHAR}
+       </foreach>
+    </select>
+
+    <select id="getPatentIds" resultType="java.lang.String">
+        select patent_id from  patent_info
+    </select>
+
+    <insert id="insert" parameterType="com.wtkj.oa.entity.Patent">
+    insert into patent_info (id, patent_id, company_id, patent_name,
+      patent_type, user_id, collection,
+      payment, application_date, authorization_date,
+      create_time, last_update_time)
+    values (#{id,jdbcType=VARCHAR},#{patentId,jdbcType=VARCHAR}, #{companyId,jdbcType=VARCHAR},
+      #{patentName,jdbcType=VARCHAR}, #{patentType,jdbcType=INTEGER}, #{userId,jdbcType=VARCHAR},
+      #{collection,jdbcType=VARCHAR}, #{payment,jdbcType=VARCHAR}, #{applicationDate,jdbcType=VARCHAR},
+      #{authorizationDate,jdbcType=DATE}, #{createTime,jdbcType=TIMESTAMP}, #{lastUpdateTime,jdbcType=TIMESTAMP})
+  </insert>
+
+    <insert id="insertBatch" parameterType="java.util.List">
+        insert into patent_info
+        (id, patent_id, company_id, patent_name,
+        patent_type, user_id, collection,
+        payment, application_date, authorization_date,
+        create_time, last_update_time)
+        values
+        <foreach collection="list" item="item" index="index" separator=",">
+            (
+            #{item.id,jdbcType=VARCHAR}, #{item.patentId,jdbcType=VARCHAR}, #{item.companyId,jdbcType=VARCHAR},
+            #{item.patentName,jdbcType=VARCHAR}, #{item.patentType,jdbcType=INTEGER}, #{item.userId,jdbcType=VARCHAR},
+            #{item.collection,jdbcType=VARCHAR}, #{item.payment,jdbcType=VARCHAR},
+            #{item.applicationDate,jdbcType=DATE},
+            #{item.authorizationDate,jdbcType=DATE}, #{item.createTime,jdbcType=TIMESTAMP},
+            #{item.lastUpdateTime,jdbcType=TIMESTAMP}
+            )
+        </foreach>
+    </insert>
+
+    <insert id="insertSelective" parameterType="com.wtkj.oa.entity.Patent">
+        insert into patent_info
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="patentId != null">
+                patent_id,
+            </if>
+            <if test="companyId != null">
+                company_id,
+            </if>
+            <if test="patentName != null">
+                patent_name,
+            </if>
+            <if test="patentType != null">
+                patent_type,
+            </if>
+            <if test="userId != null">
+                user_id,
+            </if>
+            <if test="collection != null">
+                collection,
+            </if>
+            <if test="payment != null">
+                payment,
+            </if>
+            <if test="applicationDate != null">
+                application_date,
+            </if>
+            <if test="authorizationDate != null">
+                authorization_date,
+            </if>
+            <if test="createTime != null">
+                create_time,
+            </if>
+            <if test="lastUpdateTime != null">
+                last_update_time,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="patentId != null">
+                #{patentId,jdbcType=VARCHAR},
+            </if>
+            <if test="companyId != null">
+                #{companyId,jdbcType=VARCHAR},
+            </if>
+            <if test="patentName != null">
+                #{patentName,jdbcType=VARCHAR},
+            </if>
+            <if test="patentType != null">
+                #{patentType,jdbcType=INTEGER},
+            </if>
+            <if test="userId != null">
+                #{userId,jdbcType=VARCHAR},
+            </if>
+            <if test="collection != null">
+                #{collection,jdbcType=VARCHAR},
+            </if>
+            <if test="payment != null">
+                #{payment,jdbcType=VARCHAR},
+            </if>
+            <if test="applicationDate != null">
+                #{applicationDate,jdbcType=DATE},
+            </if>
+            <if test="authorizationDate != null">
+                #{authorizationDate,jdbcType=DATE},
+            </if>
+            <if test="createTime != null">
+                #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="lastUpdateTime != null">
+                #{lastUpdateTime,jdbcType=TIMESTAMP},
+            </if>
+        </trim>
+    </insert>
+
+    <update id="updateByPrimaryKeySelective" parameterType="com.wtkj.oa.entity.Patent">
+        update patent_info
+        <set>
+            <if test="companyId != null">
+                company_id = #{companyId,jdbcType=VARCHAR},
+            </if>
+            <if test="patentName != null">
+                patent_name = #{patentName,jdbcType=VARCHAR},
+            </if>
+            <if test="patentType != null">
+                patent_type = #{patentType,jdbcType=INTEGER},
+            </if>
+            <if test="userId != null">
+                user_id = #{userId,jdbcType=VARCHAR},
+            </if>
+            <if test="collection != null">
+                collection = #{collection,jdbcType=VARCHAR},
+            </if>
+            <if test="payment != null">
+                payment = #{payment,jdbcType=VARCHAR},
+            </if>
+            <if test="applicationDate != null">
+                application_date = #{applicationDate,jdbcType=DATE},
+            </if>
+            <if test="authorizationDate != null">
+                authorization_date = #{authorizationDate,jdbcType=DATE},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="lastUpdateTime != null">
+                last_update_time = #{lastUpdateTime,jdbcType=TIMESTAMP},
+            </if>
+        </set>
+        where patent_id = #{patentId,jdbcType=VARCHAR}
+    </update>
+
+    <select id="listByName" resultMap="BaseResultMap" parameterType="java.lang.String">
+        select
+        <include refid="Base_Column_List"/>
+        from patent_info p
+        left join company_info c
+        on p.company_id = c.company_id
+        <if test="patentName != null">
+            where p.patent_name = #{patentName,jdbcType=VARCHAR}
+        </if>
+        order by
+        c.company_name desc,
+        p.application_date desc
+    </select>
+
+    <select id="listLikeName" resultMap="BaseResultMap" parameterType="java.lang.String">
+        select
+        <include refid="Base_Column_List"/>
+        from patent_info p
+        left join company_info c
+        on p.company_id = c.company_id
+        <if test="patentName != null">
+            where p.patent_name like "%"#{patentName,jdbcType=VARCHAR}"%"
+        </if>
+    </select>
+</mapper>

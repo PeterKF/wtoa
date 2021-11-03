@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wtkj.oa.dao.CompanyMapper">
+    <resultMap id="BaseResultMap" type="com.wtkj.oa.entity.Company">
+        <result column="company_id" javaType="java.lang.String" property="companyId" jdbcType="VARCHAR"/>
+        <result column="credit_code" javaType="java.lang.String" property="creditCode" jdbcType="VARCHAR"/>
+        <result column="company_name" javaType="java.lang.String" property="companyName" jdbcType="VARCHAR"/>
+        <result column="address" javaType="java.lang.String" property="address" jdbcType="VARCHAR"/>
+        <result column="contact" javaType="java.lang.String" property="contact" jdbcType="VARCHAR"/>
+        <result column="telephone" javaType="java.lang.String" property="telephone" jdbcType="VARCHAR"/>
+        <result column="city" javaType="java.lang.String" property="city" jdbcType="VARCHAR"/>
+        <result column="area" javaType="java.lang.String" property="area" jdbcType="VARCHAR"/>
+        <result column="county" javaType="java.lang.String" property="county" jdbcType="VARCHAR"/>
+        <result column="user_id" javaType="java.lang.String" property="userId" jdbcType="VARCHAR"/>
+        <result column="user_name" javaType="java.lang.String" property="userName" jdbcType="VARCHAR"/>
+        <result column="assistant_id" javaType="java.lang.String" property="assistantId" jdbcType="VARCHAR"/>
+        <result column="director" javaType="java.lang.String" property="director" jdbcType="VARCHAR"/>
+        <result column="phone" javaType="java.lang.String" property="phone" jdbcType="VARCHAR"/>
+        <result column="region" javaType="java.lang.String" property="region" jdbcType="VARCHAR"/>
+        <result column="last_update_time" javaType="java.lang.String" property="lastUpdateTime" jdbcType="TIMESTAMP"/>
+        <result column="year" javaType="java.lang.String" property="year" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        c.company_id, c.company_name, c.address, c.contact, c.telephone, c.city, c.area, c.county, c.user_id, u.user_name,
+        c.assistant_id, c.director, c.phone, c.credit_code, c.region, c.last_update_time,c.year
+    </sql>
+
+    <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from company_info c
+        left join user_info u
+        on c.user_id = u.user_id
+        where c.company_id = #{companyId,jdbcType=VARCHAR}
+    </select>
+
+    <select id="getIdByName" parameterType="java.lang.String" resultType="java.lang.String">
+        select company_id from company_info where company_name = #{companyName,jdbcType=VARCHAR}
+    </select>
+
+    <select id="list" parameterType="java.lang.String" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from company_info c
+        left join user_info u
+        on c.user_id = u.user_id
+        order by c.last_update_time desc
+    </select>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from company_info
+    where company_id = #{companyId,jdbcType=VARCHAR}
+  </delete>
+
+    <insert id="insert" parameterType="com.wtkj.oa.entity.Company">
+    insert into company_info (company_id, credit_code, company_name, address,
+      contact, telephone, city,
+      area, county, user_id,
+      assistant_id, director, phone, region, last_update_time ,year
+      )
+    values (#{companyId,jdbcType=VARCHAR}, #{creditCode,jdbcType=VARCHAR},
+      #{companyName,jdbcType=VARCHAR}, #{address,jdbcType=VARCHAR},
+      #{contact,jdbcType=VARCHAR}, #{telephone,jdbcType=VARCHAR}, #{city,jdbcType=VARCHAR},
+      #{area,jdbcType=VARCHAR}, #{county,jdbcType=VARCHAR}, #{userId,jdbcType=VARCHAR},
+      #{assistantId,jdbcType=VARCHAR}, #{director,jdbcType=VARCHAR}, #{phone,jdbcType=VARCHAR},
+      #{region,jdbcType=VARCHAR}, #{lastUpdateTime,jdbcType=TIMESTAMP}, #{year,jdbcType=VARCHAR})
+  </insert>
+
+    <update id="updateByPrimaryKeySelective" parameterType="com.wtkj.oa.entity.Company">
+        update company_info
+        <set>
+            <if test="creditCode != null">
+                credit_code = #{creditCode,jdbcType=VARCHAR},
+            </if>
+            <if test="companyName != null">
+                company_name = #{companyName,jdbcType=VARCHAR},
+            </if>
+            <if test="address != null">
+                address = #{address,jdbcType=VARCHAR},
+            </if>
+            <if test="contact != null">
+                contact = #{contact,jdbcType=VARCHAR},
+            </if>
+            <if test="telephone != null">
+                telephone = #{telephone,jdbcType=VARCHAR},
+            </if>
+            <if test="city != null">
+                city = #{city,jdbcType=VARCHAR},
+            </if>
+            <if test="area != null">
+                area = #{area,jdbcType=VARCHAR},
+            </if>
+            <if test="county != null">
+                county = #{county,jdbcType=VARCHAR},
+            </if>
+            <if test="userId != null">
+                user_id = #{userId,jdbcType=VARCHAR},
+            </if>
+            <if test="assistantId != null">
+                assistant_id = #{assistantId,jdbcType=VARCHAR},
+            </if>
+            <if test="director != null">
+                director = #{director,jdbcType=VARCHAR},
+            </if>
+            <if test="phone != null">
+                phone = #{phone,jdbcType=VARCHAR},
+            </if>
+            <if test="region != null">
+                region = #{region,jdbcType=VARCHAR},
+            </if>
+            <if test="lastUpdateTime != null">
+                last_update_time = #{lastUpdateTime,jdbcType=TIMESTAMP},
+            </if>
+        </set>
+        where company_id = #{companyId,jdbcType=VARCHAR}
+    </update>
+
+    <select id="listByName" resultMap="BaseResultMap" parameterType="java.lang.String">
+        select
+        <include refid="Base_Column_List"/>
+        from company_info c
+        left join user_info u
+        on c.user_id = u.user_id
+        where 1=1
+        <if test="companyName != null">
+            and c.company_name like "%"#{companyName,jdbcType=VARCHAR}"%"
+        </if>
+        order by c.last_update_time desc
+    </select>
+
+    <select id="listByIds" resultMap="BaseResultMap" parameterType="java.util.List">
+        select
+        <include refid="Base_Column_List"/>
+        from company_info c
+        left join user_info u
+        on c.user_id = u.user_id
+        where c.company_id  in
+        <foreach collection="list" item="valueList" open="(" close=")" separator=",">
+            #{valueList}
+        </foreach>
+    </select>
+</mapper>

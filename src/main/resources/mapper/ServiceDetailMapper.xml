@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wtkj.oa.dao.ServiceDetailMapper">
+    <resultMap id="BaseResultMap" type="com.wtkj.oa.entity.ServiceDetail">
+        <result column="service_id" javaType="java.lang.String" property="serviceId" jdbcType="VARCHAR"/>
+        <result column="service_name" javaType="java.lang.String" property="serviceName" jdbcType="VARCHAR"/>
+        <result column="period" javaType="java.lang.String" property="period" jdbcType="VARCHAR"/>
+        <result column="year" javaType="java.lang.String" property="year" jdbcType="VARCHAR"/>
+        <result column="expense" javaType="java.lang.String" property="expense" jdbcType="VARCHAR"/>
+        <result column="contract_id" javaType="java.lang.String" property="contractId" jdbcType="VARCHAR"/>
+        <result column="manager" javaType="java.lang.String" property="manager" jdbcType="VARCHAR"/>
+        <result column="manager_telephone" javaType="java.lang.String" property="managerTelephone" jdbcType="VARCHAR"/>
+        <result column="sum_fee" javaType="java.lang.String" property="sumFee" jdbcType="VARCHAR"/>
+        <result column="before_fee" javaType="java.lang.String" property="beforeFee" jdbcType="VARCHAR"/>
+        <result column="country_tec_fee" javaType="java.lang.String" property="countryTecFee" jdbcType="VARCHAR"/>
+        <result column="province_tec_fee" javaType="java.lang.String" property="provinceTecFee" jdbcType="VARCHAR"/>
+        <result column="city_tec_fee" javaType="java.lang.String" property="cityTecFee" jdbcType="VARCHAR"/>
+        <result column="enterprise_tec_fee" javaType="java.lang.String" property="enterpriseTecFee" jdbcType="VARCHAR"/>
+        <result column="patent_matters" javaType="java.lang.String" property="patentMatters" jdbcType="VARCHAR"/>
+        <result column="guidance_fee" javaType="java.lang.String" property="guidanceFee" jdbcType="VARCHAR"/>
+        <result column="sign_date" javaType="java.lang.String" property="signDate" jdbcType="VARCHAR"/>
+        <result column="proxy_content" javaType="java.lang.String" property="proxyContent" jdbcType="VARCHAR"/>
+        <result column="agent" javaType="java.lang.String" property="agent" jdbcType="VARCHAR"/>
+        <result column="agent_fee" javaType="java.lang.String" property="agentFee" jdbcType="VARCHAR"/>
+        <result column="patent_fee" javaType="java.lang.String" property="patentFee" jdbcType="VARCHAR"/>
+        <result column="practical_fee" javaType="java.lang.String" property="practicalFee" jdbcType="VARCHAR"/>
+        <result column="appearance_fee" javaType="java.lang.String" property="appearanceFee" jdbcType="VARCHAR"/>
+        <result column="soft_fee" javaType="java.lang.String" property="softFee" jdbcType="VARCHAR"/>
+        <result column="percent" javaType="java.lang.String" property="percent" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+    service_id, service_name, period, year, expense, contract_id, manager, manager_telephone,
+    sum_fee, before_fee, country_tec_fee, province_tec_fee, city_tec_fee, enterprise_tec_fee,
+    patent_matters, guidance_fee,sign_date,proxy_content,agent,agent_fee,patent_fee,practical_fee,
+    appearance_fee, soft_fee, percent
+  </sql>
+
+    <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from service_info
+        where service_id = #{serviceId,jdbcType=VARCHAR}
+    </select>
+
+    <select id="selectByForeignKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from service_info
+        where contract_id = #{contractId,jdbcType=VARCHAR}
+    </select>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from service_info
+    where service_id = #{serviceId,jdbcType=VARCHAR}
+  </delete>
+
+    <delete id="deleteByForeignKey" parameterType="java.lang.String">
+    delete from service_info
+    where contract_id = #{contractId,jdbcType=VARCHAR}
+  </delete>
+
+    <insert id="insert" parameterType="com.wtkj.oa.entity.ServiceDetail">
+    insert into service_info (service_id, service_name, period,
+      year, expense, contract_id,
+      manager, manager_telephone, sum_fee,
+      before_fee, country_tec_fee, province_tec_fee,
+      city_tec_fee, enterprise_tec_fee, patent_matters,
+      guidance_fee, sign_date, proxy_content,
+      agent, agent_fee,patent_fee,practical_fee,
+      appearance_fee, soft_fee, percent)
+    values (#{serviceId,jdbcType=VARCHAR}, #{serviceName,jdbcType=VARCHAR}, #{period,jdbcType=VARCHAR},
+      #{year,jdbcType=VARCHAR}, #{expense,jdbcType=VARCHAR}, #{contractId,jdbcType=VARCHAR},
+      #{manager,jdbcType=VARCHAR}, #{managerTelephone,jdbcType=VARCHAR}, #{sumFee,jdbcType=VARCHAR},
+      #{beforeFee,jdbcType=VARCHAR}, #{countryTecFee,jdbcType=VARCHAR}, #{provinceTecFee,jdbcType=VARCHAR},
+      #{cityTecFee,jdbcType=VARCHAR}, #{enterpriseTecFee,jdbcType=VARCHAR}, #{patentMatters,jdbcType=VARCHAR},
+      #{guidanceFee,jdbcType=VARCHAR}, #{signDate,jdbcType=VARCHAR}, #{proxyContent,jdbcType=VARCHAR},
+      #{agent,jdbcType=VARCHAR}, #{agentFee,jdbcType=VARCHAR},#{patentFee,jdbcType=VARCHAR},
+      #{practicalFee,jdbcType=VARCHAR},#{appearanceFee,jdbcType=VARCHAR},#{softFee,jdbcType=VARCHAR},
+      #{percent,jdbcType=VARCHAR})
+  </insert>
+
+    <update id="updateByPrimaryKeySelective" parameterType="com.wtkj.oa.entity.ServiceDetail">
+        update service_info
+        <set>
+            <if test="serviceName != null">
+                service_name = #{serviceName,jdbcType=VARCHAR},
+            </if>
+            <if test="period != null">
+                period = #{period,jdbcType=VARCHAR},
+            </if>
+            <if test="year != null">
+                year = #{year,jdbcType=VARCHAR},
+            </if>
+            <if test="expense != null">
+                expense = #{expense,jdbcType=VARCHAR},
+            </if>
+            <if test="contractId != null">
+                contract_id = #{contractId,jdbcType=VARCHAR},
+            </if>
+            <if test="manager != null">
+                manager = #{manager,jdbcType=VARCHAR},
+            </if>
+            <if test="managerTelephone != null">
+                manager_telephone = #{managerTelephone,jdbcType=VARCHAR},
+            </if>
+            <if test="sumFee != null">
+                sum_fee = #{sumFee,jdbcType=VARCHAR},
+            </if>
+            <if test="beforeFee != null">
+                before_fee = #{beforeFee,jdbcType=VARCHAR},
+            </if>
+            <if test="countryTecFee != null">
+                country_tec_fee = #{countryTecFee,jdbcType=VARCHAR},
+            </if>
+            <if test="provinceTecFee != null">
+                province_tec_fee = #{provinceTecFee,jdbcType=VARCHAR},
+            </if>
+            <if test="cityTecFee != null">
+                city_tec_fee = #{cityTecFee,jdbcType=VARCHAR},
+            </if>
+            <if test="enterpriseTecFee != null">
+                enterprise_tec_fee = #{enterpriseTecFee,jdbcType=VARCHAR},
+            </if>
+            <if test="patentMatters != null">
+                patent_matters = #{patentMatters,jdbcType=VARCHAR},
+            </if>
+            <if test="guidanceFee != null">
+                guidance_fee = #{guidanceFee,jdbcType=VARCHAR},
+            </if>
+            <if test="signDate != null">
+                sign_date = #{practicalFee,jdbcType=VARCHAR},
+            </if>
+            <if test="proxyContent != null">
+                proxy_content = #{proxyContent,jdbcType=VARCHAR},
+            </if>
+            <if test="agent != null">
+                agent = #{agent,jdbcType=VARCHAR},
+            </if>
+            <if test="agentFee != null">
+                agent_fee = #{agentFee,jdbcType=VARCHAR},
+            </if>
+            <if test="patentFee != null">
+                patent_fee = #{patentFee,jdbcType=VARCHAR},
+            </if>
+            <if test="appearanceFee != null">
+                appearance_fee = #{appearanceFee,jdbcType=VARCHAR},
+            </if>
+            <if test="practicalFee != null">
+                practical_fee = #{practicalFee,jdbcType=VARCHAR},
+            </if>
+            <if test="softFee != null">
+                soft_fee = #{softFee,jdbcType=VARCHAR},
+            </if>
+            <if test="percent != null">
+                percent = #{percent,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where contract_id = #{contractId,jdbcType=VARCHAR}
+    </update>
+
+    <update id="updateByPrimaryKey" parameterType="com.wtkj.oa.entity.ServiceDetail">
+        update service_info
+          set service_name = #{serviceName,jdbcType=VARCHAR},
+              period = #{period,jdbcType=VARCHAR},
+              year = #{year,jdbcType=VARCHAR},
+              expense = #{expense,jdbcType=VARCHAR},
+              manager = #{manager,jdbcType=VARCHAR},
+              manager_telephone = #{managerTelephone,jdbcType=VARCHAR},
+              sum_fee = #{sumFee,jdbcType=VARCHAR},
+              before_fee = #{beforeFee,jdbcType=VARCHAR},
+              country_tec_fee = #{countryTecFee,jdbcType=VARCHAR},
+              province_tec_fee = #{provinceTecFee,jdbcType=VARCHAR},
+              city_tec_fee = #{cityTecFee,jdbcType=VARCHAR},
+              enterprise_tec_fee = #{enterpriseTecFee,jdbcType=VARCHAR},
+              patent_matters = #{patentMatters,jdbcType=VARCHAR},
+              guidance_fee = #{guidanceFee,jdbcType=VARCHAR},
+              sign_date = #{signDate,jdbcType=VARCHAR},
+              proxy_content = #{proxyContent,jdbcType=VARCHAR},
+              agent = #{agent,jdbcType=VARCHAR},
+              agent_fee = #{agentFee,jdbcType=VARCHAR},
+              patent_fee = #{patentFee,jdbcType=VARCHAR},
+              appearance_fee = #{appearanceFee,jdbcType=VARCHAR},
+              practical_fee = #{practicalFee,jdbcType=VARCHAR},
+              soft_fee = #{softFee,jdbcType=VARCHAR}
+         where contract_id = #{contractId,jdbcType=VARCHAR}
+  </update>
+</mapper>

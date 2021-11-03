@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wtkj.oa.dao.MenuMapper">
+    <resultMap id="BaseResultMap" type="com.wtkj.oa.entity.Menu">
+        <result column="role_id" javaType="java.lang.String" property="roleId" jdbcType="VARCHAR"/>
+        <result column="menu" javaType="java.lang.String" property="menu" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+    role_id, menu
+  </sql>
+
+    <insert id="insert" parameterType="com.wtkj.oa.entity.Menu">
+    insert into menu_info (role_id, menu)
+    values (#{roleId,jdbcType=VARCHAR}, #{menu,jdbcType=VARCHAR})
+  </insert>
+
+    <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from menu_info
+        where role_id = #{roleId,jdbcType=VARCHAR}
+    </select>
+
+    <update id="update" parameterType="com.wtkj.oa.entity.Menu">
+        update menu_info
+        <set>
+            <if test="menu != null">
+                menu = #{menu,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where role_id = #{roleId,jdbcType=VARCHAR}
+    </update>
+</mapper>

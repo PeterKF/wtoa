@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wtkj.oa.dao.UserMapper">
+    <resultMap id="BaseResultMap" type="com.wtkj.oa.entity.User">
+        <result column="user_id" javaType="java.lang.String" property="userId" jdbcType="VARCHAR"/>
+        <result column="user_name" javaType="java.lang.String" property="userName" jdbcType="VARCHAR"/>
+        <result column="login_name" javaType="java.lang.String" property="loginName" jdbcType="VARCHAR"/>
+        <result column="password" javaType="java.lang.String" property="password" jdbcType="VARCHAR"/>
+        <result column="role_name" javaType="java.lang.String" property="roleName" jdbcType="VARCHAR"/>
+        <result column="role_id" javaType="java.lang.String" property="roleId" jdbcType="VARCHAR"/>
+        <result column="menu" javaType="java.lang.String" property="menu" jdbcType="VARCHAR"/>
+        <result column="telephone" javaType="java.lang.String" property="telephone" jdbcType="VARCHAR"/>
+        <result column="assistant_id" javaType="java.lang.String" property="assistantIds" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+      u.user_id, u.user_name, u.login_name, u.password, r.role_name , u.role_id, u.telephone, m.menu, u.assistant_id
+   </sql>
+
+    <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from user_info u
+        left join role_info r
+        on u.role_id = r.role_id
+        left join menu_info m
+        on m.role_id = u.role_id
+        where u.user_id = #{userId,jdbcType=VARCHAR}
+    </select>
+
+    <select id="selectByName" parameterType="java.lang.String" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from user_info u
+        left join role_info r
+        on u.role_id = r.role_id
+        left join menu_info m
+        on m.role_id = u.role_id
+        where u.login_name = #{loginName,jdbcType=VARCHAR}
+    </select>
+
+    <select id="selectByRole" parameterType="java.lang.String" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from user_info u
+        left join role_info r
+        on u.role_id = r.role_id
+        left join menu_info m
+        on m.role_id = u.role_id
+        where r.role_name = #{roleName,jdbcType=VARCHAR}
+    </select>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from user_info
+    where user_id = #{userId,jdbcType=VARCHAR}
+  </delete>
+
+    <insert id="insert" parameterType="com.wtkj.oa.entity.User">
+    insert into user_info (user_id, user_name, login_name,
+      password, role_id, telephone,assistant_id)
+    values (#{userId,jdbcType=VARCHAR}, #{userName,jdbcType=VARCHAR}, #{loginName,jdbcType=VARCHAR},
+      #{password,jdbcType=VARCHAR}, #{roleId,jdbcType=VARCHAR}, #{telephone,jdbcType=VARCHAR},
+      #{assistantIds,jdbcType=VARCHAR})
+  </insert>
+
+    <update id="updateByPrimaryKeySelective" parameterType="com.wtkj.oa.entity.User">
+        update user_info
+        <set>
+            <if test="userName != null">
+                user_name = #{userName,jdbcType=VARCHAR},
+            </if>
+            <if test="loginName != null">
+                login_name = #{loginName,jdbcType=VARCHAR},
+            </if>
+            <if test="password != null">
+                password = #{password,jdbcType=VARCHAR},
+            </if>
+            <if test="roleId != null">
+                role_id = #{roleId,jdbcType=VARCHAR},
+            </if>
+            <if test="telephone != null">
+                telephone = #{telephone,jdbcType=VARCHAR},
+            </if>
+            <if test="assistantIds != null">
+                assistant_id = #{assistantIds,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where user_id = #{userId,jdbcType=VARCHAR}
+    </update>
+
+    <select id="list" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from user_info u
+        left join role_info r
+        on u.role_id = r.role_id
+        left join menu_info m
+        on m.role_id = u.role_id
+    </select>
+
+    <select id="getIdByName" parameterType="java.lang.String" resultType="java.lang.String">
+        select user_id from user_info where user_name = #{userName,jdbcType=VARCHAR}
+    </select>
+
+    <select id="getUserId" parameterType="java.lang.String" resultType="java.lang.String">
+        select user_id from user_info where assistant_id like "%"#{userId,jdbcType=VARCHAR}
+    </select>
+</mapper>

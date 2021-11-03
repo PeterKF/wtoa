@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wtkj.oa.dao.ContentMapper">
+    <resultMap id="BaseResultMap" type="com.wtkj.oa.entity.Content">
+        <result column="business_type" javaType="java.lang.Integer" property="businessType" jdbcType="INTEGER"/>
+        <result column="contract_type" javaType="java.lang.String" property="contractType" jdbcType="VARCHAR"/>
+        <result column="title" javaType="java.lang.String" property="title" jdbcType="VARCHAR"/>
+        <result column="content" javaType="java.lang.String" property="content" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <select id="getContentByType" resultType="com.wtkj.oa.entity.Content">
+         SELECT
+            title,
+            content
+        FROM
+            content_info
+         where business_type = #{businessType,jdbcType=INTEGER}
+         and contract_type  = #{contractType,jdbcType=VARCHAR}
+    </select>
+</mapper>
