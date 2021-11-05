@@ -1,0 +1,22 @@
+- !com.wtkj.oa.entity.InsideInfo
+   accountNo: '19045101040019419'
+   address: "\u676d\u5dde\u5e02\u6ee8\u6c5f\u533a\u4fe1\u8bda\u8def572\u53f7\u6d59\u6c5f\u79d1\u6280\u5927\u5e02\u573a\
+      B405"
+   bank: "\u4e2d\u56fd\u519c\u4e1a\u94f6\u884c\u676d\u5dde\u5e02\u6ee8\u6c5f\u652f\u884c"
+   bankNo: '103331004514'
+   companyName: "\u676d\u5dde\u95fb\u6d9b\u79d1\u6280\u6709\u9650\u516c\u53f8"
+   companyType: 1
+   manager: "\u77f3\u8fd0\u660c"
+   mobile: '18658178705'
+   taxNo: 91330108555161537C
+- !com.wtkj.oa.entity.InsideInfo
+   accountNo: '201000184987204'
+   address: "\u53f0\u5dde\u5e02\u8def\u6865\u533a\u8def\u5317\u8857\u9053\u73e0\u5149\u8857199\u53f71\u53f7\u697c\
+      204\u5ba4"
+   bank: "\u6d59\u6c5f\u53f0\u5dde\u8def\u6865\u519c\u6751\u5546\u4e1a\u94f6\u884c\u80a1\u4efd\u6709\u9650\u516c\u53f8\u79d1\u6280\u652f\u884c"
+   bankNo: '402345000962'
+   companyName: "\u53f0\u5dde\u95fb\u6d9b\u79d1\u6280\u6709\u9650\u516c\u53f8"
+   companyType: 2
+   manager: "\u77f3\u8fd0\u660c"
+   mobile: '18658178705'
+   taxNo: 91331004MA2AKLYJ8W
