@@ -1,31 +1,44 @@
 package com.wtkj.oa.service.impl;
 
+import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
+import cn.hutool.poi.excel.ExcelReader;
+import cn.hutool.poi.excel.ExcelUtil;
+import cn.hutool.poi.excel.ExcelWriter;
 import com.wtkj.oa.common.constant.ContractEnum;
 import com.wtkj.oa.common.constant.GXEnum;
+import com.wtkj.oa.common.constant.PatentEnum;
+import com.wtkj.oa.dao.CompanyMapper;
 import com.wtkj.oa.dao.ContractMapper;
-import com.wtkj.oa.entity.Contract;
-import com.wtkj.oa.entity.ContractDate;
-import com.wtkj.oa.entity.ContractDetail;
+import com.wtkj.oa.dao.PatentMapper;
+import com.wtkj.oa.dao.UserMapper;
+import com.wtkj.oa.entity.*;
 import com.wtkj.oa.exception.BusinessException;
 import com.wtkj.oa.service.IContractDetailsService;
 import com.wtkj.oa.service.IContractManageService;
+import com.wtkj.oa.utils.RandomStringUtils;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.logging.log4j.util.Strings;
+import org.apache.poi.ss.usermodel.Font;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
-import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
+import java.io.*;
+import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -35,12 +48,22 @@ import static cn.hutool.core.text.CharSequenceUtil.isEmpty;
  * @author chenq
  */
 @Service
+@Slf4j
 public class ContractDetailsServiceImpl implements IContractDetailsService {
     @Resource
     private ContractMapper contractMapper;
 
     @Resource
     private IContractManageService contractManageService;
+
+    @Resource
+    private UserMapper userMapper;
+
+    @Resource
+    private CompanyMapper companyMapper;
+
+    @Resource
+    private PatentMapper patentMapper;
 
     @Override
     public List<ContractDetail> list(String companyId) {
@@ -289,5 +312,135 @@ public class ContractDetailsServiceImpl implements IContractDetailsService {
         } catch (IOException e) {
             throw new BusinessException("合同文件读取失败！" + e);
         }
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public String initCompanies(MultipartFile file) {
+        if (file.isEmpty()) {
+            throw new BusinessException("请先选择上传文件");
+        }
+
+        int count = 0;
+        ExcelReader reader = null;
+        try {
+            reader = ExcelUtil.getReader(file.getInputStream(), 0);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        List<List<Object>> objectList = reader.read();
+
+        if (CollectionUtil.isNotEmpty(objectList)) {
+            for (int i = 0; i < objectList.size(); ++i) {
+                List<Object> objects = objectList.get(i);
+                List<String> comNames = new ArrayList();
+                Company company = new Company().setCompanyId(RandomStringUtils.getNextVal())
+                        .setYear(String.valueOf(objects.get(0)))
+                        .setCompanyName(String.valueOf(objects.get(1))).setRegion(String.valueOf(objects.get(2)))
+                        .setDirector(String.valueOf(objects.get(3))).setPhone(String.valueOf(objects.get(4)))
+                        .setContact(String.valueOf(objects.get(5))).setTelephone(String.valueOf(objects.get(6)));
+
+                if (CollectionUtil.isEmpty(comNames) || !comNames.contains(company.getCompanyName())) {
+                    comNames.add(company.getCompanyName());
+                    String userId = userMapper.getIdByName(String.valueOf(objects.get(7)));
+                    company.setUserId(userId);
+                    companyMapper.insert(company);
+                    count++;
+                }
+            }
+        }
+        return "初始化客户数：" + count + "条！";
+    }
+
+    /**
+     * 初始化合同信息
+     *
+     * @return
+     */
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public String initPatents(MultipartFile file) {
+        if (file.isEmpty()) {
+            throw new BusinessException("请先选择上传文件");
+        }
+        List<List<Object>> dataList = null;
+        try {
+            dataList = ExcelUtil.getReader(file.getInputStream(), 0).read();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        List<Patent> patents = new ArrayList<>();
+
+        if (!CollectionUtils.isEmpty(dataList)) {
+            List<String> ids = patentMapper.getPatentIds();
+            //List<Company> companies = companyMapper.list();
+            String companyId = "";
+            for (int i = 1; i < dataList.size(); i++) {
+                List<Object> list = dataList.get(i);
+                String companyName = String.valueOf(list.get(2));
+                companyId = companyMapper.getIdByName(companyName);
+
+                String date = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
+                String applicationDate = String.valueOf(list.get(1)).split(" ")[0];
+
+                String patentId = String.valueOf(list.get(0));
+
+                if (Strings.isEmpty(patentId)) {
+                    patentId = "";
+                }
+
+                Patent patent = new Patent().setId(RandomStringUtils.getNextVal()).setPatentId(patentId)
+                        .setCompanyId(companyId).setApplicationDate(applicationDate)
+                        .setPatentName(String.valueOf(list.get(3)))
+                        .setPatentType(PatentEnum.getTypeByName(String.valueOf(list.get(4))))
+                        .setCreateTime(date).setLastUpdateTime(date);
+
+                if (ids.stream().noneMatch(id -> id.equals(patent.getPatentId()))) {
+                    patents.add(patent);
+                }
+                companyId = "";
+            }
+
+            if (!CollectionUtils.isEmpty(patents)) {
+                patentMapper.insertBatch(patents);
+            }
+        }
+        return "初始化知识产权" + patents.size() + "条！";
+    }
+
+
+    public void exportExcel(String fileType, HttpServletResponse response) {
+        ExcelWriter writer = ExcelUtil.getWriter(true);
+        List<String> titles = new ArrayList<>();
+        String fileName = "";
+        if ("1".equals(fileType)) {
+            fileName = "客户名单.xlsx";
+            titles = CollUtil.newArrayList("年份", "客户名称", "地区", "企业负责人", "联系方式", "企业联系人", "联系方式", "客户经理");
+        } else if ("2".equals(fileType)) {
+            fileName = "专利清单.xlsx";
+            titles = CollUtil.newArrayList("申请号", "申请日", "公司名称", "申请名称", "类型");
+        } else {
+            fileName = "浙江省中小型企业合同清单.xlsx";
+            titles = CollUtil.newArrayList("客户名称", "客户经理");
+        }
+        try {
+            fileName = URLEncoder.encode(fileName, String.valueOf(StandardCharsets.UTF_8));
+        } catch (UnsupportedEncodingException e) {
+            log.info("Unsupported encoding", e);
+        }
+        Font font = writer.createFont();
+        font.setBold(true);
+        font.setFontName("宋体");
+        writer.getStyleSet().setFont(font, true);
+        writer.writeRow(titles, true);
+        //response为HttpServletResponse对象
+        response.setContentType("application/vnd.ms-excel;charset=utf-8");
+        response.setHeader("Content-Disposition", "attachment;filename=" + fileName);
+        try (ServletOutputStream out = response.getOutputStream();) {
+            writer.flush(out, true);
+        } catch (IOException e) {
+            log.info("error message", e);
+        }
+        writer.close();
     }
 }

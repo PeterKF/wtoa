@@ -7,7 +7,6 @@ import com.wtkj.oa.entity.ContractDate;
 import com.wtkj.oa.service.IContractDetailsService;
 import com.wtkj.oa.service.IContractManageService;
 import com.wtkj.oa.service.IHTContractService;
-import com.wtkj.oa.service.InitDataService;
 import com.wtkj.oa.service.impl.TaskMatterServiceImpl;
 import com.wtkj.oa.utils.ResponseUtils;
 import io.swagger.annotations.Api;
@@ -102,13 +101,6 @@ public class ContractManageController {
         return ResponseUtils.success(contractDetailsService.list(companyId));
     }
 
-    @ApiOperation("上传文件")
-    @RequestMapping(value = "/uploadFile", method = RequestMethod.POST)
-    public ResponseMsg uploadImage(@RequestParam(value = "file") MultipartFile file, @RequestParam String contractId) {
-        contractDetailsService.uploadFile(file, contractId);
-        return ResponseUtils.success();
-    }
-
     @ApiOperation("预览文件")
     @RequestMapping(value = "/viewFile", method = RequestMethod.GET)
     public ResponseMsg viewFile(HttpServletResponse response, @RequestParam String contractId) {
@@ -141,19 +133,29 @@ public class ContractManageController {
         return ResponseUtils.success(contractManageService.contractsByCompanyId(companyId));
     }
 
-
-    @Resource
-    private InitDataService initDataService;
+    @ApiOperation("上传文件")
+    @RequestMapping(value = "/uploadFile", method = RequestMethod.POST)
+    public ResponseMsg uploadImage(@RequestParam(value = "file") MultipartFile file, @RequestParam String contractId) {
+        contractDetailsService.uploadFile(file, contractId);
+        return ResponseUtils.success();
+    }
 
     @ApiOperation("批量导入公司")
-    @RequestMapping(value = "/company", method = RequestMethod.POST)
+    @RequestMapping(value = "/upload/company", method = RequestMethod.POST)
     public ResponseMsg initCompanies(@RequestParam(value = "file") MultipartFile file) {
-        return ResponseUtils.success(initDataService.initCompanies(file));
+        return ResponseUtils.success(contractDetailsService.initCompanies(file));
     }
 
     @ApiOperation("批量导入知识产权")
-    @PostMapping("/patent")
-    public ResponseMsg initPatents(@RequestParam(value = "file", required = false) MultipartFile file) {
-        return ResponseUtils.success(initDataService.initPatents(file));
+    @PostMapping(value = "/upload/patent")
+    public ResponseMsg initPatents(@RequestParam(value = "file") MultipartFile file) {
+        return ResponseUtils.success(contractDetailsService.initPatents(file));
+    }
+
+    @ApiOperation("导出模板")
+    @GetMapping(value = "/exportExcel")
+    public ResponseMsg initPatents(@RequestParam String fileType, HttpServletResponse response) {
+        contractDetailsService.exportExcel(fileType, response);
+        return ResponseUtils.success();
     }
 }

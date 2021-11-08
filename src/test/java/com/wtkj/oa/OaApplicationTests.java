@@ -2,7 +2,6 @@ package com.wtkj.oa;
 
 import cn.hutool.core.collection.CollectionUtil;
 import com.wtkj.oa.service.IMenuService;
-import com.wtkj.oa.service.InitDataService;
 import org.junit.Test;
 import org.junit.platform.commons.util.CollectionUtils;
 import org.junit.runner.RunWith;
@@ -16,9 +15,6 @@ import java.util.List;
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class OaApplicationTests {
-    @Resource
-    private InitDataService initDtaService;
-
     @Resource
     private IMenuService menuService;
 
