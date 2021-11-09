@@ -16,11 +16,6 @@ public interface IContractDetailsService {
 
     void viewFile(HttpServletResponse response, String contractId);
 
-    String initCompanies(MultipartFile file);
-
-    String initPatents(MultipartFile file);
-
-    void exportExcel(String fileType, HttpServletResponse response);
 }
 
 

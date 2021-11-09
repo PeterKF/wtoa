@@ -197,6 +197,24 @@
          #{status,jdbcType=INTEGER})
     </insert>
 
+    <insert id="batchInsert" parameterType="java.util.List">
+        insert into contract_info (contract_id, contract_name, business_type, contract_type,
+        company_id, user_id, contract_file,
+        contract_status, invoice_status, collection_status,
+        create_time, last_update_time, billing_date, collection_date)
+        values
+        <foreach collection="list" item="item" index="index" separator=",">
+            (#{item.contractId,jdbcType=VARCHAR}, #{item.contractName,jdbcType=VARCHAR},
+            #{item.businessType,jdbcType=INTEGER},
+            #{item.contractType,jdbcType=INTEGER}, #{item.companyId,jdbcType=VARCHAR}, #{item.userId,jdbcType=VARCHAR},
+            #{item.contractFile,jdbcType=VARCHAR},
+            #{item.contractStatus,jdbcType=INTEGER}, #{item.invoiceStatus,jdbcType=INTEGER},
+            #{item.collectionStatus,jdbcType=INTEGER},
+            #{item.createTime,jdbcType=TIMESTAMP}, #{item.lastUpdateTime,jdbcType=TIMESTAMP},
+            #{item.billingDate,jdbcType=DATE}, #{item.collectionDate,jdbcType=DATE})
+        </foreach>
+    </insert>
+
     <update id="updateContractDate" parameterType="com.wtkj.oa.entity.ContractDate">
         update contract_date
         <set>

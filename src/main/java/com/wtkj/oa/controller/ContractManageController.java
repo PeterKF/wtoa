@@ -139,23 +139,4 @@ public class ContractManageController {
         contractDetailsService.uploadFile(file, contractId);
         return ResponseUtils.success();
     }
-
-    @ApiOperation("批量导入公司")
-    @RequestMapping(value = "/upload/company", method = RequestMethod.POST)
-    public ResponseMsg initCompanies(@RequestParam(value = "file") MultipartFile file) {
-        return ResponseUtils.success(contractDetailsService.initCompanies(file));
-    }
-
-    @ApiOperation("批量导入知识产权")
-    @PostMapping(value = "/upload/patent")
-    public ResponseMsg initPatents(@RequestParam(value = "file") MultipartFile file) {
-        return ResponseUtils.success(contractDetailsService.initPatents(file));
-    }
-
-    @ApiOperation("导出模板")
-    @GetMapping(value = "/exportExcel")
-    public ResponseMsg initPatents(@RequestParam String fileType, HttpServletResponse response) {
-        contractDetailsService.exportExcel(fileType, response);
-        return ResponseUtils.success();
-    }
 }

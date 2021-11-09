@@ -2,6 +2,7 @@ package com.wtkj.oa.common.interceptors;
 
 import com.wtkj.oa.common.config.RepeatedlyReadRequestWrapper;
 import org.apache.catalina.connector.RequestFacade;
+import org.apache.tomcat.util.http.fileupload.servlet.ServletFileUpload;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,9 +27,11 @@ public class RepeatedlyReadFilter implements Filter {
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
         logger.info("复制request.getInputStream流");
         ServletRequest requestWrapper = null;
-        String path = ((RequestFacade) request).getRequestURI();
-        if (!path.contains("upload") && request instanceof HttpServletRequest) {
-            requestWrapper = new RepeatedlyReadRequestWrapper((HttpServletRequest) request);
+        if (request instanceof HttpServletRequest) {
+            Boolean isFile = ServletFileUpload.isMultipartContent((HttpServletRequest) request);
+            if (!isFile) {
+                requestWrapper = new RepeatedlyReadRequestWrapper((HttpServletRequest) request);
+            }
         }
         if (null == requestWrapper) {
             chain.doFilter(request, response);

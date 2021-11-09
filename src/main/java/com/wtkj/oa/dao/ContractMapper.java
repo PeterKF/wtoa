@@ -37,6 +37,8 @@ public interface ContractMapper {
 
     int addDate(ContractDate record);
 
+    int batchInsert(List<Contract> contracts);
+
     void updateContractDate(ContractDate record);
 
     Integer getMaxStatus(String contractId);
