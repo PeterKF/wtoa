@@ -21,6 +21,7 @@ import com.wtkj.oa.utils.RandomStringUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.util.Strings;
 import org.apache.poi.ss.usermodel.Font;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -80,7 +81,7 @@ public class InitDataServiceImpl implements InitDataService {
         List<List<Object>> objectList = reader.read();
 
         if (CollectionUtil.isNotEmpty(objectList)) {
-            for (int i = 0; i < objectList.size(); ++i) {
+            for (int i = 1; i < objectList.size(); i++) {
                 List<Object> objects = objectList.get(i);
                 List<String> comNames = new ArrayList();
                 Company company = new Company().setCompanyId(RandomStringUtils.getNextVal())
@@ -89,12 +90,16 @@ public class InitDataServiceImpl implements InitDataService {
                         .setDirector(String.valueOf(objects.get(3))).setPhone(String.valueOf(objects.get(4)))
                         .setContact(String.valueOf(objects.get(5))).setTelephone(String.valueOf(objects.get(6)));
 
-                if (CollectionUtil.isEmpty(comNames) || !comNames.contains(company.getCompanyName())) {
-                    comNames.add(company.getCompanyName());
-                    String userId = userMapper.getIdByName(String.valueOf(objects.get(7)));
-                    company.setUserId(userId);
-                    companyMapper.insert(company);
-                    count++;
+                try {
+                    if (CollectionUtil.isEmpty(comNames) || !comNames.contains(company.getCompanyName())) {
+                        comNames.add(company.getCompanyName());
+                        String userId = userMapper.getIdByName(String.valueOf(objects.get(7)));
+                        company.setUserId(userId);
+                        companyMapper.insert(company);
+                        count++;
+                    }
+                } catch (DuplicateKeyException e) {
+                    throw new BusinessException("文档中有重复的客户名，详情报错信息:" + e.getCause());
                 }
             }
         }
