@@ -72,25 +72,18 @@ public class InitDataServiceImpl implements InitDataService {
         }
 
         int count = 0;
-        ExcelReader reader = null;
-        try {
-            reader = ExcelUtil.getReader(file.getInputStream(), 0);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        List<List<Object>> objectList = reader.read();
+        try (ExcelReader reader = ExcelUtil.getReader(file.getInputStream(), 0)) {
+            List<List<Object>> objectList = reader.read();
+            if (CollectionUtil.isNotEmpty(objectList)) {
+                for (int i = 1; i < objectList.size(); i++) {
+                    List<Object> objects = objectList.get(i);
+                    List<String> comNames = new ArrayList<>();
+                    Company company = new Company().setCompanyId(RandomStringUtils.getNextVal())
+                            .setYear(String.valueOf(objects.get(0)))
+                            .setCompanyName(String.valueOf(objects.get(1))).setRegion(String.valueOf(objects.get(2)))
+                            .setDirector(String.valueOf(objects.get(3))).setPhone(String.valueOf(objects.get(4)))
+                            .setContact(String.valueOf(objects.get(5))).setTelephone(String.valueOf(objects.get(6)));
 
-        if (CollectionUtil.isNotEmpty(objectList)) {
-            for (int i = 1; i < objectList.size(); i++) {
-                List<Object> objects = objectList.get(i);
-                List<String> comNames = new ArrayList();
-                Company company = new Company().setCompanyId(RandomStringUtils.getNextVal())
-                        .setYear(String.valueOf(objects.get(0)))
-                        .setCompanyName(String.valueOf(objects.get(1))).setRegion(String.valueOf(objects.get(2)))
-                        .setDirector(String.valueOf(objects.get(3))).setPhone(String.valueOf(objects.get(4)))
-                        .setContact(String.valueOf(objects.get(5))).setTelephone(String.valueOf(objects.get(6)));
-
-                try {
                     if (CollectionUtil.isEmpty(comNames) || !comNames.contains(company.getCompanyName())) {
                         comNames.add(company.getCompanyName());
                         String userId = userMapper.getIdByName(String.valueOf(objects.get(7)));
@@ -98,11 +91,14 @@ public class InitDataServiceImpl implements InitDataService {
                         companyMapper.insert(company);
                         count++;
                     }
-                } catch (DuplicateKeyException e) {
-                    throw new BusinessException("文档中有重复的客户名，详情报错信息:" + e.getCause());
                 }
             }
+        } catch (IOException e) {
+            log.warn("IO Error is", e);
+        } catch (DuplicateKeyException e) {
+            throw new BusinessException("文档中有重复的客户名，详情报错信息:" + e.getCause());
         }
+
         return "初始化客户数：" + count + "条！";
     }
 
@@ -127,7 +123,6 @@ public class InitDataServiceImpl implements InitDataService {
 
         if (!CollectionUtils.isEmpty(dataList)) {
             List<String> ids = patentMapper.getPatentIds();
-            //List<Company> companies = companyMapper.list();
             String companyId = "";
             for (int i = 1; i < dataList.size(); i++) {
                 List<Object> list = dataList.get(i);
@@ -152,7 +147,6 @@ public class InitDataServiceImpl implements InitDataService {
                 if (ids.stream().noneMatch(id -> id.equals(patent.getPatentId()))) {
                     patents.add(patent);
                 }
-                companyId = "";
             }
 
             if (!CollectionUtils.isEmpty(patents)) {
@@ -175,7 +169,7 @@ public class InitDataServiceImpl implements InitDataService {
         }
         ExcelReader reader = ExcelUtil.getReader((File) file, 0);
         List<List<Object>> objectList = reader.read();
-        List<Contract> contracts = new ArrayList<Contract>();
+        List<Contract> contracts = new ArrayList<>();
         if (CollectionUtil.isNotEmpty(objectList)) {
             for (List<Object> objects : objectList) {
                 Contract contract = new Contract();
