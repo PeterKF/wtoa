@@ -30,7 +30,6 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.annotation.Resource;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
-import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -167,36 +166,40 @@ public class InitDataServiceImpl implements InitDataService {
         if (file.isEmpty()) {
             throw new BusinessException("请先选择上传的文件");
         }
-        ExcelReader reader = ExcelUtil.getReader((File) file, 0);
-        List<List<Object>> objectList = reader.read();
+
         List<Contract> contracts = new ArrayList<>();
-        if (CollectionUtil.isNotEmpty(objectList)) {
-            for (List<Object> objects : objectList) {
-                Contract contract = new Contract();
-                String contractId = contractMapper.selectIdByType(2);
-                if (StrUtil.isEmpty(contractId)) {
-                    contract.setContractId(RandomStringUtils.getContractCode(2, 0));
-                } else {
-                    String number = contractId.substring(contractId.length() - 2);
-                    contract.setContractId(RandomStringUtils.getContractCode(2, Integer.valueOf(number)));
+        try (ExcelReader reader = ExcelUtil.getReader(file.getInputStream(), 0)) {
+            List<List<Object>> objectList = reader.read();
+            if (CollectionUtil.isNotEmpty(objectList)) {
+                for (int i = 1; i < objectList.size(); i++) {
+                    Contract contract = new Contract();
+                    String contractId = contractMapper.selectIdByType(2);
+                    if (StrUtil.isEmpty(contractId)) {
+                        contract.setContractId(RandomStringUtils.getContractCode(2, 0));
+                    } else {
+                        String number = contractId.substring(contractId.length() - 2);
+                        contract.setContractId(RandomStringUtils.getContractCode(2, Integer.valueOf(number)));
+                    }
+
+                    contract.setContractName("浙江省科技型中小企业");
+                    contract.setBusinessType(2).setContractType("2").setContractStatus(0).setCollectionStatus(0).setInvoiceStatus(0);
+                    String date = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
+                    contract.setCreateTime(date).setLastUpdateTime(date);
+
+                    String companyId = companyMapper.getIdByName(String.valueOf(objectList.get(i).get(0)));
+                    contract.setCompanyId(companyId);
+
+                    String userId = userMapper.getIdByName(String.valueOf(objectList.get(i).get(1)));
+                    contract.setUserId(userId);
+
+                    String content = contractManageService.getHtmlContentByType(2, "2", companyId);
+                    contract.setContractFile(content);
+                    contracts.add(contract);
                 }
-
-                contract.setContractName("浙江省科技型中小企业");
-                contract.setBusinessType(2).setContractType("2").setContractStatus(0).setCollectionStatus(0).setInvoiceStatus(0);
-                String date = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
-                contract.setCreateTime(date).setLastUpdateTime(date);
-
-                String companyId = companyMapper.getIdByName(String.valueOf(objects.get(0)));
-                contract.setCompanyId(companyId);
-
-                String userId = userMapper.getIdByName(String.valueOf(objects.get(1)));
-                contract.setUserId(userId);
-
-                String content = contractManageService.getHtmlContentByType(2, "2", companyId);
-                contract.setContractFile(content);
-                contracts.add(contract);
+                contractMapper.batchInsert(contracts);
             }
-            contractMapper.batchInsert(contracts);
+        } catch (IOException e) {
+            log.warn("IO Error,", e);
         }
         return "初始化" + contracts.size() + "份浙江省科技型中小企业";
     }

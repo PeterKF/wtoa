@@ -316,11 +316,9 @@ public class ContractManageServiceImpl implements IContractManageService {
                 User one = users.stream().filter(c -> !StringUtils.isEmpty(c.getAssistantIds())
                         && c.getAssistantIds().equals(userId)).findFirst().get();
 
-                if (ObjectUtils.isEmpty(one)) {
-
-                } else {
+                if (ObjectUtil.isNotEmpty(one)) {
                     for (Contract c : contracts) {
-                        if (!CollectionUtils.isEmpty(idMap) && !StringUtils.isEmpty(idMap.get(c.getCompanyId()))
+                        if (!CollectionUtils.isEmpty(idMap) && StrUtil.isNotEmpty(idMap.get(c.getCompanyId()))
                                 && idMap.get(c.getCompanyId()).equals(one.getUserId())) {
                             cList.add(c);
                         }
