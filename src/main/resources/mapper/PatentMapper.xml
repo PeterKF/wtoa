@@ -198,8 +198,8 @@
             where p.patent_name = #{patentName,jdbcType=VARCHAR}
         </if>
         order by
-        c.company_name desc,
-        p.application_date desc
+        p.application_date desc,
+        c.company_name desc
     </select>
 
     <select id="listLikeName" resultMap="BaseResultMap" parameterType="java.lang.String">
