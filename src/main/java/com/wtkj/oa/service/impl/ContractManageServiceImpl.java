@@ -246,6 +246,10 @@ public class ContractManageServiceImpl implements IContractManageService {
         if (StrUtil.isNotEmpty(company.getUserName())) {
             companies = companies.stream().filter(c -> StrUtil.isNotEmpty(c.getUserName()) && c.getUserName().contains(company.getUserName())).collect(Collectors.toList());
         }
+
+        if (StrUtil.isNotEmpty(company.getCompanyName())) {
+            companies = companies.stream().filter(c -> StrUtil.isNotEmpty(c.getCompanyName()) && c.getCompanyName().contains(company.getCompanyName())).collect(Collectors.toList());
+        }
         return new PageInfo<>(company.getPageNum(), company.getPageSize(), companies);
     }
 
