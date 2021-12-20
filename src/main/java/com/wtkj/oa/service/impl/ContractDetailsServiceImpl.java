@@ -262,6 +262,14 @@ public class ContractDetailsServiceImpl implements IContractDetailsService {
         if (!f.exists()) {
             f.mkdir();
         }
+
+        if (StrUtil.isNotEmpty(contract.getFileName())) {
+            File oldFile = new File(System.getProperty("user.dir") + "/resource/contract/", contract.getFileName());
+            if (oldFile.exists()) {
+                oldFile.delete();
+            }
+        }
+
         String fileName = "";
         try {
             fileName = new String(file.getOriginalFilename().getBytes(StandardCharsets.UTF_8), StandardCharsets.UTF_8);
