@@ -12,7 +12,9 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 
 import javax.annotation.Resource;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -57,7 +59,8 @@ public class HTContractServiceImpl implements IHTContractService {
                 result = contentStr.toString().replace("{companyName}", StrUtil.isEmpty(company.getCompanyName()) ? "" : company.getCompanyName())
                         .replace("{address}", StrUtil.isEmpty(company.getAddress()) ? "" : company.getAddress())
                         .replace("{director}", StrUtil.isEmpty(company.getDirector()) ? "" : company.getDirector())
-                        .replace("{phone}", StrUtil.isEmpty(company.getPhone()) ? "" : company.getPhone());
+                        .replace("{phone}", StrUtil.isEmpty(company.getPhone()) ? "" : company.getPhone())
+                        .replace("{signDate}", new SimpleDateFormat("yyyy年MM月dd日").format(new Date()));
             } else {
                 result = contentStr.toString();
             }
