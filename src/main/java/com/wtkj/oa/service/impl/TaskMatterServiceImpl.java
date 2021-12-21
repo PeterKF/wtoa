@@ -49,17 +49,9 @@ public class TaskMatterServiceImpl extends ServiceImpl<ContractDateMapper, Contr
 
     public PageInfo<ContractDate> taskList(ContractDate contractDate) {
         List<ContractDate> contractDates = contractDateMapper.taskMatterList(contractDate);
-        if (CollUtil.isNotEmpty(contractDates)) {
-            for (ContractDate c : contractDates) {
-                Contract contract = contractMapper.selectByPrimaryKey(c.getContractId());
-                if (contract != null) {
-                    if (contract.getBusinessType().equals(1)) {
-                        c.setName(GXEnum.getNameByType(c.getType()));
-                    } else {
-                        c.setName(contract.getContractName());
-                    }
-                }
-            }
+
+        if (StrUtil.isNotEmpty(contractDate.getName())) {
+            contractDates = contractDates.stream().filter(c -> c.getName().equals(contractDate.getName())).collect(Collectors.toList());
         }
 
         if (contractDate.getUserId() != null) {
