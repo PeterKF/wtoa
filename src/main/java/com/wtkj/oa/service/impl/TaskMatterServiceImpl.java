@@ -47,6 +47,12 @@ public class TaskMatterServiceImpl extends ServiceImpl<ContractDateMapper, Contr
     @Autowired
     private ContractDateMapper contractDateMapper;
 
+    /**
+     * 任务事项列表
+     *
+     * @param contractDate
+     * @return
+     */
     public PageInfo<ContractDate> taskList(ContractDate contractDate) {
         List<ContractDate> contractDates = contractDateMapper.taskMatterList(contractDate);
 
