@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wtkj.oa.dao.ContractDateMapper">
+    <select id="taskMatterList" resultType="com.wtkj.oa.entity.ContractDate" parameterType="com.wtkj.oa.entity.ContractDate">
+        SELECT
+        d.*, c.company_name,
+        u.user_name,
+        u.user_id,
+        t.contract_name
+        FROM
+        contract_date d,
+        company_info c,
+        user_info u,
+        contract_info t
+        WHERE
+        d.company_id = c.company_id
+        AND t.contract_id = d.contract_id
+        and u.user_id = c.user_id
+        <include refid="whereSql"/>
+        order by d.company_id desc,
+        d.contract_id desc
+    </select>
+
+    <sql id="whereSql">
+        <if test="status != null">
+            and d.status = #{status,jdbcType=INTEGER}
+        </if>
+        <if test="completeDate != null">
+            and d.complete_date = #{completeDate,jdbcType=VARCHAR}
+        </if>
+        <if test="name != null">
+            and d.name = #{name,jdbcType=VARCHAR}
+        </if>
+        <if test="companyName != null">
+            and c.company_name = #{companyName,jdbcType=VARCHAR}
+        </if>
+        <if test="userName != null">
+            and u.user_name = #{userName,jdbcType=VARCHAR}
+        </if>
+    </sql>
+</mapper>

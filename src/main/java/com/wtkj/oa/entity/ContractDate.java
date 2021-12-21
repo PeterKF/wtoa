@@ -30,13 +30,13 @@ public class ContractDate implements Serializable {
     @TableField("company_id")
     private String companyId;
 
-    @TableField(exist = false)
+    @TableField("user_name")
     private String userName;
 
-    @TableField(exist = false)
+    @TableField("company_name")
     private String companyName;
 
-    @TableField("name")
+    @TableField(exist = false)
     private String name;
 
     @TableField("type")
@@ -78,7 +78,7 @@ public class ContractDate implements Serializable {
     @TableField(exist = false)
     private int pageNum;
 
-    @TableField(exist = false)
+    @TableField("user_id")
     private String userId;
 
     public ContractDate(String contractId, String name, String type, String completeDate) {

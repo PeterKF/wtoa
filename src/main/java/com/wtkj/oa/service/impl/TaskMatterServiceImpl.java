@@ -15,6 +15,7 @@ import com.wtkj.oa.entity.Contract;
 import com.wtkj.oa.entity.ContractDate;
 import com.wtkj.oa.entity.User;
 import com.wtkj.oa.service.ICompanyManageService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
@@ -35,25 +36,21 @@ import java.util.stream.Collectors;
 public class TaskMatterServiceImpl extends ServiceImpl<ContractDateMapper, ContractDate> {
 
     @Resource
-    private CompanyMapper companyMapper;
-
-    @Resource
     private ICompanyManageService companyManageService;
-
-    @Resource
-    private UserMapper userMapper;
 
     @Resource
     private ContractMapper contractMapper;
 
+    @Resource
+    private UserMapper userMapper;
+
+    @Autowired
+    private ContractDateMapper contractDateMapper;
+
     public PageInfo<ContractDate> taskList(ContractDate contractDate) {
-        QueryWrapper<ContractDate> queryWrapper = new QueryWrapper<>();
-        queryWrapper.orderByDesc("company_id").orderByDesc("contract_id");
-        List<ContractDate> contractDates = this.list(queryWrapper);
+        List<ContractDate> contractDates = contractDateMapper.taskMatterList(contractDate);
         if (CollUtil.isNotEmpty(contractDates)) {
             for (ContractDate c : contractDates) {
-                c.setUserName(companyMapper.selectByPrimaryKey(c.getCompanyId()).getUserName());
-                c.setCompanyName(companyMapper.selectByPrimaryKey(c.getCompanyId()).getCompanyName());
                 Contract contract = contractMapper.selectByPrimaryKey(c.getContractId());
                 if (contract != null) {
                     if (contract.getBusinessType().equals(1)) {
@@ -64,18 +61,7 @@ public class TaskMatterServiceImpl extends ServiceImpl<ContractDateMapper, Contr
                 }
             }
         }
-        if (contractDate.getStatus() != null) {
-            contractDates = contractDates.stream().filter(c -> c.getStatus().equals(contractDate.getStatus())).collect(Collectors.toList());
-        }
-        if (!contractDate.getCompleteDate().equals("")) {
-            contractDates = contractDates.stream().filter(c -> c.getCompleteDate().contains(contractDate.getCompleteDate())).collect(Collectors.toList());
-        }
-        if (!contractDate.getName().equals("")) {
-            contractDates = contractDates.stream().filter(c -> c.getName().equals(contractDate.getName())).collect(Collectors.toList());
-        }
-        if (!contractDate.getCompanyName().equals("")) {
-            contractDates = contractDates.stream().filter(c -> c.getCompanyName().contains(contractDate.getCompanyName())).collect(Collectors.toList());
-        }
+
         if (contractDate.getUserId() != null) {
             List<ContractDate> contractDateList = new ArrayList<>();
             String userId = contractDate.getUserId();
@@ -107,10 +93,6 @@ public class TaskMatterServiceImpl extends ServiceImpl<ContractDateMapper, Contr
             if (flag) {
                 contractDates = contractDateList;
             }
-        }
-
-        if (StrUtil.isNotEmpty(contractDate.getUserName())) {
-            contractDates = contractDates.stream().filter(c -> c.getUserName().contains(contractDate.getUserName())).collect(Collectors.toList());
         }
 
         return new PageInfo<>(contractDate.getPageNum(), contractDate.getPageSize(), contractDates);
