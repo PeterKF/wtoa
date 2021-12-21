@@ -25,16 +25,16 @@
         <if test="status != null">
             and d.status = #{status,jdbcType=INTEGER}
         </if>
-        <if test="completeDate != null">
-            and d.complete_date = #{completeDate,jdbcType=VARCHAR}
+        <if test="completeDate != null and completeDate != ''">
+            and d.complete_date like "%"#{completeDate,jdbcType=VARCHAR}"%"
         </if>
-        <if test="name != null">
+        <if test="name != null and name != ''">
             and d.name = #{name,jdbcType=VARCHAR}
         </if>
-        <if test="companyName != null">
+        <if test="companyName != null and companyName != ''">
             and c.company_name = #{companyName,jdbcType=VARCHAR}
         </if>
-        <if test="userName != null">
+        <if test="userName != null and userName != ''">
             and u.user_name = #{userName,jdbcType=VARCHAR}
         </if>
     </sql>
