@@ -10,10 +10,7 @@ import com.itextpdf.text.pdf.BaseFont;
 import com.wtkj.oa.common.config.PageInfo;
 import com.wtkj.oa.common.constant.ContractEnum;
 import com.wtkj.oa.common.constant.GXEnum;
-import com.wtkj.oa.dao.CompanyMapper;
-import com.wtkj.oa.dao.ContractMapper;
-import com.wtkj.oa.dao.ServiceDetailMapper;
-import com.wtkj.oa.dao.UserMapper;
+import com.wtkj.oa.dao.*;
 import com.wtkj.oa.entity.*;
 import com.wtkj.oa.exception.BusinessException;
 import com.wtkj.oa.service.ICompanyManageService;
@@ -62,6 +59,9 @@ public class ContractManageServiceImpl implements IContractManageService {
 
     @Resource
     private UserMapper userMapper;
+
+    @Resource
+    private ContentMapper contentMapper;
 
     @Resource
     private ICompanyManageService companyManageService;
@@ -389,20 +389,19 @@ public class ContractManageServiceImpl implements IContractManageService {
     }
 
     /**
-     * 根据合同类型读取html文件内容
+     * 根据表中数据获取合同模板
      *
      * @param contractType
      * @return
      */
     public String getHtmlContentByType(Integer businessType, String contractType, String companyId) {
-        String fileName = ContractEnum.getNameByType(businessType, contractType) + ".html";
-        String result = getHtmlContent(fileName);
+        String result = contentMapper.getContentByType(businessType, contractType).getContent();
         Company company = companyManageService.selectOne(companyId);
         if (CharSequenceUtil.isNotEmpty(result) && !ObjectUtils.isEmpty(company)) {
-            result = result.replace("{companyName}", "" + company.getCompanyName() + "")
-                    .replace("{address}", "" + company.getAddress() + "")
-                    .replace("{director}", "" + company.getDirector() + "")
-                    .replace("{phone}", "" + company.getPhone() + "")
+            result = result.replace("{companyName}", "" + Objects.toString(company.getCompanyName(), "") + "")
+                    .replace("{address}", "" + Objects.toString(company.getAddress(), "") + "")
+                    .replace("{director}", "" + Objects.toString(company.getDirector(), "") + "")
+                    .replace("{phone}", "" + Objects.toString(company.getPhone(), "") + "")
                     .replace("{signDate}", new SimpleDateFormat("yyyy年MM月dd日").format(new Date()));
         }
         return result;
