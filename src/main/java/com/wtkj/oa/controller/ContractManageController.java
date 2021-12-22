@@ -148,7 +148,7 @@ public class ContractManageController {
     }
 
     @ApiOperation("修改合同模板")
-    @PutMapping(value = "/template")
+    @PostMapping(value = "/template")
     public ResponseMsg update(@RequestBody Content content) {
         htContractService.updateContract(content);
         return ResponseUtils.success();
