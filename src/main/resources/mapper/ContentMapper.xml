@@ -9,12 +9,21 @@
     </resultMap>
 
     <select id="getContentByType" resultType="com.wtkj.oa.entity.Content">
-         SELECT
-            title,
-            content
-        FROM
-            content_info
-         where business_type = #{businessType,jdbcType=INTEGER}
-         and contract_type  = #{contractType,jdbcType=VARCHAR}
+        SELECT title,
+               content
+        FROM content_info
+        where business_type = #{businessType,jdbcType=INTEGER}
+          and contract_type = #{contractType,jdbcType=VARCHAR}
     </select>
+
+    <update id="updateContent" parameterType="com.wtkj.oa.entity.Content">
+        update content_info
+        <set>
+            <if test="content != null">
+                content = #{content,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where business_type = #{businessType,jdbcType=INTEGER}
+        and contract_type = #{contractType,jdbcType=VARCHAR}
+    </update>
 </mapper>

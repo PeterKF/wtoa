@@ -2,6 +2,7 @@ package com.wtkj.oa.controller;
 
 import com.wtkj.oa.common.config.ResponseMsg;
 import com.wtkj.oa.entity.Company;
+import com.wtkj.oa.entity.Content;
 import com.wtkj.oa.entity.Contract;
 import com.wtkj.oa.entity.ContractDate;
 import com.wtkj.oa.service.IContractDetailsService;
@@ -68,13 +69,6 @@ public class ContractManageController {
         return ResponseUtils.success(contractManageService.list(contract));
     }
 
-    @ApiOperation("根据不同类型显示不同合同内容")
-    @RequestMapping(value = "/getHtmlByType", method = RequestMethod.GET)
-    public ResponseMsg getHtmlContent(@RequestParam String companyId, @RequestParam(required = false) Integer companyType,
-                                      @RequestParam Integer businessType, @RequestParam String contractType) {
-        return ResponseUtils.success(htContractService.getContentByType(companyId, companyType, businessType, contractType));
-    }
-
     @ApiOperation("预览合同")
     @RequestMapping(value = "/preview", method = RequestMethod.GET)
     public ResponseMsg preview(@RequestParam String contractId) {
@@ -137,6 +131,26 @@ public class ContractManageController {
     @RequestMapping(value = "/uploadFile", method = RequestMethod.POST)
     public ResponseMsg uploadImage(@RequestParam(value = "file") MultipartFile file, @RequestParam String contractId) {
         contractDetailsService.uploadFile(file, contractId);
+        return ResponseUtils.success();
+    }
+
+    @ApiOperation("根据不同类型显示不同合同内容")
+    @RequestMapping(value = "/getHtmlByType", method = RequestMethod.GET)
+    public ResponseMsg getHtmlContent(@RequestParam String companyId, @RequestParam(required = false) Integer companyType,
+                                      @RequestParam Integer businessType, @RequestParam String contractType) {
+        return ResponseUtils.success(htContractService.getContentByType(companyId, companyType, businessType, contractType));
+    }
+
+    @ApiOperation("根据不同类型显示不同合同模板")
+    @RequestMapping(value = "/template", method = RequestMethod.GET)
+    public ResponseMsg getHtmlContent(@RequestParam Integer businessType, @RequestParam String contractType) {
+        return ResponseUtils.success(htContractService.getContractInfo(businessType, contractType));
+    }
+
+    @ApiOperation("修改合同模板")
+    @PutMapping(value = "/template")
+    public ResponseMsg update(@RequestBody Content content) {
+        htContractService.updateContract(content);
         return ResponseUtils.success();
     }
 }

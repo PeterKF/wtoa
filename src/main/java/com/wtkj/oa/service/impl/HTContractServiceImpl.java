@@ -1,19 +1,19 @@
 package com.wtkj.oa.service.impl;
 
+import cn.hutool.core.text.CharSequenceUtil;
 import cn.hutool.core.util.StrUtil;
 import com.wtkj.oa.dao.ContentMapper;
 import com.wtkj.oa.entity.*;
+import com.wtkj.oa.exception.BusinessException;
 import com.wtkj.oa.service.ICompanyManageService;
 import com.wtkj.oa.service.IContractManageService;
 import com.wtkj.oa.service.IHTContractService;
 import com.wtkj.oa.utils.YamlUtils;
 import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 
 import javax.annotation.Resource;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -69,21 +69,14 @@ public class HTContractServiceImpl implements IHTContractService {
         }
 
         List<InsideInfo> infoList = YamlUtils.read(List.class, "company");
-        if (companyType == null) {
-            companyType = 1;
-        }
-        if (companyType.equals(2)) {
-            result = result.replace("{city}", "台州");
-            if (!CollectionUtils.isEmpty(infoList)) {
-                InsideInfo zhInfo = infoList.get(1);
-                result = getInsideInfo(result, zhInfo);
-            }
-        } else {
+        if (companyType == null || companyType == 1) {
             result = result.replace("{city}", "杭州");
-            if (!CollectionUtils.isEmpty(infoList)) {
-                InsideInfo hzInfo = infoList.get(0);
-                result = getInsideInfo(result, hzInfo);
-            }
+            InsideInfo hzInfo = infoList.get(0);
+            result = getInsideInfo(result, hzInfo);
+        } else {
+            result = result.replace("{city}", "台州");
+            InsideInfo zhInfo = infoList.get(1);
+            result = getInsideInfo(result, zhInfo);
         }
         resultDTO.setHtml(result);
         List<String> fields = contractManageService.getFields(new ServiceDetail());
@@ -98,5 +91,45 @@ public class HTContractServiceImpl implements IHTContractService {
                 .replace("{bank}", insideInfo.getBank()).replace("{bankNo}", insideInfo.getBankNo())
                 .replace("{accountNo}", insideInfo.getAccountNo());
         return result;
+    }
+
+    /**
+     * 获取合同模板内容
+     *
+     * @param businessType
+     * @param contractType
+     * @return
+     */
+    public String getContractInfo(Integer businessType, String contractType) {
+        String result = "";
+        if (businessType.equals(1)) {
+            throw new BusinessException("高薪合同暂不支持！");
+        } else {
+            Content content = contentMapper.getContentByType(businessType, contractType);
+            if (content != null) {
+                result = content.getContent();
+            }
+        }
+        return result;
+    }
+
+    /**
+     * 编辑合同模板内容
+     *
+     * @param content
+     */
+    public void updateContract(Content content) {
+        if (CharSequenceUtil.isEmpty(content.getContent())) {
+            throw new BusinessException("合同模板内容不能为空");
+        }
+
+        if (CharSequenceUtil.isEmpty(content.getContractType())) {
+            throw new BusinessException("合同类型不能为空");
+        }
+
+        if (content.getBusinessType() == null) {
+            throw new BusinessException("业务类型不能为空");
+        }
+        contentMapper.updateContent(content);
     }
 }

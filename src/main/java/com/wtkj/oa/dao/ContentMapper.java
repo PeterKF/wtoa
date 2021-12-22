@@ -7,4 +7,6 @@ import org.apache.ibatis.annotations.Mapper;
 @Mapper
 public interface ContentMapper {
     Content getContentByType(Integer businessType, String contractType);
+
+    void updateContent(Content content);
 }
