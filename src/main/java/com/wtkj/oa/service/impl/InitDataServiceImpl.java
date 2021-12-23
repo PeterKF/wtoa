@@ -171,9 +171,15 @@ public class InitDataServiceImpl implements InitDataService {
         try (ExcelReader reader = ExcelUtil.getReader(file.getInputStream(), 0)) {
             List<List<Object>> objectList = reader.read();
             if (CollectionUtil.isNotEmpty(objectList)) {
-                for (int i = 1; i < objectList.size(); i++) {
+                int i;
+                for (i = 1; i < objectList.size(); i++) {
                     Contract contract = new Contract();
-                    String contractId = contractMapper.selectIdByType(2);
+                    String contractId = "";
+                    if (i == 1) {
+                        contractId = contractMapper.selectIdByType(2);
+                    } else {
+                        contractId = contracts.get(i - 2).getContractId();
+                    }
                     if (StrUtil.isEmpty(contractId)) {
                         contract.setContractId(RandomStringUtils.getContractCode(2, 0));
                     } else {
