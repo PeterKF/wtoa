@@ -1,8 +1,7 @@
 package com.wtkj.oa.service.impl;
 
 import cn.hutool.core.collection.CollUtil;
-import cn.hutool.core.collection.CollectionUtil;
-import cn.hutool.core.util.StrUtil;
+import cn.hutool.core.text.CharSequenceUtil;
 import cn.hutool.poi.excel.ExcelReader;
 import cn.hutool.poi.excel.ExcelUtil;
 import cn.hutool.poi.excel.ExcelWriter;
@@ -24,7 +23,6 @@ import org.apache.poi.ss.usermodel.Font;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.CollectionUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
@@ -73,7 +71,7 @@ public class InitDataServiceImpl implements InitDataService {
         int count = 0;
         try (ExcelReader reader = ExcelUtil.getReader(file.getInputStream(), 0)) {
             List<List<Object>> objectList = reader.read();
-            if (CollectionUtil.isNotEmpty(objectList)) {
+            if (CollUtil.isNotEmpty(objectList)) {
                 for (int i = 1; i < objectList.size(); i++) {
                     List<Object> objects = objectList.get(i);
                     List<String> comNames = new ArrayList<>();
@@ -83,7 +81,7 @@ public class InitDataServiceImpl implements InitDataService {
                             .setDirector(String.valueOf(objects.get(3))).setPhone(String.valueOf(objects.get(4)))
                             .setContact(String.valueOf(objects.get(5))).setTelephone(String.valueOf(objects.get(6)));
 
-                    if (CollectionUtil.isEmpty(comNames) || !comNames.contains(company.getCompanyName())) {
+                    if (CollUtil.isEmpty(comNames) || !comNames.contains(company.getCompanyName())) {
                         comNames.add(company.getCompanyName());
                         String userId = userMapper.getIdByName(String.valueOf(objects.get(7)));
                         company.setUserId(userId);
@@ -112,15 +110,15 @@ public class InitDataServiceImpl implements InitDataService {
         if (file.isEmpty()) {
             throw new BusinessException("请先选择上传文件");
         }
-        List<List<Object>> dataList = null;
+        List<List<Object>> dataList = new ArrayList<>();
         try {
             dataList = ExcelUtil.getReader(file.getInputStream(), 0).read();
         } catch (IOException e) {
-            e.printStackTrace();
+            log.warn("IO ERROR,", e);
         }
         List<Patent> patents = new ArrayList<>();
 
-        if (!CollectionUtils.isEmpty(dataList)) {
+        if (CollUtil.isNotEmpty(dataList)) {
             List<String> ids = patentMapper.getPatentIds();
             String companyId = "";
             for (int i = 1; i < dataList.size(); i++) {
@@ -148,7 +146,7 @@ public class InitDataServiceImpl implements InitDataService {
                 }
             }
 
-            if (!CollectionUtils.isEmpty(patents)) {
+            if (!CollUtil.isEmpty(patents)) {
                 patentMapper.insertBatch(patents);
             }
         }
@@ -170,7 +168,7 @@ public class InitDataServiceImpl implements InitDataService {
         List<Contract> contracts = new ArrayList<>();
         try (ExcelReader reader = ExcelUtil.getReader(file.getInputStream(), 0)) {
             List<List<Object>> objectList = reader.read();
-            if (CollectionUtil.isNotEmpty(objectList)) {
+            if (CollUtil.isNotEmpty(objectList)) {
                 int i;
                 for (i = 1; i < objectList.size(); i++) {
                     Contract contract = new Contract();
@@ -180,7 +178,7 @@ public class InitDataServiceImpl implements InitDataService {
                     } else {
                         contractId = contracts.get(i - 2).getContractId();
                     }
-                    if (StrUtil.isEmpty(contractId)) {
+                    if (CharSequenceUtil.isEmpty(contractId)) {
                         contract.setContractId(RandomStringUtils.getContractCode(2, 0));
                     } else {
                         String number = contractId.substring(contractId.length() - 2);
