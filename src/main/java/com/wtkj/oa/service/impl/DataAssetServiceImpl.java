@@ -5,9 +5,9 @@ import com.wtkj.oa.common.config.SqlConfig;
 import com.wtkj.oa.entity.Database;
 import com.wtkj.oa.entity.TableColumn;
 import com.wtkj.oa.utils.DBPool.DBPoolUtils;
-import io.swagger.models.auth.In;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowCallbackHandler;
+import redis.clients.jedis.Jedis;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -143,25 +143,23 @@ public class DataAssetServiceImpl {
     }
 
     public static void main(String[] args) {
-        /*Database database = new Database(2, "127.0.0.1", "3306", "",
-                "root", "123456");
-        database.setDbName("wtdb");
-        database.setTableName("company_info");
-        database.setNumber(10);
-       *//* List<TableColumn> mapList = new DataAssetServiceImpl().getColumns(database);
-        for (TableColumn m : mapList) {
-            System.out.println(m);
-        }*//*
-        *//*List<String> dbs = new DataAssetServiceImpl().getDBNames(database);
-        for (String d:dbs){
-            System.out.println(d);
-        }*//*
-        List<Map<String, Object>> mapList = new DataAssetServiceImpl().getResultSet(database);
-        for (Map map : mapList) {
-            System.out.ptln(map);
-        }*/
-        Integer num = null;
-        System.out.println("echo "+num);
+        Jedis jedis = new Jedis("192.168.67.128", 6379);
+
+        // 设置认证密码，如果没有可以设置为空
+        //  jedis.auth("root");
+
+        // 指定数据库 默认是0
+        jedis.select(1);
+
+        // 使用ping命令，测试连接是否成功
+        String result = jedis.ping();
+        System.out.println(result);
+        jedis.set("username", "tom");
+        String userName = jedis.get("username");
+        System.out.println(userName);
+        if (jedis != null) {
+            jedis.close();
+        }
     }
 }
 

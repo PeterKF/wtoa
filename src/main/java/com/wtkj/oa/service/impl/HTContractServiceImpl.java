@@ -68,6 +68,22 @@ public class HTContractServiceImpl implements IHTContractService {
             result = contractManageService.getHtmlContentByType(businessType, contractType, companyId);
         }
 
+        result = getHtmlContent(companyType, result);
+
+        resultDTO.setHtml(result);
+        List<String> fields = contractManageService.getFields(new ServiceDetail());
+        resultDTO.setFields(fields);
+        return resultDTO;
+    }
+
+    /**
+     * 在合同中，填写乙方公司信息
+     *
+     * @param companyType
+     * @param result
+     * @return
+     */
+    public String getHtmlContent(Integer companyType, String result) {
         List<InsideInfo> infoList = YamlUtils.read(List.class, "company");
         if (companyType == null || companyType == 1) {
             result = result.replace("{city}", "杭州");
@@ -78,10 +94,7 @@ public class HTContractServiceImpl implements IHTContractService {
             InsideInfo zhInfo = infoList.get(1);
             result = getInsideInfo(result, zhInfo);
         }
-        resultDTO.setHtml(result);
-        List<String> fields = contractManageService.getFields(new ServiceDetail());
-        resultDTO.setFields(fields);
-        return resultDTO;
+        return result;
     }
 
     private String getInsideInfo(String result, InsideInfo insideInfo) {

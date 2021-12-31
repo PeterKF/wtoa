@@ -10,4 +10,6 @@ public interface IHTContractService {
     String getContractInfo(Integer businessType, String contractType);
 
     void updateContract(Content content);
+
+    String getHtmlContent(Integer companyType, String result);
 }

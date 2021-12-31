@@ -15,6 +15,7 @@ import com.wtkj.oa.entity.Contract;
 import com.wtkj.oa.entity.Patent;
 import com.wtkj.oa.exception.BusinessException;
 import com.wtkj.oa.service.IContractManageService;
+import com.wtkj.oa.service.IHTContractService;
 import com.wtkj.oa.service.InitDataService;
 import com.wtkj.oa.utils.RandomStringUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -60,6 +61,9 @@ public class InitDataServiceImpl implements InitDataService {
 
     @Resource
     private ContractMapper contractMapper;
+
+    @Resource
+    private IHTContractService htContractServiceImpl;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -178,6 +182,7 @@ public class InitDataServiceImpl implements InitDataService {
                     } else {
                         contractId = contracts.get(i - 2).getContractId();
                     }
+
                     if (CharSequenceUtil.isEmpty(contractId)) {
                         contract.setContractId(RandomStringUtils.getContractCode(2, 0));
                     } else {
@@ -196,7 +201,17 @@ public class InitDataServiceImpl implements InitDataService {
                     String userId = userMapper.getIdByName(String.valueOf(objectList.get(i).get(1)));
                     contract.setUserId(userId);
 
+                    //合同中甲方信息
                     String content = contractManageService.getHtmlContentByType(2, "2", companyId);
+
+                    //合同中乙方信息
+                    String city = String.valueOf(objectList.get(i).get(2));
+                    if ("杭州".equals(city)) {
+                        content = htContractServiceImpl.getHtmlContent(1, content);
+                    } else {
+                        content = htContractServiceImpl.getHtmlContent(2, content);
+                    }
+
                     contract.setContractFile(content);
                     contracts.add(contract);
                 }
@@ -226,7 +241,7 @@ public class InitDataServiceImpl implements InitDataService {
             titles = CollUtil.newArrayList("申请号", "申请日", "公司名称", "申请名称", "类型");
         } else {
             fileName = "浙江省中小型企业合同清单.xlsx";
-            titles = CollUtil.newArrayList("客户名称", "客户经理");
+            titles = CollUtil.newArrayList("客户名称", "客户经理", "乙方公司地区");
         }
         try {
             fileName = URLEncoder.encode(fileName, String.valueOf(StandardCharsets.UTF_8));
