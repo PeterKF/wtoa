@@ -113,14 +113,17 @@ public class HTContractServiceImpl implements IHTContractService {
      * @param contractType
      * @return
      */
+    @Override
     public String getContractInfo(Integer businessType, String contractType) {
-        String result = "";
+        Content content = contentMapper.getContentByType(businessType, contractType);
+        String result = content.getContent();
         if (businessType.equals(1)) {
-            throw new BusinessException("高薪合同暂不支持！");
-        } else {
-            Content content = contentMapper.getContentByType(businessType, contractType);
-            if (content != null) {
-                result = content.getContent();
+            if ("8".equals(contractType)) {
+                result = result + "</html>";
+            } else if ("9".equals(contractType)) {
+                result = "<html>" + result;
+            } else {
+                result = "<html>" + result + "</html>";
             }
         }
         return result;
@@ -131,6 +134,7 @@ public class HTContractServiceImpl implements IHTContractService {
      *
      * @param content
      */
+    @Override
     public void updateContract(Content content) {
         if (CharSequenceUtil.isEmpty(content.getContent())) {
             throw new BusinessException("合同模板内容不能为空");
