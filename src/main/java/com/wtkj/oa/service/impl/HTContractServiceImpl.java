@@ -139,14 +139,27 @@ public class HTContractServiceImpl implements IHTContractService {
         if (CharSequenceUtil.isEmpty(content.getContent())) {
             throw new BusinessException("合同模板内容不能为空");
         }
+        String result = content.getContent();
 
         if (CharSequenceUtil.isEmpty(content.getContractType())) {
             throw new BusinessException("合同类型不能为空");
         }
+        String contractType = content.getContractType();
 
         if (content.getBusinessType() == null) {
             throw new BusinessException("业务类型不能为空");
+        } else {
+            if (content.getBusinessType().equals(1)) {
+                if ("8".equals(contractType)) {
+                    result = result.replace("</html>", "");
+                } else if ("9".equals(contractType)) {
+                    result = result.replace("<html>", "");
+                } else {
+                    result = result.replace("<html>", "").replace("</html>", "");
+                }
+            }
         }
+        content.setContent(result);
         contentMapper.updateContent(content);
     }
 }

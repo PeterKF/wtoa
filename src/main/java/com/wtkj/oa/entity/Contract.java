@@ -62,6 +62,8 @@ public class Contract implements Serializable {
 
     private String contractFile;
 
+    private String completeDate;
+
     private Date billingDate;
 
     private Date collectionDate;

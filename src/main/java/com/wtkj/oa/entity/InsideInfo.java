@@ -1,6 +1,10 @@
 package com.wtkj.oa.entity;
 
-public class InsideInfo {
+import java.io.Serializable;
+
+public class InsideInfo implements Serializable {
+    private static final long serialVersionUID = 140812774009671666L;
+
     private Integer companyType;
 
     private String companyName;

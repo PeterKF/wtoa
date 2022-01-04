@@ -6,12 +6,10 @@ import cn.hutool.poi.excel.ExcelReader;
 import cn.hutool.poi.excel.ExcelUtil;
 import cn.hutool.poi.excel.ExcelWriter;
 import com.wtkj.oa.common.constant.PatentEnum;
-import com.wtkj.oa.dao.CompanyMapper;
-import com.wtkj.oa.dao.ContractMapper;
-import com.wtkj.oa.dao.PatentMapper;
-import com.wtkj.oa.dao.UserMapper;
+import com.wtkj.oa.dao.*;
 import com.wtkj.oa.entity.Company;
 import com.wtkj.oa.entity.Contract;
+import com.wtkj.oa.entity.ContractDate;
 import com.wtkj.oa.entity.Patent;
 import com.wtkj.oa.exception.BusinessException;
 import com.wtkj.oa.service.IContractManageService;
@@ -21,6 +19,7 @@ import com.wtkj.oa.utils.RandomStringUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.util.Strings;
 import org.apache.poi.ss.usermodel.Font;
+import org.springframework.beans.BeanUtils;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -201,6 +200,9 @@ public class InitDataServiceImpl implements InitDataService {
                     String userId = userMapper.getIdByName(String.valueOf(objectList.get(i).get(1)));
                     contract.setUserId(userId);
 
+                    String completeDate = String.valueOf(objectList.get(i).get(3));
+                    contract.setCompleteDate(completeDate);
+
                     //合同中甲方信息
                     String content = contractManageService.getHtmlContentByType(2, "2", companyId);
 
@@ -215,7 +217,24 @@ public class InitDataServiceImpl implements InitDataService {
                     contract.setContractFile(content);
                     contracts.add(contract);
                 }
-                contractMapper.batchInsert(contracts);
+                //添加到合同表中
+                try {
+                    contractMapper.batchInsert(contracts);
+                } catch (DuplicateKeyException e) {
+                    throw new BusinessException("数据重复，原因：" + e.getMessage());
+                }
+
+                //添加到合同时间表中 （用于添加完成时间）
+                for (Contract c : contracts) {
+                    ContractDate cDate = new ContractDate();
+                    cDate.setCompanyId(c.getCompanyId()).setContractId(c.getContractId()).setType(c.getContractType())
+                            .setStatus(2).setCompleteDate(c.getCompleteDate());
+                    try {
+                        contractMapper.addDate(cDate);
+                    } catch (DuplicateKeyException e) {
+                        contractMapper.updateContractDate(cDate);
+                    }
+                }
             }
         } catch (IOException e) {
             log.warn("IO Error,", e);
@@ -241,7 +260,7 @@ public class InitDataServiceImpl implements InitDataService {
             titles = CollUtil.newArrayList("申请号", "申请日", "公司名称", "申请名称", "类型");
         } else {
             fileName = "浙江省中小型企业合同清单.xlsx";
-            titles = CollUtil.newArrayList("客户名称", "客户经理", "乙方公司地区");
+            titles = CollUtil.newArrayList("客户名称", "客户经理", "乙方公司地区", "完成时间");
         }
         try {
             fileName = URLEncoder.encode(fileName, String.valueOf(StandardCharsets.UTF_8));
