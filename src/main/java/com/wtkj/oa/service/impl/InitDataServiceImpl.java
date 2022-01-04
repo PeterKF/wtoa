@@ -2,6 +2,7 @@ package com.wtkj.oa.service.impl;
 
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.text.CharSequenceUtil;
+import cn.hutool.core.util.StrUtil;
 import cn.hutool.poi.excel.ExcelReader;
 import cn.hutool.poi.excel.ExcelUtil;
 import cn.hutool.poi.excel.ExcelWriter;
@@ -175,32 +176,36 @@ public class InitDataServiceImpl implements InitDataService {
                 int i;
                 for (i = 1; i < objectList.size(); i++) {
                     Contract contract = new Contract();
-                    String contractId = "";
+                    String number = "";
                     if (i == 1) {
-                        contractId = contractMapper.selectIdByType(2);
+                        number = contractMapper.selectIdByType(2);
                     } else {
-                        contractId = contracts.get(i - 2).getContractId();
+                        number = contracts.get(i - 2).getContractId().substring(8);
                     }
 
-                    if (CharSequenceUtil.isEmpty(contractId)) {
+                    if (CharSequenceUtil.isEmpty(number)) {
                         contract.setContractId(RandomStringUtils.getContractCode(2, 0));
                     } else {
-                        String number = contractId.substring(contractId.length() - 2);
-                        contract.setContractId(RandomStringUtils.getContractCode(2, Integer.valueOf(number)));
+                        String contractId = RandomStringUtils.getContractCode(2, Integer.valueOf(number));
+                        contract.setContractId(contractId);
                     }
 
                     contract.setContractName("浙江省科技型中小企业");
-                    contract.setBusinessType(2).setContractType("2").setContractStatus(0).setCollectionStatus(0).setInvoiceStatus(0);
+                    contract.setBusinessType(2).setContractType("4").setContractStatus(0).setCollectionStatus(0).setInvoiceStatus(0);
                     String date = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
                     contract.setCreateTime(date).setLastUpdateTime(date);
 
-                    String companyId = companyMapper.getIdByName(String.valueOf(objectList.get(i).get(0)));
+                    String companyName = String.valueOf(objectList.get(i).get(0));
+                    String companyId = companyMapper.getIdByName(companyName);
+                    if (StrUtil.isEmpty(companyId)) {
+                        throw new BusinessException(companyName + "没有配置，请先配置");
+                    }
                     contract.setCompanyId(companyId);
 
                     String userId = userMapper.getIdByName(String.valueOf(objectList.get(i).get(1)));
                     contract.setUserId(userId);
 
-                    String completeDate = String.valueOf(objectList.get(i).get(3));
+                    String completeDate = String.valueOf(objectList.get(i).get(3)).substring(0, 10);
                     contract.setCompleteDate(completeDate);
 
                     //合同中甲方信息

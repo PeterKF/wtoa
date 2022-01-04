@@ -157,7 +157,8 @@
     </update>
 
     <select id="selectIdByType" parameterType="java.lang.Integer" resultType="java.lang.String">
-        select MAX(contract_id) from contract_info where business_type = #{businessType,jdbcType=INTEGER}
+        select max(cast(substring(contract_id,9) as UNSIGNED INTEGER)) from contract_info
+        where business_type = #{businessType,jdbcType=INTEGER}
     </select>
 
     <select id="getDateByType" resultType="java.lang.String">
