@@ -209,7 +209,7 @@ public class InitDataServiceImpl implements InitDataService {
                     contract.setCompleteDate(completeDate);
 
                     //合同中甲方信息
-                    String content = contractManageService.getHtmlContentByType(2, "2", companyId);
+                    String content = contractManageService.getHtmlContentByType(2, "4", companyId);
 
                     //合同中乙方信息
                     String city = String.valueOf(objectList.get(i).get(2));
