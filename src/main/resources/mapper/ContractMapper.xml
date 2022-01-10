@@ -45,22 +45,54 @@
     </resultMap>
 
     <sql id="Base_Column_List">
-        t.contract_id,
-        t.contract_name,
-        t.business_type,
-        t.contract_type,
-        t.company_id,
-        c.company_name,
-        t.user_id,
-        t.contract_file,
-        t.contract_status,
-        t.invoice_status,
-        t.collection_status,
-        t.create_time,
-        t.last_update_time,
-        t.billing_date,
-        t.collection_date,
-        t.file_name
+        t
+                .
+                contract_id,
+                t
+                .
+                contract_name,
+                t
+                .
+                business_type,
+                t
+                .
+                contract_type,
+                t
+                .
+                company_id,
+                c
+                .
+                company_name,
+                t
+                .
+                user_id,
+                t
+                .
+                contract_file,
+                t
+                .
+                contract_status,
+                t
+                .
+                invoice_status,
+                t
+                .
+                collection_status,
+                t
+                .
+                create_time,
+                t
+                .
+                last_update_time,
+                t
+                .
+                billing_date,
+                t
+                .
+                collection_date,
+                t
+                .
+                file_name
     </sql>
 
     <select id="list" resultMap="BaseResultMap">
@@ -87,25 +119,38 @@
     </select>
 
     <select id="getContractContent" parameterType="java.lang.String" resultType="java.lang.String">
-    select CONVERT(contract_file USING utf8) AS contractFile from contract_info where contract_id = #{contractId,jdbcType=VARCHAR}
-  </select>
+        select CONVERT(contract_file USING utf8) AS contractFile
+        from contract_info
+        where contract_id = #{contractId,jdbcType=VARCHAR}
+    </select>
 
     <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
-    delete from contract_info
-    where contract_id = #{contractId,jdbcType=VARCHAR}
-  </delete>
+        delete
+        from contract_info
+        where contract_id = #{contractId,jdbcType=VARCHAR}
+    </delete>
+
+    <delete id="deleteByType" parameterType="java.lang.String">
+        delete
+        from contract_info
+        where business_type = '2'
+          and contract_type = '4'
+          and company_id = #{companyId,jdbcType=VARCHAR}
+    </delete>
 
     <insert id="insert" parameterType="com.wtkj.oa.entity.Contract">
-    insert into contract_info (contract_id, contract_name,business_type, contract_type,
-      company_id, user_id, contract_file,
-      contract_status, invoice_status, collection_status,
-      create_time, last_update_time,billing_date, collection_date)
-    values (#{contractId,jdbcType=VARCHAR}, #{contractName,jdbcType=VARCHAR}, #{businessType,jdbcType=INTEGER},
-      #{contractType,jdbcType=INTEGER}, #{companyId,jdbcType=VARCHAR}, #{userId,jdbcType=VARCHAR}, #{contractFile,jdbcType=VARCHAR},
-      #{contractStatus,jdbcType=INTEGER}, #{invoiceStatus,jdbcType=INTEGER}, #{collectionStatus,jdbcType=INTEGER},
-      #{createTime,jdbcType=TIMESTAMP}, #{lastUpdateTime,jdbcType=TIMESTAMP},#{billingDate,jdbcType=DATE},
-      #{collectionDate,jdbcType=DATE})
-  </insert>
+        insert into contract_info (contract_id, contract_name, business_type, contract_type,
+                                   company_id, user_id, contract_file,
+                                   contract_status, invoice_status, collection_status,
+                                   create_time, last_update_time, billing_date, collection_date)
+        values (#{contractId,jdbcType=VARCHAR}, #{contractName,jdbcType=VARCHAR}, #{businessType,jdbcType=INTEGER},
+                #{contractType,jdbcType=INTEGER}, #{companyId,jdbcType=VARCHAR}, #{userId,jdbcType=VARCHAR},
+                #{contractFile,jdbcType=VARCHAR},
+                #{contractStatus,jdbcType=INTEGER}, #{invoiceStatus,jdbcType=INTEGER},
+                #{collectionStatus,jdbcType=INTEGER},
+                #{createTime,jdbcType=TIMESTAMP}, #{lastUpdateTime,jdbcType=TIMESTAMP}, #{billingDate,jdbcType=DATE},
+                #{collectionDate,jdbcType=DATE})
+    </insert>
 
     <update id="updateByPrimaryKeySelective" parameterType="com.wtkj.oa.entity.Contract">
         update contract_info
@@ -157,7 +202,8 @@
     </update>
 
     <select id="selectIdByType" parameterType="java.lang.Integer" resultType="java.lang.String">
-        select max(cast(substring(contract_id,9) as UNSIGNED INTEGER)) from contract_info
+        select max(cast(substring(contract_id, 9) as UNSIGNED INTEGER))
+        from contract_info
         where business_type = #{businessType,jdbcType=INTEGER}
     </select>
 
@@ -165,7 +211,7 @@
         select complete_date
         from contract_date
         where contract_id = #{contractId,jdbcType=VARCHAR}
-        and type = #{type,jdbcType=VARCHAR}
+          and type = #{type,jdbcType=VARCHAR}
     </select>
 
     <select id="getDateList" parameterType="java.lang.String" resultMap="ResultMap">
@@ -181,21 +227,23 @@
     </select>
 
     <delete id="deleteDate">
-        delete from contract_date
+        delete
+        from contract_date
         where contract_id = #{contractId,jdbcType=VARCHAR}
-        and type = #{type,jdbcType=VARCHAR}
+          and type = #{type,jdbcType=VARCHAR}
     </delete>
 
     <delete id="deleteAllDate">
-    delete from contract_date
-    where contract_id = #{contractId,jdbcType=VARCHAR}
+        delete
+        from contract_date
+        where contract_id = #{contractId,jdbcType=VARCHAR}
     </delete>
 
     <insert id="addDate" parameterType="com.wtkj.oa.entity.ContractDate">
-         insert into  contract_date(contract_id,type,complete_date,company_id,status)
-         values  (#{contractId,jdbcType=VARCHAR}, #{type,jdbcType=VARCHAR},
-         #{completeDate,jdbcType=VARCHAR},#{companyId,jdbcType=VARCHAR},
-         #{status,jdbcType=INTEGER})
+        insert into contract_date(contract_id, type, complete_date, company_id, status)
+        values (#{contractId,jdbcType=VARCHAR}, #{type,jdbcType=VARCHAR},
+                #{completeDate,jdbcType=VARCHAR}, #{companyId,jdbcType=VARCHAR},
+                #{status,jdbcType=INTEGER})
     </insert>
 
     <insert id="batchInsert" parameterType="java.util.List">
@@ -255,35 +303,39 @@
     </update>
 
     <select id="getMaxStatus" resultType="java.lang.Integer">
-        select max(status) from contract_date  where  contract_id = #{contractId,jdbcType=VARCHAR}
+        select max(status)
+        from contract_date
+        where contract_id = #{contractId,jdbcType=VARCHAR}
     </select>
 
     <select id="getMinStatus" resultType="java.lang.Integer">
-        select max(status) from contract_date  where  contract_id = #{contractId,jdbcType=VARCHAR}
+        select max(status)
+        from contract_date
+        where contract_id = #{contractId,jdbcType=VARCHAR}
     </select>
 
     <select id="getStatusById" resultType="java.lang.Integer">
-        select status from contract_date where contract_id = #{contractId,jdbcType=VARCHAR}
+        select status
+        from contract_date
+        where contract_id = #{contractId,jdbcType=VARCHAR}
     </select>
 
     <select id="getStatus" resultMap="ResultMap">
-        SELECT
-            contract_id,
-            NAME,
-            type,
-            complete_date,
-            STATUS,
-            billing_status_before,
-            billing_date_before,
-            collection_status_before,
-            collection_date_before,
-            billing_status_after,
-            billing_date_after,
-            collection_status_after,
-            collection_date_after
-        FROM
-            contract_date t
-        where  contract_id = #{contractId,jdbcType=VARCHAR}
-        and type = #{type,jdbcType=VARCHAR}
+        SELECT contract_id,
+               NAME,
+               type,
+               complete_date,
+               STATUS,
+               billing_status_before,
+               billing_date_before,
+               collection_status_before,
+               collection_date_before,
+               billing_status_after,
+               billing_date_after,
+               collection_status_after,
+               collection_date_after
+        FROM contract_date t
+        where contract_id = #{contractId,jdbcType=VARCHAR}
+          and type = #{type,jdbcType=VARCHAR}
     </select>
 </mapper>

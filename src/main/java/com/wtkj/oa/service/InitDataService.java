@@ -13,4 +13,6 @@ public interface InitDataService {
     String initContracts(MultipartFile file);
 
     void exportExcel(String fileType, HttpServletResponse response);
+
+    void deletePatents(MultipartFile file);
 }

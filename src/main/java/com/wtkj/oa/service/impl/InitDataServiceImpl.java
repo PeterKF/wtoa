@@ -103,6 +103,20 @@ public class InitDataServiceImpl implements InitDataService {
         return "初始化客户数：" + count + "条！";
     }
 
+    @Transactional(rollbackFor = Exception.class)
+    public void deletePatents(MultipartFile file) {
+        try {
+            List<List<Object>> dataList = ExcelUtil.getReader(file.getInputStream(), 0).read();
+            for (int i = 0; i < dataList.size(); i++) {
+                String companyName = String.valueOf(dataList.get(i).get(0));
+                String companyId = companyMapper.getIdByName(companyName);
+                contractMapper.deleteByType(companyId);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     /**
      * 初始化合同信息
      *
@@ -219,7 +233,7 @@ public class InitDataServiceImpl implements InitDataService {
                         content = htContractServiceImpl.getHtmlContent(2, content);
                     }
 
-                    contract.setContractFile(content);
+                    contract.setContractFile(content).setContractStatus(1);
                     contracts.add(contract);
                 }
                 //添加到合同表中
@@ -287,4 +301,6 @@ public class InitDataServiceImpl implements InitDataService {
         }
         writer.close();
     }
+
+
 }

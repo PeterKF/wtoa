@@ -48,4 +48,11 @@ public class InitDataController {
         initDataService.exportExcel(fileType, response);
         return ResponseUtils.success();
     }
+
+    @ApiOperation("批量删除合同")
+    @PostMapping(value = "/delete")
+    public ResponseMsg deleteContracts(@RequestParam(value = "file") MultipartFile file) {
+        initDataService.deletePatents(file);
+        return ResponseUtils.success();
+    }
 }

@@ -11,6 +11,8 @@ import java.util.List;
 public interface ContractMapper {
     int deleteByPrimaryKey(String contractId);
 
+    int deleteByType(String companyId);
+
     int insert(Contract record);
 
     Contract selectByPrimaryKey(String contractId);
