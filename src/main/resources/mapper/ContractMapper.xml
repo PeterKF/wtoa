@@ -45,7 +45,7 @@
     </resultMap>
 
     <sql id="Base_Column_List">
-        t
+                t
                 .
                 contract_id,
                 t
