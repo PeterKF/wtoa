@@ -250,9 +250,9 @@ public class ContractDetailsServiceImpl implements IContractDetailsService {
         }
 
         Contract contract = contractMapper.selectByPrimaryKey(contractId);
-        if (ObjectUtil.isNotEmpty(contract.getContractStatus()) && contract.getContractStatus().equals(0)) {
+       /* if (ObjectUtil.isNotEmpty(contract.getContractStatus()) && contract.getContractStatus().equals(0)) {
             throw new BusinessException("当前合同处于待签定状态，不可上传文件!");
-        }
+        }*/
 
         if (file == null) {
             throw new BusinessException("请选择上传文件！");
