@@ -3,6 +3,7 @@ package com.wtkj.oa.entity;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.wtkj.oa.common.constant.ContractEnum;
 import com.wtkj.oa.common.constant.GXEnum;
 import lombok.Data;
 import lombok.Getter;
@@ -37,7 +38,6 @@ public class ContractDate implements Serializable {
     @TableField("company_name")
     private String companyName;
 
-    @TableField("name")
     private String name;
 
     @TableField("business_type")
@@ -86,10 +86,15 @@ public class ContractDate implements Serializable {
     private String userId;
 
     public String getName() {
-        if (this.businessType != null && this.businessType.equals(1)) {
-            return GXEnum.getNameByType(this.getType());
+        if (this.businessType == null) {
+            return name;
         }
-        return name;
+
+        if (this.businessType.equals(1)) {
+            return GXEnum.getNameByType(this.getType());
+        } else {
+            return ContractEnum.getNameByType(this.businessType, this.getType());
+        }
     }
 
     public ContractDate(String contractId, String name, String type, String completeDate) {

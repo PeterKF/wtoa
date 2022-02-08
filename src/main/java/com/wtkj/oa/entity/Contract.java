@@ -76,6 +76,8 @@ public class Contract implements Serializable {
 
     private String expense;
 
+    private String contractMatter;
+
     private int pageSize;
 
     private int pageNum;

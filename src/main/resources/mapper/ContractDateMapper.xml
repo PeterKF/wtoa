@@ -7,7 +7,7 @@
         u.user_name,
         u.user_id,
         t.business_type,
-        t.contract_name as name
+        t.contract_name
         FROM
         contract_date d,
         company_info c,
@@ -30,7 +30,7 @@
             and d.complete_date like "%"#{completeDate,jdbcType=VARCHAR}"%"
         </if>
         <if test="companyName != null and companyName != ''">
-            and c.company_name = #{companyName,jdbcType=VARCHAR}
+            and c.company_name like "%"#{companyName,jdbcType=VARCHAR}"%"
         </if>
         <if test="userName != null and userName != ''">
             and u.user_name = #{userName,jdbcType=VARCHAR}
