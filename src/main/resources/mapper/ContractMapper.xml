@@ -18,6 +18,7 @@
         <result column="billing_date" property="billingDate" javaType="java.sql.Date" jdbcType="DATE"/>
         <result column="collection_date" property="collectionDate" javaType="java.sql.Date" jdbcType="DATE"/>
         <result column="file_name" javaType="java.lang.String" property="fileName" jdbcType="VARCHAR"/>
+        <result column="contract_matter" javaType="java.lang.String" property="contractMatter" jdbcType="VARCHAR"/>
     </resultMap>
 
     <resultMap id="ResultMap" type="com.wtkj.oa.entity.ContractDate">
@@ -45,9 +46,7 @@
     </resultMap>
 
     <sql id="Base_Column_List">
-                t
-                .
-                contract_id,
+                t.contract_id,
                 t
                 .
                 contract_name,
@@ -142,14 +141,14 @@
         insert into contract_info (contract_id, contract_name, business_type, contract_type,
                                    company_id, user_id, contract_file,
                                    contract_status, invoice_status, collection_status,
-                                   create_time, last_update_time, billing_date, collection_date)
+                                   create_time, last_update_time, billing_date, collection_date, contract_matter)
         values (#{contractId,jdbcType=VARCHAR}, #{contractName,jdbcType=VARCHAR}, #{businessType,jdbcType=INTEGER},
                 #{contractType,jdbcType=INTEGER}, #{companyId,jdbcType=VARCHAR}, #{userId,jdbcType=VARCHAR},
                 #{contractFile,jdbcType=VARCHAR},
                 #{contractStatus,jdbcType=INTEGER}, #{invoiceStatus,jdbcType=INTEGER},
                 #{collectionStatus,jdbcType=INTEGER},
                 #{createTime,jdbcType=TIMESTAMP}, #{lastUpdateTime,jdbcType=TIMESTAMP}, #{billingDate,jdbcType=DATE},
-                #{collectionDate,jdbcType=DATE})
+                #{collectionDate,jdbcType=DATE}, #{contractMatter,jdbcType=VARCHAR})
     </insert>
 
     <update id="updateByPrimaryKeySelective" parameterType="com.wtkj.oa.entity.Contract">
@@ -196,6 +195,9 @@
             </if>
             <if test="fileName != null">
                 file_name = #{fileName,jdbcType=VARCHAR},
+            </if>
+            <if test="contractMatter != null">
+                contract_matter = #{contractMatter,jdbcType=VARCHAR},
             </if>
         </set>
         where contract_id = #{contractId,jdbcType=VARCHAR}
