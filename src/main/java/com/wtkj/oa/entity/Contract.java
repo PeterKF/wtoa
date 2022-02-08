@@ -48,13 +48,13 @@ public class Contract implements Serializable {
     /**
      * 合同状态
      */
-    private Integer contractStatus = 0;
+    private Integer contractStatus;
 
     //发票状态
-    private Integer invoiceStatus = 0;
+    private Integer invoiceStatus;
 
     //收款状态
-    private Integer collectionStatus = 0;
+    private Integer collectionStatus;
 
     private String createTime;
 

@@ -109,13 +109,14 @@ public class ContractManageServiceImpl implements IContractManageService {
         }
 
         String contractId = contractMapper.selectIdByType(contract.getBusinessType());
-        if (StrUtil.isEmpty(contractId)) {
+        if (isEmpty(contractId)) {
             contract.setContractId(RandomStringUtils.getContractCode(contract.getBusinessType(), 0));
         } else {
             contract.setContractId(RandomStringUtils.getContractCode(contract.getBusinessType(), Integer.valueOf(contractId)));
         }
 
         contract.setContractName(contractName);
+        contract.setContractStatus(0).setInvoiceStatus(0).setCollectionStatus(0);
 
         ServiceDetail serviceDetail = contract.getServiceDetails();
         if (!ObjectUtils.isEmpty(serviceDetail)) {
