@@ -163,13 +163,13 @@ public class ContractManageServiceImpl implements IContractManageService {
                 }
                 contractMapper.deleteDate(date.getContractId(), date.getType());
                 date.setCompanyId(contract.getCompanyId());
-                if (contract.getContractStatus().equals(0) || contract.getContractStatus().equals(1)) {
+                if (contract.getContractStatus() == null || contract.getContractStatus().equals(0) || contract.getContractStatus().equals(1)) {
                     date.setStatus(2);
                 }
                 contractMapper.addDate(date);
             }
             if (count > 0) {
-                if (contract.getContractStatus().equals(0) || contract.getContractStatus().equals(1)) {
+                if (contract.getContractStatus() == null || contract.getContractStatus().equals(0) || contract.getContractStatus().equals(1)) {
                     contract.setContractStatus(2);
                 }
             }
