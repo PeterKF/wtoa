@@ -225,9 +225,9 @@ public class ContractDetailsServiceImpl implements IContractDetailsService {
         }
 
         Contract contract = contractMapper.selectByPrimaryKey(contractDate.getContractId());
-        /*if (contract.getContractStatus().equals(0) || contract.getContractStatus().equals(1)) {
+        if (contract.getContractStatus().equals(0)) {
             throw new BusinessException("请先上传合同附件，再修改合同状态");
-        }*/
+        }
         contractMapper.updateContractDate(contractDate);
 
         List<Integer> status = contractMapper.getStatusById(contractDate.getContractId());
