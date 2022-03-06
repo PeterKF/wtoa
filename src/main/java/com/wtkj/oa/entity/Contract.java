@@ -46,7 +46,7 @@ public class Contract implements Serializable {
     private Boolean dateFlag;
 
     /**
-     * 合同状态
+     * 合同状态 (0：待上传  1：待签订  2：代开票  3：已完成)
      */
     private Integer contractStatus;
 
