@@ -1,6 +1,7 @@
 package com.wtkj.oa.service.impl;
 
 import cn.hutool.core.util.StrUtil;
+import com.github.pagehelper.PageHelper;
 import com.wtkj.oa.common.config.PageInfo;
 import com.wtkj.oa.dao.PatentMapper;
 import com.wtkj.oa.dao.UserMapper;
@@ -76,8 +77,10 @@ public class PatentManageServiceImpl implements IPatentManageService {
         patentMapper.updateByPrimaryKeySelective(patent);
     }
 
+    @Override
     public PageInfo<Patent> list(Patent patent) {
         List<Patent> patents;
+        PageHelper.startPage(patent.getPageNum(), patent.getPageSize());
         if (StringUtils.isEmpty(patent.getPatentName())) {
             patents = patentMapper.listByName(null);
         } else {
