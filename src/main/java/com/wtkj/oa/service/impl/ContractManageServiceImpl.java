@@ -1,10 +1,13 @@
 package com.wtkj.oa.service.impl;
 
 
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.text.CharSequenceUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
+import com.github.pagehelper.PageHelper;
+import com.google.common.collect.Lists;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.pdf.BaseFont;
 import com.wtkj.oa.common.config.PageInfo;
@@ -17,7 +20,6 @@ import com.wtkj.oa.service.ICompanyManageService;
 import com.wtkj.oa.service.IContractManageService;
 import com.wtkj.oa.utils.RandomStringUtils;
 import com.wtkj.oa.utils.ReadWordUtils;
-import com.wtkj.oa.utils.YamlUtils;
 import org.apache.poi.poifs.filesystem.DirectoryEntry;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.springframework.beans.factory.annotation.Value;
@@ -223,6 +225,7 @@ public class ContractManageServiceImpl implements IContractManageService {
             return null;
         }
 
+        PageHelper.startPage(company.getPageNum(), company.getPageSize());
         List<Company> companies = companyMapper.list();
         if (CollectionUtil.isEmpty(companies)) {
             return null;
@@ -244,11 +247,26 @@ public class ContractManageServiceImpl implements IContractManageService {
         }
 
         if (StrUtil.isNotEmpty(company.getUserName())) {
-            companies = companies.stream().filter(c -> StrUtil.isNotEmpty(c.getUserName()) && c.getUserName().contains(company.getUserName())).collect(Collectors.toList());
+            List<String> useNames = Arrays.asList(company.getUserName().split(","));
+            companies = companies.stream().filter(c -> StrUtil.isNotEmpty(c.getUserName()) && useNames.contains(c.getUserName())).collect(Collectors.toList());
         }
 
         if (StrUtil.isNotEmpty(company.getCompanyName())) {
             companies = companies.stream().filter(c -> StrUtil.isNotEmpty(c.getCompanyName()) && c.getCompanyName().contains(company.getCompanyName())).collect(Collectors.toList());
+        }
+
+        for (Company com : companies) {
+            List<Contract> contracts = contractMapper.selectByCompanyId(com.getCompanyId());
+            if (CollUtil.isNotEmpty(contracts)) {
+                for (Contract contract : contracts) {
+                    if (contract.getContractStatus() <= 2) {
+                        com.setStatus(0);
+                        break;
+                    }
+                }
+            } else {
+                com.setStatus(0);
+            }
         }
         return new PageInfo<>(company.getPageNum(), company.getPageSize(), companies);
     }

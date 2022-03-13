@@ -17,10 +17,7 @@ import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -121,8 +118,9 @@ public class PatentManageServiceImpl implements IPatentManageService {
                 }
 
                 if (StrUtil.isNotEmpty(patent.getUserName())) {
+                    List<String> useNames = Arrays.asList(patent.getUserName().split(","));
                     patentList = patentList.stream().filter(p -> StrUtil.isNotEmpty(p.getUserName())
-                            && p.getUserName().contains(patent.getUserName())).collect(Collectors.toList());
+                            && useNames.contains(p.getUserName())).collect(Collectors.toList());
                 }
                 return new PageInfo<>(patent.getPageNum(), patent.getPageSize(), patentList);
             }

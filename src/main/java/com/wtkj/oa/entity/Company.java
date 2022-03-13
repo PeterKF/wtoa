@@ -58,6 +58,9 @@ public class Company implements Serializable {
     //员工助理id
     private String assistantId;
 
+    //合同状态 （0 未上传 1 已上传）
+    private Integer status = 1;
+
     private String region;
 
     private String lastUpdateTime;
