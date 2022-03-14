@@ -259,7 +259,7 @@ public class ContractManageServiceImpl implements IContractManageService {
             List<Contract> contracts = contractMapper.selectByCompanyId(com.getCompanyId());
             if (CollUtil.isNotEmpty(contracts)) {
                 for (Contract contract : contracts) {
-                    if (contract.getContractStatus() <= 2) {
+                    if (contract.getContractStatus() == 0) {
                         com.setStatus(0);
                         break;
                     }
