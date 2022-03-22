@@ -225,7 +225,7 @@ public class ContractManageServiceImpl implements IContractManageService {
             return null;
         }
 
-        PageHelper.startPage(company.getPageNum(), company.getPageSize());
+        //PageHelper.startPage(company.getPageNum(), company.getPageSize());
         List<Company> companies = companyMapper.list();
         if (CollectionUtil.isEmpty(companies)) {
             return null;
