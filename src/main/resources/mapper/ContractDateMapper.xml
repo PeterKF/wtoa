@@ -32,8 +32,5 @@
         <if test="companyName != null and companyName != ''">
             and c.company_name like "%"#{companyName,jdbcType=VARCHAR}"%"
         </if>
-        <if test="userName != null and userName != ''">
-            and u.user_name = #{userName,jdbcType=VARCHAR}
-        </if>
     </sql>
 </mapper>

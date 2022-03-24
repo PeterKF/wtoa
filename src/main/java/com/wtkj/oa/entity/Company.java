@@ -59,7 +59,7 @@ public class Company implements Serializable {
     private String assistantId;
 
     //合同状态 （0 未上传 1 已上传）
-    private Integer status = 1;
+    private Integer status;
 
     private String region;
 

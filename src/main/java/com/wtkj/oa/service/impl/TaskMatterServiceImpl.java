@@ -22,6 +22,7 @@ import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -58,6 +59,11 @@ public class TaskMatterServiceImpl extends ServiceImpl<ContractDateMapper, Contr
 
         if (StrUtil.isNotEmpty(contractDate.getName())) {
             contractDates = contractDates.stream().filter(c -> c.getName().equals(contractDate.getName())).collect(Collectors.toList());
+        }
+
+        if (StrUtil.isNotEmpty(contractDate.getUserName())) {
+            List<String> useNames = Arrays.asList(contractDate.getUserName().split(","));
+            contractDates = contractDates.stream().filter(c -> StrUtil.isNotEmpty(c.getUserName()) && useNames.contains(c.getUserName())).collect(Collectors.toList());
         }
 
         if (contractDate.getUserId() != null) {

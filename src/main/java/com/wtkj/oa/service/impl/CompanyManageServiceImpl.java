@@ -127,8 +127,9 @@ public class CompanyManageServiceImpl implements ICompanyManageService {
             }
             //根据业务经理查询
             if (StrUtil.isNotEmpty(company.getUserName())) {
+                List<String> useNames = Arrays.asList(company.getUserName().split(","));
                 companies = companies.stream().filter(c -> StrUtil.isNotEmpty(c.getUserName())
-                        && c.getUserName().equalsIgnoreCase(company.getUserName())).collect(Collectors.toList());
+                        && useNames.contains(c.getUserName())).collect(Collectors.toList());
             }
         }
         return new PageInfo<>(company.getPageNum(), company.getPageSize(), companies);
