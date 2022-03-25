@@ -226,7 +226,7 @@ public class ContractManageServiceImpl implements IContractManageService {
         }
 
         //PageHelper.startPage(company.getPageNum(), company.getPageSize());
-        List<Company> companies = companyMapper.list();
+        List<Company> companies = companyMapper.companyList();
         if (CollectionUtil.isEmpty(companies)) {
             return null;
         }
@@ -255,19 +255,6 @@ public class ContractManageServiceImpl implements IContractManageService {
             companies = companies.stream().filter(c -> StrUtil.isNotEmpty(c.getCompanyName()) && c.getCompanyName().contains(company.getCompanyName())).collect(Collectors.toList());
         }
 
-        for (Company com : companies) {
-            List<Contract> contracts = contractMapper.selectByCompanyId(com.getCompanyId());
-            if (CollUtil.isNotEmpty(contracts)) {
-                for (Contract contract : contracts) {
-                    if (contract.getContractStatus() == 0) {
-                        com.setStatus(0);
-                        break;
-                    }
-                }
-            } else {
-                com.setStatus(0);
-            }
-        }
         return new PageInfo<>(company.getPageNum(), company.getPageSize(), companies);
     }
 

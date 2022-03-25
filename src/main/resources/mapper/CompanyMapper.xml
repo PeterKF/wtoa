@@ -48,6 +48,32 @@
         order by c.last_update_time desc
     </select>
 
+    <select id="companyList" resultMap="BaseResultMap">
+        SELECT
+                c.company_id,
+                c.company_name,
+                c.address,
+                c.contact,
+                c.telephone,
+                c.city,
+                c.area,
+                c.county,
+                c.user_id,
+                u.user_name,
+                c.assistant_id,
+                c.director,
+                c.phone,
+                c.credit_code,
+                c.region,
+                c.last_update_time,
+                c. YEAR,
+                IF(t.contract_status = 0, 0, 1) AS `status`
+        FROM
+                company_info c
+        LEFT JOIN user_info u ON c.user_id = u.user_id
+        LEFT JOIN contract_info t ON t.company_id = c.company_id
+    </select>
+
     <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
     delete from company_info
     where company_id = #{companyId,jdbcType=VARCHAR}

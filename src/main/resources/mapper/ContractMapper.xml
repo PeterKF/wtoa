@@ -47,51 +47,21 @@
 
     <sql id="Base_Column_List">
                 t.contract_id,
-                t
-                .
-                contract_name,
-                t
-                .
-                business_type,
-                t
-                .
-                contract_type,
-                t
-                .
-                company_id,
-                c
-                .
-                company_name,
-                t
-                .
-                user_id,
-                t
-                .
-                contract_file,
-                t
-                .
-                contract_status,
-                t
-                .
-                invoice_status,
-                t
-                .
-                collection_status,
-                t
-                .
-                create_time,
-                t
-                .
-                last_update_time,
-                t
-                .
-                billing_date,
-                t
-                .
-                collection_date,
-                t
-                .
-                file_name
+                t.contract_name,
+                t.business_type,
+                t.contract_type,
+                t.company_id,
+                c.company_name,
+                t.user_id,
+                t.contract_file,
+                t.contract_status,
+                t.invoice_status,
+                t.collection_status,
+                t.create_time,
+                t.last_update_time,
+                t.billing_date,
+                t.collection_date,
+                t.file_name
     </sql>
 
     <select id="list" resultMap="BaseResultMap">
