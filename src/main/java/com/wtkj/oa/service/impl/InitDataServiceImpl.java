@@ -6,6 +6,7 @@ import cn.hutool.core.util.StrUtil;
 import cn.hutool.poi.excel.ExcelReader;
 import cn.hutool.poi.excel.ExcelUtil;
 import cn.hutool.poi.excel.ExcelWriter;
+import cn.hutool.poi.excel.StyleSet;
 import com.wtkj.oa.common.constant.PatentEnum;
 import com.wtkj.oa.dao.*;
 import com.wtkj.oa.entity.Company;
@@ -20,6 +21,9 @@ import com.wtkj.oa.utils.RandomStringUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.util.Strings;
 import org.apache.poi.ss.usermodel.Font;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.util.SheetUtil;
+import org.apache.poi.xssf.streaming.SXSSFSheet;
 import org.springframework.beans.BeanUtils;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
@@ -34,10 +38,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 /**
  * @Description 初始化数据实现类
@@ -305,7 +306,7 @@ public class InitDataServiceImpl implements InitDataService {
 
 
     /**
-     * 导出客户信息（待完善）
+     * 导出客户信息
      *
      * @param response
      */
@@ -315,19 +316,34 @@ public class InitDataServiceImpl implements InitDataService {
             return;
         }
 
-        List<String> titles = Arrays.asList("统一认证编号", "客户名称", "年份", "所在地区", "地址", "联系人", "联系人电话", "负责人", "负责人电话", "客户经理");
+        List<Map<String, Object>> mapList = new ArrayList<>(companyList.size());
+        for (Company com : companyList) {
+            Map<String, Object> comInfoMap = new LinkedHashMap<>();
+            comInfoMap.put("统一认证编号", com.getCreditCode());
+            comInfoMap.put("客户名称", com.getCompanyName());
+            comInfoMap.put("年份", com.getYear());
+            comInfoMap.put("所在地区", com.getRegion());
+            comInfoMap.put("地址", com.getAddress());
+            comInfoMap.put("联系人", com.getContact());
+            comInfoMap.put("联系人电话", com.getTelephone());
+            comInfoMap.put("负责人", com.getDirector());
+            comInfoMap.put("负责人电话", com.getPhone());
+            comInfoMap.put("客户经理", com.getUserName());
+            mapList.add(comInfoMap);
+        }
 
-        ExcelWriter writer = ExcelUtil.getWriter();
+        ExcelWriter writer = com.wtkj.oa.common.config.ExcelWriter.getBigWriter();
         Font font = writer.createFont();
+        //设置字体
         font.setFontName("宋体");
         writer.getStyleSet().setFont(font, true);
-
-        writer.writeRow(titles, true);
-        writer.write(companyList, false);
+        writer.write(mapList, true);
+        //所有列宽度自适应
+        writer.autoSizeColumnAll();
 
         //response为HttpServletResponse对象
-        response.setContentType("application/vnd.ms-excel;charset=utf-8");
-        response.setHeader("Content-Disposition", "attachment;filename=客户信息表.xls");
+        // response.setContentType("application/vnd.ms-excel;charset=utf-8");
+        response.setHeader("Content-Disposition", "attachment;filename=companyInfo.xlsx");
         try (ServletOutputStream out = response.getOutputStream();) {
             writer.flush(out, true);
         } catch (IOException e) {

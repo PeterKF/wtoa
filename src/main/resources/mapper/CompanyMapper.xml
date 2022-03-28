@@ -64,7 +64,7 @@
                 company_info c
         LEFT JOIN user_info u ON c.user_id = u.user_id
         ORDER BY
-                c.last_update_time DESC
+                c.user_id DESC
     </select>
 
     <select id="companyList" resultMap="BaseResultMap">
