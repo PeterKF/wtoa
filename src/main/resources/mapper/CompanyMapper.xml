@@ -49,7 +49,7 @@
     </select>
 
     <select id="companyList" resultMap="BaseResultMap">
-        SELECT
+        SELECT  DISTINCT
                 c.company_id,
                 c.company_name,
                 c.address,
