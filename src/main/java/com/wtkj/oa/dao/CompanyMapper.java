@@ -19,6 +19,8 @@ public interface CompanyMapper {
 
     List<Company> list();
 
+    List<Company> companyInfo();
+
     List<Company> companyList();
 
     List<Company> listByIds(List<String> list);

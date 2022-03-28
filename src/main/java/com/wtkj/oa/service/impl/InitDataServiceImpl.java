@@ -35,6 +35,7 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -303,4 +304,35 @@ public class InitDataServiceImpl implements InitDataService {
     }
 
 
+    /**
+     * 导出客户信息（待完善）
+     *
+     * @param response
+     */
+    public void exportCompanyInfo(HttpServletResponse response) {
+        List<Company> companyList = companyMapper.companyInfo();
+        if (CollUtil.isEmpty(companyList)) {
+            return;
+        }
+
+        List<String> titles = Arrays.asList("统一认证编号", "客户名称", "年份", "所在地区", "地址", "联系人", "联系人电话", "负责人", "负责人电话", "客户经理");
+
+        ExcelWriter writer = ExcelUtil.getWriter();
+        Font font = writer.createFont();
+        font.setFontName("宋体");
+        writer.getStyleSet().setFont(font, true);
+
+        writer.writeRow(titles, true);
+        writer.write(companyList, false);
+
+        //response为HttpServletResponse对象
+        response.setContentType("application/vnd.ms-excel;charset=utf-8");
+        response.setHeader("Content-Disposition", "attachment;filename=客户信息表.xls");
+        try (ServletOutputStream out = response.getOutputStream();) {
+            writer.flush(out, true);
+        } catch (IOException e) {
+            log.info("error message", e);
+        }
+        writer.close();
+    }
 }

@@ -48,6 +48,25 @@
         order by c.last_update_time desc
     </select>
 
+    <select id="companyInfo" resultMap="BaseResultMap">
+        SELECT
+                c.credit_code,
+                c.company_name,
+                c.`year`,
+                c.region,
+                c.address,
+                c.contact,
+                c.telephone,
+                c.director,
+                c.phone,
+                u.user_name
+        FROM
+                company_info c
+        LEFT JOIN user_info u ON c.user_id = u.user_id
+        ORDER BY
+                c.last_update_time DESC
+    </select>
+
     <select id="companyList" resultMap="BaseResultMap">
         SELECT DISTINCT
                 c.company_id,
