@@ -275,7 +275,7 @@ public class InitDataServiceImpl implements InitDataService {
         String fileName = "";
         if ("1".equals(fileType)) {
             fileName = "客户名单.xlsx";
-            titles = CollUtil.newArrayList("年份", "客户名称", "地区", "企业负责人", "联系方式", "企业联系人", "联系方式", "客户经理");
+            titles = CollUtil.newArrayList("年份", "客户名称", "地区", "企业负责人", "负责人联系电话", "企业联系人", "联系电话", "客户经理");
         } else if ("2".equals(fileType)) {
             fileName = "专利清单.xlsx";
             titles = CollUtil.newArrayList("申请号", "申请日", "公司名称", "申请名称", "类型");
@@ -319,15 +319,13 @@ public class InitDataServiceImpl implements InitDataService {
         List<Map<String, Object>> mapList = new ArrayList<>(companyList.size());
         for (Company com : companyList) {
             Map<String, Object> comInfoMap = new LinkedHashMap<>();
-            comInfoMap.put("统一认证编号", com.getCreditCode());
-            comInfoMap.put("客户名称", com.getCompanyName());
             comInfoMap.put("年份", com.getYear());
-            comInfoMap.put("所在地区", com.getRegion());
-            comInfoMap.put("地址", com.getAddress());
-            comInfoMap.put("联系人", com.getContact());
-            comInfoMap.put("联系人电话", com.getTelephone());
-            comInfoMap.put("负责人", com.getDirector());
-            comInfoMap.put("负责人电话", com.getPhone());
+            comInfoMap.put("客户名称", com.getCompanyName());
+            comInfoMap.put("地区", com.getRegion());
+            comInfoMap.put("企业负责人", com.getDirector());
+            comInfoMap.put("负责人联系电话", com.getPhone());
+            comInfoMap.put("企业联系人", com.getContact());
+            comInfoMap.put("联系电话", com.getTelephone());
             comInfoMap.put("客户经理", com.getUserName());
             mapList.add(comInfoMap);
         }
