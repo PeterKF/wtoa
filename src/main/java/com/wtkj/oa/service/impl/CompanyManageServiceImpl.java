@@ -46,7 +46,9 @@ public class CompanyManageServiceImpl implements ICompanyManageService {
 
         this.checkRepeat(company.getCompanyName());
         company.setCompanyId(RandomStringUtils.getNextVal());
-        company.setLastUpdateTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
+        String nowDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
+        company.setCreateTime(nowDate);
+        company.setLastUpdateTime(nowDate);
         companyMapper.insert(company);
     }
 

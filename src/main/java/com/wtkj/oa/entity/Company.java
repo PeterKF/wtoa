@@ -63,6 +63,8 @@ public class Company implements Serializable {
 
     private String region;
 
+    private String createTime;
+
     private String lastUpdateTime;
 
     private int pageSize;

@@ -17,13 +17,14 @@
         <result column="director" javaType="java.lang.String" property="director" jdbcType="VARCHAR"/>
         <result column="phone" javaType="java.lang.String" property="phone" jdbcType="VARCHAR"/>
         <result column="region" javaType="java.lang.String" property="region" jdbcType="VARCHAR"/>
+        <result column="create_time" javaType="java.lang.String" property="createTime" jdbcType="TIMESTAMP"/>
         <result column="last_update_time" javaType="java.lang.String" property="lastUpdateTime" jdbcType="TIMESTAMP"/>
         <result column="year" javaType="java.lang.String" property="year" jdbcType="VARCHAR"/>
     </resultMap>
 
     <sql id="Base_Column_List">
         c.company_id, c.company_name, c.address, c.contact, c.telephone, c.city, c.area, c.county, c.user_id, u.user_name,
-        c.assistant_id, c.director, c.phone, c.credit_code, c.region, c.last_update_time,c.year
+        c.assistant_id, c.director, c.phone, c.credit_code, c.region, c.last_update_time,c.create_time,c.year
     </sql>
 
     <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
@@ -50,7 +51,7 @@
 
     <select id="companyInfo" resultMap="BaseResultMap">
         SELECT
-                c.credit_code,
+                c.company_id,
                 c.company_name,
                 c.`year`,
                 c.region,
@@ -59,7 +60,8 @@
                 c.telephone,
                 c.director,
                 c.phone,
-                u.user_name
+                u.user_name,
+                c.create_time
         FROM
                 company_info c
         LEFT JOIN user_info u ON c.user_id = u.user_id
