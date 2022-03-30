@@ -275,7 +275,7 @@ public class InitDataServiceImpl implements InitDataService {
         String fileName = "";
         if ("1".equals(fileType)) {
             fileName = "客户名单.xlsx";
-            titles = CollUtil.newArrayList("年份", "客户名称", "地区", "企业负责人", "负责人联系电话", "企业联系人", "联系电话", "客户经理");
+            titles = CollUtil.newArrayList("客户ID(默认不填)", "年份", "客户名称", "地区", "企业负责人", "负责人联系电话", "企业联系人", "联系电话", "客户经理");
         } else if ("2".equals(fileType)) {
             fileName = "专利清单.xlsx";
             titles = CollUtil.newArrayList("申请号", "申请日", "公司名称", "申请名称", "类型");
@@ -319,6 +319,7 @@ public class InitDataServiceImpl implements InitDataService {
         List<Map<String, Object>> mapList = new ArrayList<>(companyList.size());
         for (Company com : companyList) {
             Map<String, Object> comInfoMap = new LinkedHashMap<>();
+            comInfoMap.put("客户ID(不可编辑)", com.getCompanyId());
             comInfoMap.put("年份", com.getYear());
             comInfoMap.put("客户名称", com.getCompanyName());
             comInfoMap.put("地区", com.getRegion());
