@@ -207,7 +207,7 @@ public class InitDataServiceImpl implements InitDataService {
                     }
 
                     contract.setContractName("浙江省科技型中小企业");
-                    contract.setBusinessType(2).setContractType("4").setContractStatus(0).setCollectionStatus(0).setInvoiceStatus(0);
+                    contract.setBusinessType(2).setContractType("4").setCollectionStatus(0).setInvoiceStatus(0);
                     String date = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
                     contract.setCreateTime(date).setLastUpdateTime(date);
 
@@ -235,7 +235,7 @@ public class InitDataServiceImpl implements InitDataService {
                         content = htContractServiceImpl.getHtmlContent(2, content);
                     }
 
-                    contract.setContractFile(content).setContractStatus(1);
+                    contract.setContractFile(content).setContractStatus(2);
                     contracts.add(contract);
                 }
                 //添加到合同表中

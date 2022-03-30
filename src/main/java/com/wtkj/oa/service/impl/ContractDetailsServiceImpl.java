@@ -284,8 +284,8 @@ public class ContractDetailsServiceImpl implements IContractDetailsService {
             throw new BusinessException("上传文件失败！" + e);
         }
 
-        contractMapper.updateByPrimaryKeySelective(new Contract(contractId, fileName, 1));
-        contractMapper.updateContractDate(new ContractDate().setStatus(1));
+        contractMapper.updateByPrimaryKeySelective(new Contract(contractId, fileName, 2));
+        contractMapper.updateContractDate(new ContractDate().setStatus(2));
     }
 
     /**

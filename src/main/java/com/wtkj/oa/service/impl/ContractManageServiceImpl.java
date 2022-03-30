@@ -118,6 +118,7 @@ public class ContractManageServiceImpl implements IContractManageService {
         }
 
         contract.setContractName(contractName);
+        //新建合同，状态值为0
         contract.setContractStatus(0).setInvoiceStatus(0).setCollectionStatus(0);
 
         ServiceDetail serviceDetail = contract.getServiceDetails();
@@ -165,14 +166,15 @@ public class ContractManageServiceImpl implements IContractManageService {
                 }
                 contractMapper.deleteDate(date.getContractId(), date.getType());
                 date.setCompanyId(contract.getCompanyId());
-                if (contract.getContractStatus() == null || contract.getContractStatus().equals(0) || contract.getContractStatus().equals(1)) {
-                    date.setStatus(2);
+                if (contract.getContractStatus() == null || contract.getContractStatus().equals(0)) {
+                    date.setStatus(1);
                 }
                 contractMapper.addDate(date);
             }
+            //修改完成时间
             if (count > 0) {
-                if (contract.getContractStatus() == null || contract.getContractStatus().equals(0) || contract.getContractStatus().equals(1)) {
-                    contract.setContractStatus(2);
+                if (contract.getContractStatus() == null || contract.getContractStatus().equals(0)) {
+                    contract.setContractStatus(1);
                 }
             }
         }
