@@ -1,44 +1,34 @@
 package com.wtkj.oa.service.impl;
 
-import cn.hutool.core.collection.CollUtil;
-import cn.hutool.core.collection.CollectionUtil;
-import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
-import cn.hutool.poi.excel.ExcelReader;
-import cn.hutool.poi.excel.ExcelUtil;
-import cn.hutool.poi.excel.ExcelWriter;
 import com.wtkj.oa.common.constant.ContractEnum;
 import com.wtkj.oa.common.constant.GXEnum;
-import com.wtkj.oa.common.constant.PatentEnum;
 import com.wtkj.oa.dao.CompanyMapper;
 import com.wtkj.oa.dao.ContractMapper;
 import com.wtkj.oa.dao.PatentMapper;
 import com.wtkj.oa.dao.UserMapper;
-import com.wtkj.oa.entity.*;
+import com.wtkj.oa.entity.Contract;
+import com.wtkj.oa.entity.ContractDate;
+import com.wtkj.oa.entity.ContractDetail;
 import com.wtkj.oa.exception.BusinessException;
 import com.wtkj.oa.service.IContractDetailsService;
 import com.wtkj.oa.service.IContractManageService;
-import com.wtkj.oa.utils.RandomStringUtils;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.logging.log4j.util.Strings;
-import org.apache.poi.ss.usermodel.Font;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
-import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
-import java.io.*;
-import java.net.URLEncoder;
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -250,9 +240,6 @@ public class ContractDetailsServiceImpl implements IContractDetailsService {
         }
 
         Contract contract = contractMapper.selectByPrimaryKey(contractId);
-       /* if (ObjectUtil.isNotEmpty(contract.getContractStatus()) && contract.getContractStatus().equals(0)) {
-            throw new BusinessException("当前合同处于待签定状态，不可上传文件!");
-        }*/
 
         if (file == null) {
             throw new BusinessException("请选择上传文件！");
