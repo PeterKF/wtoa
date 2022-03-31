@@ -92,6 +92,8 @@
                   CASE
                   WHEN t.contract_status = 0 THEN
                    0
+                  WHEN t.contract_status = 1 THEN
+                   0
                   WHEN t.contract_status IS NULL THEN
                    0
                   ELSE
