@@ -81,18 +81,41 @@ public class InitDataServiceImpl implements InitDataService {
                 for (int i = 1; i < objectList.size(); i++) {
                     List<Object> objects = objectList.get(i);
                     List<String> comNames = new ArrayList<>();
-                    Company company = new Company().setCompanyId(RandomStringUtils.getNextVal())
-                            .setYear(String.valueOf(objects.get(0)))
-                            .setCompanyName(String.valueOf(objects.get(1))).setRegion(String.valueOf(objects.get(2)))
-                            .setDirector(String.valueOf(objects.get(3))).setPhone(String.valueOf(objects.get(4)))
-                            .setContact(String.valueOf(objects.get(5))).setTelephone(String.valueOf(objects.get(6)));
-
-                    if (CollUtil.isEmpty(comNames) || !comNames.contains(company.getCompanyName())) {
-                        comNames.add(company.getCompanyName());
-                        String userId = userMapper.getIdByName(String.valueOf(objects.get(7)));
+                    String companyId = String.valueOf(objects.get(0));
+                    if (CharSequenceUtil.isEmpty(companyId)) {
+                        //客户id为空时，新增客户
+                        Company company = new Company().setCompanyId(RandomStringUtils.getNextVal())
+                                .setYear(String.valueOf(objects.get(1)))
+                                .setCompanyName(String.valueOf(objects.get(2)))
+                                .setCreditCode(String.valueOf(objects.get(3)))
+                                .setAddress(String.valueOf(objects.get(4)))
+                                .setContact(String.valueOf(objects.get(6)))
+                                .setTelephone(String.valueOf(objects.get(7)))
+                                .setDirector(String.valueOf(objects.get(8)))
+                                .setPhone(String.valueOf(objects.get(9)))
+                                .setRegion(String.valueOf(objects.get(10)));
+                        if (CollUtil.isEmpty(comNames) || !comNames.contains(company.getCompanyName())) {
+                            comNames.add(company.getCompanyName());
+                            String userId = userMapper.getIdByName(String.valueOf(objects.get(5)));
+                            company.setUserId(userId);
+                            companyMapper.insert(company);
+                            count++;
+                        }
+                    } else {
+                        //客户id不为空时，编辑客户
+                        Company company = new Company().setCompanyId(companyId)
+                                .setYear(String.valueOf(objects.get(1)))
+                                .setCompanyName(String.valueOf(objects.get(2)))
+                                .setCreditCode(String.valueOf(objects.get(3)))
+                                .setAddress(String.valueOf(objects.get(4)))
+                                .setContact(String.valueOf(objects.get(6)))
+                                .setTelephone(String.valueOf(objects.get(7)))
+                                .setDirector(String.valueOf(objects.get(8)))
+                                .setPhone(String.valueOf(objects.get(9)))
+                                .setRegion(String.valueOf(objects.get(10)));
+                        String userId = userMapper.getIdByName(String.valueOf(objects.get(5)));
                         company.setUserId(userId);
-                        companyMapper.insert(company);
-                        count++;
+                        companyMapper.updateByPrimaryKeySelective(company);
                     }
                 }
             }
@@ -102,7 +125,7 @@ public class InitDataServiceImpl implements InitDataService {
             throw new BusinessException("文档中有重复的客户名，详情报错信息:" + e.getCause());
         }
 
-        return "初始化客户数：" + count + "条！";
+        return "添加客户数：" + count + "条！";
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -275,7 +298,7 @@ public class InitDataServiceImpl implements InitDataService {
         String fileName = "";
         if ("1".equals(fileType)) {
             fileName = "客户名单.xlsx";
-            titles = CollUtil.newArrayList("客户ID(默认不填)", "年份", "客户名称", "地区", "企业负责人", "负责人联系电话", "企业联系人", "联系电话", "客户经理");
+            titles = CollUtil.newArrayList("客户ID(默认不填)", "年份", "客户名称", "统一社会信用代码", "客户地址", "项目经理", "联系人", "联系电话", "企业负责人", "负责人电话", "所属地区");
         } else if ("2".equals(fileType)) {
             fileName = "专利清单.xlsx";
             titles = CollUtil.newArrayList("申请号", "申请日", "公司名称", "申请名称", "类型");
@@ -322,12 +345,14 @@ public class InitDataServiceImpl implements InitDataService {
             comInfoMap.put("客户ID(不可编辑)", com.getCompanyId());
             comInfoMap.put("年份", com.getYear());
             comInfoMap.put("客户名称", com.getCompanyName());
-            comInfoMap.put("地区", com.getRegion());
-            comInfoMap.put("企业负责人", com.getDirector());
-            comInfoMap.put("负责人联系电话", com.getPhone());
-            comInfoMap.put("企业联系人", com.getContact());
+            comInfoMap.put("统一社会信用代码", com.getCreditCode());
+            comInfoMap.put("客户地址", com.getAddress());
+            comInfoMap.put("项目经理", com.getUserName());
+            comInfoMap.put("联系人", com.getContact());
             comInfoMap.put("联系电话", com.getTelephone());
-            comInfoMap.put("客户经理", com.getUserName());
+            comInfoMap.put("企业负责人", com.getDirector());
+            comInfoMap.put("负责人电话", com.getPhone());
+            comInfoMap.put("所属地区", com.getRegion());
             mapList.add(comInfoMap);
         }
 
