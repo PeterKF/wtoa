@@ -67,10 +67,6 @@ public class PatentManageServiceImpl implements IPatentManageService {
     }
 
     public void update(Patent patent) {
-        List<Patent> patents = patentMapper.listByName(patent.getPatentName());
-        if (!patents.get(0).getPatentId().equals(patent.getPatentId())) {
-            throw new BusinessException(patent.getPatentName() + "专利已经存在!");
-        }
         String time = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
         patent.setLastUpdateTime(time);
         patentMapper.updateByPrimaryKeySelective(patent);
