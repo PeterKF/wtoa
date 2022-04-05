@@ -76,7 +76,6 @@ public class PatentManageServiceImpl implements IPatentManageService {
     @Override
     public PageInfo<Patent> list(Patent patent) {
         List<Patent> patents;
-        PageHelper.startPage(patent.getPageNum(), patent.getPageSize());
         if (StringUtils.isEmpty(patent.getPatentName())) {
             patents = patentMapper.listByName(null);
         } else {
