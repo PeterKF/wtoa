@@ -46,7 +46,7 @@ public class YamlUtils {
         }
     }
 
-    public static <T> T readWithOutSuffix(Class<T> classType, String fileName) {
+  /*  public static <T> T readWithOutSuffix(Class<T> classType, String fileName) {
         try {
             //读取yml文件
             YamlReader reader = new YamlReader(new FileReader(FILE_PATH + fileName));
@@ -79,12 +79,12 @@ public class YamlUtils {
     }
 
 
-    /**
+    *//**
      * 将一个实例写入一个.yml文件
      *
      * @param obj      入参实例
      * @param fileName 文件名称
-     */
+     *//*
     public static void write(Object obj, String fileName) {
         try {
             YamlWriter writer = new YamlWriter(new FileWriter(FILE_PATH + fileName + YAML_SUFFIX));
@@ -159,5 +159,5 @@ public class YamlUtils {
 
     public static String getFilePath() {
         return FILE_PATH;
-    }
+    }*/
 }

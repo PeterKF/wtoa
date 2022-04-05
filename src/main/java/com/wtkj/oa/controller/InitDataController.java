@@ -55,4 +55,11 @@ public class InitDataController {
         initDataService.deletePatents(file);
         return ResponseUtils.success();
     }
+
+    @ApiOperation("导出客户信息")
+    @GetMapping(value = "/export/companyInfo")
+    public ResponseMsg exportCompanyInfo(HttpServletResponse response) {
+        initDataService.exportCompanyInfo(response);
+        return ResponseUtils.success();
+    }
 }

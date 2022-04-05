@@ -17,13 +17,14 @@
         <result column="director" javaType="java.lang.String" property="director" jdbcType="VARCHAR"/>
         <result column="phone" javaType="java.lang.String" property="phone" jdbcType="VARCHAR"/>
         <result column="region" javaType="java.lang.String" property="region" jdbcType="VARCHAR"/>
+        <result column="create_time" javaType="java.lang.String" property="createTime" jdbcType="TIMESTAMP"/>
         <result column="last_update_time" javaType="java.lang.String" property="lastUpdateTime" jdbcType="TIMESTAMP"/>
         <result column="year" javaType="java.lang.String" property="year" jdbcType="VARCHAR"/>
     </resultMap>
 
     <sql id="Base_Column_List">
         c.company_id, c.company_name, c.address, c.contact, c.telephone, c.city, c.area, c.county, c.user_id, u.user_name,
-        c.assistant_id, c.director, c.phone, c.credit_code, c.region, c.last_update_time,c.year
+        c.assistant_id, c.director, c.phone, c.credit_code, c.region, c.last_update_time,c.create_time,c.year
     </sql>
 
     <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
@@ -48,10 +49,67 @@
         order by c.last_update_time desc
     </select>
 
+    <select id="companyInfo" resultMap="BaseResultMap">
+        SELECT
+                c.company_id,
+                c.company_name,
+                c.`year`,
+                c.region,
+                c.address,
+                c.contact,
+                c.telephone,
+                c.director,
+                c.phone,
+                u.user_name,
+                c.create_time
+        FROM
+                company_info c
+        LEFT JOIN user_info u ON c.user_id = u.user_id
+        ORDER BY
+                c.user_id DESC
+    </select>
+
+    <select id="companyList" resultMap="BaseResultMap">
+        SELECT DISTINCT
+                c.company_id,
+                c.company_name,
+                c.address,
+                c.contact,
+                c.telephone,
+                c.city,
+                c.area,
+                c.county,
+                c.user_id,
+                u.user_name,
+                c.assistant_id,
+                c.director,
+                c.phone,
+                c.credit_code,
+                c.region,
+                c.last_update_time,
+                c. YEAR,
+                (
+                  CASE
+                  WHEN t.contract_status = 0 THEN
+                   0
+                  WHEN t.contract_status = 1 THEN
+                   0
+                  WHEN t.contract_status IS NULL THEN
+                   0
+                  ELSE
+                   1
+                  END
+                ) AS `status`
+        FROM
+                company_info c
+        LEFT JOIN user_info u ON c.user_id = u.user_id
+        LEFT JOIN contract_info t ON t.company_id = c.company_id
+    </select>
+
     <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
     delete from company_info
     where company_id = #{companyId,jdbcType=VARCHAR}
-  </delete>
+    </delete>
 
     <insert id="insert" parameterType="com.wtkj.oa.entity.Company">
     insert into company_info (company_id, credit_code, company_name, address,

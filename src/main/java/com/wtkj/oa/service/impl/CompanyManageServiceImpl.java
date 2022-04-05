@@ -46,7 +46,9 @@ public class CompanyManageServiceImpl implements ICompanyManageService {
 
         this.checkRepeat(company.getCompanyName());
         company.setCompanyId(RandomStringUtils.getNextVal());
-        company.setLastUpdateTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
+        String nowDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
+        company.setCreateTime(nowDate);
+        company.setLastUpdateTime(nowDate);
         companyMapper.insert(company);
     }
 
@@ -127,8 +129,9 @@ public class CompanyManageServiceImpl implements ICompanyManageService {
             }
             //根据业务经理查询
             if (StrUtil.isNotEmpty(company.getUserName())) {
+                List<String> useNames = Arrays.asList(company.getUserName().split(","));
                 companies = companies.stream().filter(c -> StrUtil.isNotEmpty(c.getUserName())
-                        && c.getUserName().equalsIgnoreCase(company.getUserName())).collect(Collectors.toList());
+                        && useNames.contains(c.getUserName())).collect(Collectors.toList());
             }
         }
         return new PageInfo<>(company.getPageNum(), company.getPageSize(), companies);

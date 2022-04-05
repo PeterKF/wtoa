@@ -118,6 +118,7 @@ public class ContractManageServiceImpl implements IContractManageService {
         }
 
         contract.setContractName(contractName);
+        //新建合同，状态值为0
         contract.setContractStatus(0).setInvoiceStatus(0).setCollectionStatus(0);
 
         ServiceDetail serviceDetail = contract.getServiceDetails();
@@ -165,14 +166,15 @@ public class ContractManageServiceImpl implements IContractManageService {
                 }
                 contractMapper.deleteDate(date.getContractId(), date.getType());
                 date.setCompanyId(contract.getCompanyId());
-                if (contract.getContractStatus() == null || contract.getContractStatus().equals(0) || contract.getContractStatus().equals(1)) {
-                    date.setStatus(2);
+                if (contract.getContractStatus() == null || contract.getContractStatus().equals(0)) {
+                    date.setStatus(1);
                 }
                 contractMapper.addDate(date);
             }
+            //修改完成时间
             if (count > 0) {
-                if (contract.getContractStatus() == null || contract.getContractStatus().equals(0) || contract.getContractStatus().equals(1)) {
-                    contract.setContractStatus(2);
+                if (contract.getContractStatus() == null || contract.getContractStatus().equals(0)) {
+                    contract.setContractStatus(1);
                 }
             }
         }
@@ -226,7 +228,7 @@ public class ContractManageServiceImpl implements IContractManageService {
         }
 
         //PageHelper.startPage(company.getPageNum(), company.getPageSize());
-        List<Company> companies = companyMapper.list();
+        List<Company> companies = companyMapper.companyList();
         if (CollectionUtil.isEmpty(companies)) {
             return null;
         }
@@ -255,19 +257,6 @@ public class ContractManageServiceImpl implements IContractManageService {
             companies = companies.stream().filter(c -> StrUtil.isNotEmpty(c.getCompanyName()) && c.getCompanyName().contains(company.getCompanyName())).collect(Collectors.toList());
         }
 
-        for (Company com : companies) {
-            List<Contract> contracts = contractMapper.selectByCompanyId(com.getCompanyId());
-            if (CollUtil.isNotEmpty(contracts)) {
-                for (Contract contract : contracts) {
-                    if (contract.getContractStatus() == 0) {
-                        com.setStatus(0);
-                        break;
-                    }
-                }
-            } else {
-                com.setStatus(0);
-            }
-        }
         return new PageInfo<>(company.getPageNum(), company.getPageSize(), companies);
     }
 
