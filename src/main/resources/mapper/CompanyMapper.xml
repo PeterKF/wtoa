@@ -70,7 +70,7 @@
     </select>
 
     <select id="companyList" resultMap="BaseResultMap">
-        SELECT DISTINCT
+        SELECT
                 c.company_id,
                 c.company_name,
                 c.address,
@@ -89,21 +89,24 @@
                 c.last_update_time,
                 c. YEAR,
                 (
-                  CASE
-                  WHEN t.contract_status = 0 THEN
-                   0
-                  WHEN t.contract_status = 1 THEN
-                   0
-                  WHEN t.contract_status IS NULL THEN
-                   0
-                  ELSE
-                   1
-                  END
-                ) AS `status`
+                        CASE
+                                WHEN (
+                                             SELECT
+                                                     1
+                                             FROM
+                                                     contract_info t
+                                             WHERE
+                                                     t.company_id = c.company_id
+                                               AND t.contract_status IN (0, 1, NULL)
+                                             ) > 0 THEN
+                                        0
+                                ELSE
+                                        1
+                                END
+                        ) AS `status`
         FROM
                 company_info c
         LEFT JOIN user_info u ON c.user_id = u.user_id
-        LEFT JOIN contract_info t ON t.company_id = c.company_id
     </select>
 
     <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
