@@ -97,7 +97,7 @@
                                                      contract_info t
                                              WHERE
                                                      t.company_id = c.company_id
-                                               AND t.contract_status IN (0, 1, NULL)
+                                               AND t.contract_status IN (0, 1, NULL) limit 1
                                              ) > 0 THEN
                                         0
                                 ELSE
