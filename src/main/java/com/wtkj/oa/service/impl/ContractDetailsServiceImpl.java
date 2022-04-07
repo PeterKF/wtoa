@@ -286,7 +286,8 @@ public class ContractDetailsServiceImpl implements IContractDetailsService {
             throw new BusinessException("请先选择一个合同！");
         }
 
-        String fileName = contractMapper.selectByPrimaryKey(contractId).getFileName();
+        Contract contract = contractMapper.selectByPrimaryKey(contractId);
+        String fileName = contract.getFileName();
         if (isEmpty(fileName)) {
             throw new BusinessException("该合同没有上传相应的合同文件！");
         }

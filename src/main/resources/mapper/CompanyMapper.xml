@@ -53,6 +53,7 @@
         SELECT
                 c.company_id,
                 c.company_name,
+                c.credit_code,
                 c.`year`,
                 c.region,
                 c.address,
@@ -91,21 +92,33 @@
                 (
                         CASE
                                 WHEN (
-                                             SELECT
-                                                     1
-                                             FROM
-                                                     contract_info t
-                                             WHERE
-                                                     t.company_id = c.company_id
-                                               AND t.contract_status IN (0, 1, NULL) limit 1
-                                             ) > 0 THEN
-                                        0
-                                ELSE
-                                        1
-                                END
-                        ) AS `status`
+                                        SELECT
+                                                1
+                                        FROM
+                                                contract_info t
+                                        WHERE
+                                                t.company_id = c.company_id
+                                          AND t.contract_status IN (0, 1, NULL)
+                                        LIMIT 1
+                        ) > 0 THEN
+			0
+		WHEN (
+			SELECT
+				1
+			FROM
+				contract_info t
+			WHERE
+				t.company_id = c.company_id
+			AND t.contract_status > 1
+			LIMIT 1
+		) > 0 THEN
+			1
+		ELSE
+			0
+                END
+                ) AS `status`
         FROM
-                company_info c
+            company_info c
         LEFT JOIN user_info u ON c.user_id = u.user_id
     </select>
 
