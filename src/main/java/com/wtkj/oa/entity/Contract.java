@@ -46,7 +46,12 @@ public class Contract implements Serializable {
     private Boolean dateFlag;
 
     /**
-     * 合同状态 (0 待签订 1 待上传 2 已签订 3 已完成)
+     * 合同上传状态 (0 未上传 1 已上传)
+     */
+    private Integer uploadStatus;
+
+    /**
+     * 合同状态 (0 待签订 1 待上传 2 已上传(执行中) 3 已完成)
      */
     private Integer contractStatus;
 
@@ -113,5 +118,17 @@ public class Contract implements Serializable {
 
     public void setUserId(String userId) {
         this.userId = userId == null ? null : userId.trim();
+    }
+
+    public Integer getUploadStatus() {
+        if (this.contractStatus < 2) {
+            return 0;
+        } else {
+            return 1;
+        }
+    }
+
+    public void setUploadStatus(Integer uploadStatus) {
+        this.uploadStatus = uploadStatus;
     }
 }
