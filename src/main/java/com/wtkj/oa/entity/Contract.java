@@ -51,7 +51,7 @@ public class Contract implements Serializable {
     private Integer uploadStatus;
 
     /**
-     * 合同状态 (0 待签订 1 待上传 2 已上传(执行中) 3 已完成)
+     * 合同状态 (0 待签订 1 待上传 2 执行中（已上传） 3 已完成)
      */
     private Integer contractStatus;
 
