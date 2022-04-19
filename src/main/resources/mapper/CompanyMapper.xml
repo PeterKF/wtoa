@@ -88,8 +88,13 @@
                 c.credit_code,
                 c.region,
                 c.last_update_time,
-                c. YEAR,
-                (
+                c.YEAR
+        FROM
+        company_info c
+        LEFT JOIN user_info u ON c.user_id = u.user_id
+    </select>
+
+    <!--      (
                         CASE
                                 WHEN (
                                         SELECT
@@ -116,11 +121,7 @@
 		ELSE
 			0
                 END
-                ) AS `status`
-        FROM
-            company_info c
-        LEFT JOIN user_info u ON c.user_id = u.user_id
-    </select>
+                ) AS `status`-->
 
     <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
     delete from company_info
