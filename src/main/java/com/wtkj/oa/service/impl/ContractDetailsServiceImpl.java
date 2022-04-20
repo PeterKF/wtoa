@@ -92,7 +92,12 @@ public class ContractDetailsServiceImpl implements IContractDetailsService {
                                             detail.setUnitFee(Integer.valueOf((c.getServiceDetails().getCityTecFee())));
                                             break;
                                         case "5":
-                                            detail.setUnitFee(Integer.valueOf((c.getServiceDetails().getEnterpriseTecFee())));
+                                            String contractMatter = c.getContractMatter();
+                                            if (StrUtil.isEmpty(contractMatter)) {
+                                                detail.setUnitFee(0);
+                                            } else {
+                                                detail.setUnitFee(Integer.valueOf(c.getContractMatter()));
+                                            }
                                             break;
                                         case "6":
                                             if (!isEmpty(c.getServiceDetails().getPatentFee())) {

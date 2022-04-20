@@ -61,7 +61,8 @@
                 t.last_update_time,
                 t.billing_date,
                 t.collection_date,
-                t.file_name
+                t.file_name,
+                t.contract_matter
     </sql>
 
     <select id="list" resultMap="BaseResultMap">
