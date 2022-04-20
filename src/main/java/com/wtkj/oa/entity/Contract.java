@@ -81,6 +81,9 @@ public class Contract implements Serializable {
 
     private String expense;
 
+    /**
+     * 合同标的
+     */
     private String contractMatter;
 
     private int pageSize;
