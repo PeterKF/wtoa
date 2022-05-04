@@ -163,14 +163,14 @@ public class ContractManageServiceImpl implements IContractManageService {
                 }
                 contractMapper.deleteDate(date.getContractId(), date.getType());
                 date.setCompanyId(contract.getCompanyId());
-                if (contract.getContractStatus() == null || contract.getContractStatus().equals(0)) {
+                if (contract.getContractStatus().equals(0)) {
                     date.setStatus(1);
                 }
                 contractMapper.addDate(date);
             }
             //修改完成时间
             if (count > 0) {
-                if (contract.getContractStatus() == null || contract.getContractStatus().equals(0)) {
+                if (contract.getContractStatus().equals(0)) {
                     contract.setContractStatus(1);
                 }
             }
@@ -199,6 +199,7 @@ public class ContractManageServiceImpl implements IContractManageService {
      *
      * @return
      */
+    @Override
     public PageInfo<Contract> list(Contract contract) {
         List<Contract> contracts = contractMapper.list();
         completeList(contracts);
@@ -288,6 +289,7 @@ public class ContractManageServiceImpl implements IContractManageService {
     }
 
 
+    @Override
     public void completeList(List<Contract> contracts) {
         if (!CollectionUtils.isEmpty(contracts)) {
             for (Contract c : contracts) {
@@ -398,6 +400,7 @@ public class ContractManageServiceImpl implements IContractManageService {
      * @param contractType
      * @return
      */
+    @Override
     public String getHtmlContentByType(Integer businessType, String contractType, String companyId) {
         String result = contentMapper.getContentByType(businessType, contractType).getContent();
         Company company = companyManageService.selectOne(companyId);
@@ -436,6 +439,7 @@ public class ContractManageServiceImpl implements IContractManageService {
      *
      * @param contractId
      */
+    @Override
     public String htmlToWord(String contractId) {
         Contract contract = contractMapper.selectByPrimaryKey(contractId);
         if (ObjectUtils.isEmpty(contract)) {
@@ -557,6 +561,7 @@ public class ContractManageServiceImpl implements IContractManageService {
      * @param request
      * @param response
      */
+    @Override
     public void downLoadWord(String contractId, HttpServletRequest request, HttpServletResponse response) {
         String path = this.htmlToWord(contractId);
         this.downLoadFile(path, request, response);
@@ -587,6 +592,7 @@ public class ContractManageServiceImpl implements IContractManageService {
      * @param object
      * @return
      */
+    @Override
     public List<String> getFields(Object object) {
         List<String> fields = new ArrayList<>();
         for (Field field : object.getClass().getDeclaredFields()) {
