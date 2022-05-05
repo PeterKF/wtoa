@@ -83,7 +83,7 @@
     <logger name="java.sql.PreparedStatement" level="info"/>
 
     <!-- 打印mapper下的sql 不显示:INFO 显示:DEBUG -->
-    <logger name="com.wtkj.oa" level="debug"></logger>
+    <logger name="com.wtkj.oa" level="info"></logger>
 
     <root level="info">
         <appender-ref ref="console"/>
