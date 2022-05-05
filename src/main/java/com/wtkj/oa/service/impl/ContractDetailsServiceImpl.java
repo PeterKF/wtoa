@@ -92,6 +92,7 @@ public class ContractDetailsServiceImpl implements IContractDetailsService {
                                             detail.setUnitFee(Integer.valueOf((c.getServiceDetails().getCityTecFee())));
                                             break;
                                         case "5":
+                                            //企业研发费加计扣除
                                             String contractMatter = c.getContractMatter();
                                             if (StrUtil.isEmpty(contractMatter)) {
                                                 detail.setUnitFee(0);
@@ -185,10 +186,16 @@ public class ContractDetailsServiceImpl implements IContractDetailsService {
         detail.setUnitFee(Integer.parseInt((c.getServiceDetails().getExpense())));
 
         //默认为1
-        if (c.getBusinessType().equals(2) || c.getBusinessType().equals(3)) {
+        if (c.getBusinessType().equals(2)) {
             if (c.getContractType().equals("3")) {
                 detail.setNumber(StrUtil.isNotEmpty(c.getServiceDetails().getPercent()) ?
                         Float.valueOf(c.getServiceDetails().getPercent()) / 100 : 1);
+            }
+        } else if (c.getBusinessType().equals(3)) {
+            //企业研发费加计扣除
+            if ("3".equals(c.getContractType())) {
+                detail.setNumber(Float.parseFloat(c.getContractMatter()));
+                detail.setUnitFee(10000);
             }
         }
 
