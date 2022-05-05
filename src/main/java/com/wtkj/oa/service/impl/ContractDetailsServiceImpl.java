@@ -94,11 +94,10 @@ public class ContractDetailsServiceImpl implements IContractDetailsService {
                                         case "5":
                                             //企业研发费加计扣除
                                             String contractMatter = c.getContractMatter();
-                                            if (StrUtil.isEmpty(contractMatter)) {
-                                                detail.setUnitFee(0);
-                                            } else {
-                                                detail.setUnitFee(Integer.valueOf(c.getContractMatter()));
+                                            if (StrUtil.isNotEmpty(contractMatter)) {
+                                                detail.setNumber(Float.parseFloat(contractMatter));
                                             }
+                                            detail.setUnitFee(Integer.valueOf(c.getServiceDetails().getEnterpriseTecFee()));
                                             break;
                                         case "6":
                                             if (!isEmpty(c.getServiceDetails().getPatentFee())) {
@@ -190,14 +189,15 @@ public class ContractDetailsServiceImpl implements IContractDetailsService {
             //各级科技项目
             if (c.getContractType().equals("3")) {
                 detail.setNumber(StrUtil.isNotEmpty(c.getServiceDetails().getPercent()) ?
-                        Float.valueOf(c.getServiceDetails().getPercent()) / 100 : 1);
+                        Float.parseFloat(c.getServiceDetails().getPercent()) / 100 : 1);
                 detail.setUnitFee(Integer.valueOf(c.getContractMatter()));
             }
         } else if (c.getBusinessType().equals(3)) {
             //企业研发费加计扣除
             if ("3".equals(c.getContractType())) {
-                detail.setNumber(Float.parseFloat(c.getContractMatter()));
-                detail.setUnitFee(10000);
+                detail.setNumber(StrUtil.isNotEmpty(c.getServiceDetails().getPercent()) ?
+                        Float.parseFloat(c.getServiceDetails().getPercent()) / 100 : 1);
+                detail.setUnitFee(Integer.valueOf(c.getContractMatter()));
             }
         }
 
