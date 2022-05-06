@@ -82,9 +82,9 @@ public class Contract implements Serializable {
     private String expense;
 
     /**
-     * 合同标的
+     * 合同标的  (可能是金额，也可能是年数，默认为0)
      */
-    private String contractMatter;
+    private String contractMatter = "0";
 
     private int pageSize;
 

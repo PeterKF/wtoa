@@ -14,6 +14,7 @@ import com.wtkj.oa.exception.BusinessException;
 import com.wtkj.oa.service.IContractDetailsService;
 import com.wtkj.oa.service.IContractManageService;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.poi.ss.formula.functions.T;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -30,6 +31,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static cn.hutool.core.text.CharSequenceUtil.isEmpty;
@@ -146,10 +148,12 @@ public class ContractDetailsServiceImpl implements IContractDetailsService {
                                 detail.setType(t);
 
                                 if (!CollectionUtils.isEmpty(c.getDateList())) {
-                                    String date = c.getDateList().stream().filter(contractDate -> contractDate.getType().equals(t))
-                                            .findFirst().get().
-                                                    getCompleteDate();
-                                    detail.setCompleteDate(date);
+                                    Optional<ContractDate> optional = c.getDateList().stream().filter(contractDate -> contractDate.getType().equals(t))
+                                            .findFirst();
+                                    if (optional.isPresent()) {
+                                        String date = optional.get().getCompleteDate();
+                                        detail.setCompleteDate(date);
+                                    }
                                 }
 
                                 if (!ObjectUtils.isEmpty(detail.getSumFee())) {
