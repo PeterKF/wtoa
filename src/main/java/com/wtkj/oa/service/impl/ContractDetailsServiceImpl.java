@@ -1,5 +1,6 @@
 package com.wtkj.oa.service.impl;
 
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.StrUtil;
 import com.wtkj.oa.common.constant.ContractEnum;
 import com.wtkj.oa.common.constant.GXEnum;
@@ -28,10 +29,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static cn.hutool.core.text.CharSequenceUtil.isEmpty;
@@ -239,10 +237,10 @@ public class ContractDetailsServiceImpl implements IContractDetailsService {
         contractMapper.updateContractDate(contractDate);
 
         List<Integer> status = contractMapper.getStatusById(contractDate.getContractId());
-        if (!CollectionUtils.isEmpty(status) && !status.contains(null)) {
-            Integer max = contractMapper.getMaxStatus(contractDate.getContractId());
-            Integer min = contractMapper.getMinStatus(contractDate.getContractId());
-            if (!ObjectUtils.isEmpty(max) && !ObjectUtils.isEmpty(min) && max.equals(min)) {
+        if (CollUtil.isNotEmpty(status)) {
+            Integer max = Collections.max(status);
+            Integer min = Collections.min(status);
+            if (max != null && min != null && max.equals(min)) {
                 contractMapper.updateByPrimaryKeySelective(new Contract(contractDate.getContractId(), max));
             }
         }

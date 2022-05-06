@@ -282,7 +282,7 @@
     </select>
 
     <select id="getMinStatus" resultType="java.lang.Integer">
-        select max(status)
+        select min(status)
         from contract_date
         where contract_id = #{contractId,jdbcType=VARCHAR}
     </select>
