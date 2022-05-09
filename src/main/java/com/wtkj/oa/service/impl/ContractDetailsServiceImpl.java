@@ -192,14 +192,14 @@ public class ContractDetailsServiceImpl implements IContractDetailsService {
             if (c.getContractType().equals("3")) {
                 detail.setNumber(StrUtil.isNotEmpty(c.getServiceDetails().getPercent()) ?
                         Float.parseFloat(c.getServiceDetails().getPercent()) / 100 : 1);
-                detail.setUnitFee(Integer.valueOf(c.getContractMatter()));
+                detail.setUnitFee(Integer.valueOf(Objects.toString(c.getContractMatter(), "0")));
             }
         } else if (c.getBusinessType().equals(3)) {
             //企业研发费加计扣除
             if ("3".equals(c.getContractType())) {
                 detail.setNumber(StrUtil.isNotEmpty(c.getServiceDetails().getPercent()) ?
                         Float.parseFloat(c.getServiceDetails().getPercent()) / 100 : 1);
-                detail.setUnitFee(Integer.valueOf(c.getContractMatter()));
+                detail.setUnitFee(Integer.valueOf(Objects.toString(c.getContractMatter(), "0")));
             }
         }
 
@@ -240,7 +240,7 @@ public class ContractDetailsServiceImpl implements IContractDetailsService {
         if (CollUtil.isNotEmpty(status)) {
             Integer max = Collections.max(status);
             Integer min = Collections.min(status);
-            if (max != null && min != null && max.equals(min)) {
+            if (max != null && max.equals(min)) {
                 contractMapper.updateByPrimaryKeySelective(new Contract(contractDate.getContractId(), max));
             }
         }
