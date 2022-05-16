@@ -1,6 +1,8 @@
 package com.wtkj.oa.entity;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 public class ContractDetail implements Serializable {
     private static final long serialVersionUID = 6663979979804188126L;
@@ -19,13 +21,13 @@ public class ContractDetail implements Serializable {
     private float number = 1;
 
     //总价
-    private float sumFee = 0;
+    private BigDecimal sumFee = BigDecimal.valueOf(0);
 
     //前期付款
-    private float earlyFee;
+    private BigDecimal earlyFee;
 
     //后期付款
-    private float laterFee;
+    private BigDecimal laterFee;
 
     //完成时间
     private String completeDate;
@@ -102,30 +104,30 @@ public class ContractDetail implements Serializable {
         this.number = number;
     }
 
-    public float getSumFee() {
+    public BigDecimal getSumFee() {
         if (this.number != 0 && this.unitFee != null) {
-            sumFee = number * unitFee;
+            sumFee = BigDecimal.valueOf(number * unitFee).setScale(2, RoundingMode.HALF_UP);
         }
         return sumFee;
     }
 
-    public void setSumFee(Integer sumFee) {
+    public void setSumFee(BigDecimal sumFee) {
         this.sumFee = sumFee;
     }
 
-    public float getEarlyFee() {
+    public BigDecimal getEarlyFee() {
         return earlyFee;
     }
 
-    public void setEarlyFee(Integer earlyFee) {
+    public void setEarlyFee(BigDecimal earlyFee) {
         this.earlyFee = earlyFee;
     }
 
-    public float getLaterFee() {
+    public BigDecimal getLaterFee() {
         return laterFee;
     }
 
-    public void setLaterFee(float laterFee) {
+    public void setLaterFee(BigDecimal laterFee) {
         this.laterFee = laterFee;
     }
 

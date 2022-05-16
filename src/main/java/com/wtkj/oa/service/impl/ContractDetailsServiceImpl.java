@@ -28,6 +28,7 @@ import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -77,9 +78,9 @@ public class ContractDetailsServiceImpl implements IContractDetailsService {
                                 detail.setNumber(1);
                                 if ("1".equals(t)) {
                                     detail.setUnitFee(Integer.valueOf(c.getServiceDetails().getSumFee()));
-                                    detail.setEarlyFee(Integer.valueOf((c.getServiceDetails().getBeforeFee())));
+                                    detail.setEarlyFee(new BigDecimal(c.getServiceDetails().getBeforeFee()));
                                 } else {
-                                    detail.setEarlyFee(0);
+                                    detail.setEarlyFee(BigDecimal.valueOf(0));
 
                                     switch (t) {
                                         case "2":
@@ -155,7 +156,7 @@ public class ContractDetailsServiceImpl implements IContractDetailsService {
                                 }
 
                                 if (!ObjectUtils.isEmpty(detail.getSumFee())) {
-                                    detail.setLaterFee(detail.getSumFee() - detail.getEarlyFee());
+                                    detail.setLaterFee(detail.getSumFee().subtract(detail.getEarlyFee()));
                                 }
                                 contractDetails.add(detail);
                             }
@@ -204,9 +205,9 @@ public class ContractDetailsServiceImpl implements IContractDetailsService {
         }
 
         //前端付款
-        detail.setEarlyFee(0);
+        detail.setEarlyFee(BigDecimal.valueOf(0));
         //后期付款
-        detail.setLaterFee(detail.getSumFee() - detail.getEarlyFee());
+        detail.setLaterFee(detail.getSumFee().subtract(detail.getEarlyFee()));
         //完成时间
         if (!CollectionUtils.isEmpty(c.getDateList())) {
             String date = c.getDateList().stream().filter(contractDate -> contractDate.getType().equals(c.getContractType()))
