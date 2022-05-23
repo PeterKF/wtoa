@@ -1,5 +1,6 @@
 package com.wtkj.oa.service.impl;
 
+import cn.hutool.core.text.CharSequenceUtil;
 import cn.hutool.core.util.StrUtil;
 import com.github.pagehelper.PageHelper;
 import com.wtkj.oa.common.config.PageInfo;
@@ -81,6 +82,8 @@ public class PatentManageServiceImpl implements IPatentManageService {
         } else {
             patents = patentMapper.listLikeName(patent.getPatentName());
         }
+
+        String year = patent.getYear();
         List<Patent> patentList = new ArrayList<>();
         if (!CollectionUtils.isEmpty(patents)) {
             Map<String, String> idMap = companyManageService.getIdMap();
@@ -106,6 +109,11 @@ public class PatentManageServiceImpl implements IPatentManageService {
                 if (!StringUtils.isEmpty(patent.getCompanyName())) {
                     patentList = patentList.stream().filter(p -> !StringUtils.isEmpty(p.getCompanyName())
                             && p.getCompanyName().contains(patent.getCompanyName())).collect(Collectors.toList());
+                }
+                //通过年份过滤
+                if (CharSequenceUtil.isNotEmpty(year)) {
+                    patentList = patentList.stream().filter(p -> CharSequenceUtil.isNotEmpty(p.getYear())
+                            && p.getYear().split("-")[0].equals(year)).collect(Collectors.toList());
                 }
 
                 Map<String, String> companyMap = companyManageService.getCompanyMap();
