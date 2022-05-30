@@ -1,7 +1,9 @@
 package com.wtkj.oa.service.impl;
 
+import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.text.CharSequenceUtil;
 import cn.hutool.core.util.StrUtil;
+import cn.hutool.poi.word.Word07Writer;
 import com.github.pagehelper.PageHelper;
 import com.wtkj.oa.common.config.PageInfo;
 import com.wtkj.oa.dao.PatentMapper;
@@ -12,14 +14,18 @@ import com.wtkj.oa.exception.BusinessException;
 import com.wtkj.oa.service.ICompanyManageService;
 import com.wtkj.oa.service.IPatentManageService;
 import com.wtkj.oa.utils.RandomStringUtils;
+import org.apache.poi.xwpf.usermodel.ParagraphAlignment;
+import org.junit.jupiter.api.Test;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
+import java.awt.*;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
@@ -141,5 +147,59 @@ public class PatentManageServiceImpl implements IPatentManageService {
                 patentList.add(p);
             }
         }
+    }
+
+    /**
+     * 获取专利费用清单
+     */
+    public void getPatentExpenseList(List<String> patentIds, String cpmpanyType) {
+        Word07Writer writer = new Word07Writer();
+        writer.addText(ParagraphAlignment.CENTER, new Font("微软雅黑", Font.PLAIN, 22), "专利费用结算单");
+        writer.addText(new Font("宋体", Font.PLAIN, 30), "公司名称");
+        writer.addText(new Font("宋体", Font.PLAIN, 30), "    您好！贵公司近期需要缴纳的专利费用清单如下：");
+        List<Map<String, String>> contentList = new ArrayList<>();
+        Map<String, String> contentMap = new HashMap<>();
+        contentMap.put("序号", "1");
+        contentMap.put("类型", "实用");
+        contentMap.put("专利申请号", "12345678");
+        contentMap.put("专利名称", "dasdfa");
+        contentMap.put("费用类型", "qwer23r");
+        contentMap.put("费用（单位：元）", "1000");
+        contentList.add(contentMap);
+        writer.addTable(contentList);
+        writer.flush(FileUtil.file("D:\\test\\wordWrite.docx"));
+        writer.close();
+    }
+
+    public static void main(String[] args) {
+        Word07Writer writer = new Word07Writer();
+        writer.addText(ParagraphAlignment.CENTER, new Font("微软雅黑", Font.PLAIN, 22), "专利费用结算单");
+        writer.addText(new Font("宋体", Font.PLAIN, 12), "公司名称");
+        writer.addText(new Font("宋体", Font.PLAIN, 12), "    您好！贵公司近期需要缴纳的专利费用清单如下：");
+        List<LinkedHashMap<String, String>> contentList = new ArrayList<>();
+        LinkedHashMap<String, String> contentMap = new LinkedHashMap<>();
+        contentMap.put("序号", "1");
+        contentMap.put("类型", "实用");
+        contentMap.put("专利申请号", "12345678");
+        contentMap.put("专利名称", "dasdfa");
+        contentMap.put("费用类型", "qwer23r");
+        contentMap.put("费用（单位：元）", "1000");
+        LinkedHashMap<String, String> contentMap2 = new LinkedHashMap<>();
+        contentMap2.put("序号", "2");
+        contentMap2.put("类型", "实用");
+        contentMap2.put("专利申请号", "23432234");
+        contentMap2.put("专利名称", "1234qwe");
+        contentMap2.put("费用类型", "1234qwer");
+        contentMap2.put("费用（单位：元）", "2000");
+        contentList.add(contentMap);
+        contentList.add(contentMap2);
+        writer.addTable(contentList);
+        writer.addText(new Font("宋体", Font.PLAIN, 12), "说明：");
+        writer.addText(new Font("宋体", Font.PLAIN, 12), "1、专利申请结算费用包括：专利申请代理费、申请费、实审费、办理登记费、年费等国家知识产权局收取的相关行政事业收费，由我方代收代缴；");
+        writer.addText(new Font("宋体", Font.PLAIN, 12), "2、按照约定，当收到“专利受理通知书”，企业需要支付费用合计￥12600元，请务必尽快安排费用付款。");
+        writer.addText(new Font("宋体", Font.PLAIN, 12), "3、因专利权人未及时安排费用导致专利视为撤回或终止，我公司概不负责，请谅解。");
+        writer.addText(new Font("宋体", Font.PLAIN, 12), "  祝商祺，谢谢！");
+        writer.flush(FileUtil.file("D:\\test\\wordWrite.docx"));
+        writer.close();
     }
 }
