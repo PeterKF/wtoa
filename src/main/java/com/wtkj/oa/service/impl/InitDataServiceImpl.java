@@ -186,6 +186,8 @@ public class InitDataServiceImpl implements InitDataService {
 
                 if (ids.stream().noneMatch(id -> id.equals(patent.getPatentId()))) {
                     patents.add(patent);
+                }else{
+                    patentMapper.updateByPrimaryKeySelective(patent);
                 }
             }
 
