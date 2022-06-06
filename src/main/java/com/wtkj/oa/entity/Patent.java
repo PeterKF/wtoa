@@ -35,11 +35,17 @@ public class Patent implements Serializable {
 
     private String userName;
 
-    //专利收款
+    //应收收款
     private String collection;
 
-    //专利付款
+    //应付金额
     private String payment;
+
+    //代理费
+    private Integer agencyFee;
+
+    //官费
+    private Integer officialFee;
 
     //收款日期
     private String collectionDate;

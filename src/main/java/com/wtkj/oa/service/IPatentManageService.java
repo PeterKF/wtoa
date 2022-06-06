@@ -13,4 +13,6 @@ public interface IPatentManageService {
     void update(Patent patent);
 
     PageInfo<Patent> list(Patent patent);
+
+    void getPatentExpenseList(List<String> patentIds, String cpmpanyType);
 }

@@ -31,9 +31,18 @@
         where p.id = #{id,jdbcType=VARCHAR}
     </select>
 
+    <select id="selectByPatentId" parameterType="java.lang.String" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from patent_info p
+        left join company_info c
+        on p.company_id = c.company_id
+        where p.patent_id = #{patentId,jdbcType=VARCHAR}
+    </select>
+
     <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
-    delete from patent_info
-    where patent_id = #{patentId,jdbcType=VARCHAR}
+        delete from patent_info
+        where patent_id = #{patentId,jdbcType=VARCHAR}
     </delete>
 
     <select id="getId" resultType="java.lang.String">

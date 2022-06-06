@@ -22,6 +22,8 @@ public interface PatentMapper {
 
     Patent selectByPrimaryKey(String id);
 
+    Patent selectByPatentId(String patentId);
+
     List<Patent> listByName(@Param("patentName") String patentName);
 
     List<Patent> listLikeName(@Param("patentName") String patentName);

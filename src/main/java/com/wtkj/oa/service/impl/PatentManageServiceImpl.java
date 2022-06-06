@@ -1,11 +1,13 @@
 package com.wtkj.oa.service.impl;
 
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.text.CharSequenceUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.poi.word.Word07Writer;
 import com.github.pagehelper.PageHelper;
 import com.wtkj.oa.common.config.PageInfo;
+import com.wtkj.oa.common.constant.PatentEnum;
 import com.wtkj.oa.dao.PatentMapper;
 import com.wtkj.oa.dao.UserMapper;
 import com.wtkj.oa.entity.Patent;
@@ -158,15 +160,36 @@ public class PatentManageServiceImpl implements IPatentManageService {
         writer.addText(new Font("宋体", Font.PLAIN, 30), "公司名称");
         writer.addText(new Font("宋体", Font.PLAIN, 30), "    您好！贵公司近期需要缴纳的专利费用清单如下：");
         List<Map<String, String>> contentList = new ArrayList<>();
-        Map<String, String> contentMap = new HashMap<>();
-        contentMap.put("序号", "1");
-        contentMap.put("类型", "实用");
-        contentMap.put("专利申请号", "12345678");
-        contentMap.put("专利名称", "dasdfa");
-        contentMap.put("费用类型", "qwer23r");
-        contentMap.put("费用（单位：元）", "1000");
-        contentList.add(contentMap);
+        if (CollUtil.isEmpty(patentIds)) {
+            throw new BusinessException("请选择要导出的专利清单");
+        }
+
+        Integer sumFee = 0;
+        for (int i = 0; i < patentIds.size(); i++) {
+            LinkedHashMap<String, String> contentMap = new LinkedHashMap<>();
+            if (i == patentIds.size() - 1) {
+                contentMap.put("费用类型", "费用合计");
+                contentMap.put("费用（单位：元）", String.valueOf(sumFee));
+            } else {
+                Patent patent = patentMapper.selectByPrimaryKey(patentIds.get(i));
+                contentMap.put("序号", String.valueOf(i + 1));
+                contentMap.put("类型", PatentEnum.getNameByType(patent.getPatentType()));
+                contentMap.put("专利申请号", patent.getPatentId());
+                contentMap.put("专利名称", patent.getPatentName());
+                contentMap.put("费用类型", "实用代理费 " + patent.getAgencyFee() + "+" + "申请费 " + patent.getOfficialFee());
+                contentMap.put("费用（单位：元）", String.valueOf(patent.getAgencyFee() + patent.getOfficialFee()));
+                sumFee = sumFee + patent.getAgencyFee() + patent.getOfficialFee();
+            }
+            contentList.add(contentMap);
+        }
         writer.addTable(contentList);
+        writer.addText(new Font("宋体", Font.PLAIN, 12), "说明：");
+        writer.addText(new Font("宋体", Font.PLAIN, 12), "1、专利申请结算费用包括：专利申请代理费、申请费、实审费、办理登记费、年费等国家知识产权局收取的相关行政事业收费，由我方代收代缴；");
+        writer.addText(new Font("宋体", Font.PLAIN, 12), "2、按照约定，当收到“专利受理通知书”，企业需要支付费用合计￥12600元，请务必尽快安排费用付款。");
+        writer.addText(new Font("宋体", Font.PLAIN, 12), "3、因专利权人未及时安排费用导致专利视为撤回或终止，我公司概不负责，请谅解。");
+        writer.addText(new Font("宋体", Font.PLAIN, 12), "   祝商祺，谢谢！");
+
+
         writer.flush(FileUtil.file("D:\\test\\wordWrite.docx"));
         writer.close();
     }
