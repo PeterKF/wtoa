@@ -92,6 +92,7 @@
         FROM
         company_info c
         LEFT JOIN user_info u ON c.user_id = u.user_id
+        order by c.create_time desc
     </select>
 
     <!--      (
