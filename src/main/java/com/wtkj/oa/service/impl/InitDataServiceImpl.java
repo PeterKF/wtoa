@@ -186,7 +186,7 @@ public class InitDataServiceImpl implements InitDataService {
 
                 if (ids.stream().noneMatch(id -> id.equals(patent.getPatentId()))) {
                     patents.add(patent);
-                }else{
+                } else {
                     patentMapper.updateByPrimaryKeySelective(patent);
                 }
             }
@@ -370,6 +370,49 @@ public class InitDataServiceImpl implements InitDataService {
         //response为HttpServletResponse对象
         // response.setContentType("application/vnd.ms-excel;charset=utf-8");
         response.setHeader("Content-Disposition", "attachment;filename=companyInfo.xlsx");
+        try (ServletOutputStream out = response.getOutputStream();) {
+            writer.flush(out, true);
+        } catch (IOException e) {
+            log.info("error message", e);
+        }
+        writer.close();
+    }
+
+    /**
+     * 导出专利信息
+     *
+     * @param response
+     */
+    public void exportPatentInfo(HttpServletResponse response) {
+        List<Patent> patentList = patentMapper.listByName(null);
+        if (CollUtil.isNotEmpty(patentList)) {
+            return;
+        }
+
+        List<Map<String, Object>> mapList = new ArrayList<>(patentList.size());
+        for (Patent patent : patentList) {
+            Map<String, Object> patentMap = new LinkedHashMap();
+            patentMap.put("年份", patent.getApplicationDate().split("-")[0]);
+            patentMap.put("专利编号", patent.getPatentId());
+            patentMap.put("专利名称", patent.getPatentName());
+            patentMap.put("客户名称", patent.getCompanyName());
+            patentMap.put("项目经理", patent.getUserName());
+            patentMap.put("专利类型", PatentEnum.getNameByType(patent.getPatentType()));
+            mapList.add(patentMap);
+        }
+
+        ExcelWriter writer = com.wtkj.oa.common.config.ExcelWriter.getBigWriter();
+        Font font = writer.createFont();
+        //设置字体
+        font.setFontName("宋体");
+        writer.getStyleSet().setFont(font, true);
+        writer.write(mapList, true);
+        //所有列宽度自适应
+        writer.autoSizeColumnAll();
+
+        //response为HttpServletResponse对象
+        // response.setContentType("application/vnd.ms-excel;charset=utf-8");
+        response.setHeader("Content-Disposition", "attachment;filename=patentInfo.xlsx");
         try (ServletOutputStream out = response.getOutputStream();) {
             writer.flush(out, true);
         } catch (IOException e) {

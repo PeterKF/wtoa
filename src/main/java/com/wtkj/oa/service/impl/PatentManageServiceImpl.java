@@ -1,6 +1,7 @@
 package com.wtkj.oa.service.impl;
 
 import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.text.CharSequenceUtil;
 import cn.hutool.core.util.StrUtil;
@@ -10,12 +11,14 @@ import com.wtkj.oa.common.config.PageInfo;
 import com.wtkj.oa.common.constant.PatentEnum;
 import com.wtkj.oa.dao.PatentMapper;
 import com.wtkj.oa.dao.UserMapper;
+import com.wtkj.oa.entity.InsideInfo;
 import com.wtkj.oa.entity.Patent;
 import com.wtkj.oa.entity.User;
 import com.wtkj.oa.exception.BusinessException;
 import com.wtkj.oa.service.ICompanyManageService;
 import com.wtkj.oa.service.IPatentManageService;
 import com.wtkj.oa.utils.RandomStringUtils;
+import com.wtkj.oa.utils.YamlUtils;
 import org.apache.poi.xwpf.usermodel.ParagraphAlignment;
 import org.junit.jupiter.api.Test;
 import org.springframework.stereotype.Service;
@@ -188,9 +191,15 @@ public class PatentManageServiceImpl implements IPatentManageService {
         writer.addText(new Font("宋体", Font.PLAIN, 12), "2、按照约定，当收到“专利受理通知书”，企业需要支付费用合计￥12600元，请务必尽快安排费用付款。");
         writer.addText(new Font("宋体", Font.PLAIN, 12), "3、因专利权人未及时安排费用导致专利视为撤回或终止，我公司概不负责，请谅解。");
         writer.addText(new Font("宋体", Font.PLAIN, 12), "   祝商祺，谢谢！");
-
-
-        writer.flush(FileUtil.file("D:\\test\\wordWrite.docx"));
+        //填写乙方信息
+        List<InsideInfo> infos = YamlUtils.read(List.class, "/company");
+        InsideInfo insideInfo = infos.stream().filter(i -> i.getCompanyType().equals(Integer.parseInt(cpmpanyType))).findFirst().get();
+        writer.addText(new Font("宋体", Font.PLAIN, 12), "   单位名称：" + insideInfo.getCompanyName());
+        writer.addText(new Font("宋体", Font.PLAIN, 12), "   开户行：" + insideInfo.getBank());
+        writer.addText(new Font("宋体", Font.PLAIN, 12), "   账号：" + insideInfo.getBankNo());
+        writer.addText(new Font("宋体", Font.PLAIN, 12), "                              " + insideInfo.getCompanyName());
+        writer.addText(new Font("宋体", Font.PLAIN, 12), "                              " + DateUtil.format(new Date(), "yyyy-MM-dd"));
+        writer.flush(FileUtil.file("D:\\test\\专利费用清单.docx"));
         writer.close();
     }
 

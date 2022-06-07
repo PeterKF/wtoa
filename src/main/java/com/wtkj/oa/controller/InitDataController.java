@@ -66,6 +66,7 @@ public class InitDataController {
     @ApiOperation("导出专利信息")
     @GetMapping(value = "/export/patentInfo")
     public ResponseMsg exportPatentInfo(HttpServletResponse response) {
+        initDataService.exportPatentInfo(response);
         return ResponseUtils.success();
     }
 }

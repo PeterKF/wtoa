@@ -17,4 +17,6 @@ public interface InitDataService {
     void deletePatents(MultipartFile file);
 
     void exportCompanyInfo(HttpServletResponse response);
+
+    void exportPatentInfo(HttpServletResponse response);
 }
