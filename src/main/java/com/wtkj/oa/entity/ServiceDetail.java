@@ -59,6 +59,7 @@ public class ServiceDetail implements Serializable {
     //软著费用
     private String softFee;
 
+    //代理事项
     private String proxyContent;
 
     private String agent;
