@@ -19,6 +19,7 @@ import com.wtkj.oa.service.ICompanyManageService;
 import com.wtkj.oa.service.IPatentManageService;
 import com.wtkj.oa.utils.RandomStringUtils;
 import com.wtkj.oa.utils.YamlUtils;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.xwpf.usermodel.ParagraphAlignment;
 import org.junit.jupiter.api.Test;
 import org.springframework.stereotype.Service;
@@ -27,13 +28,17 @@ import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletResponse;
 import java.awt.*;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@Slf4j
 public class PatentManageServiceImpl implements IPatentManageService {
 
     @Resource
@@ -72,6 +77,7 @@ public class PatentManageServiceImpl implements IPatentManageService {
         }
     }
 
+    @Override
     public void delete(String patentId) {
         if (StringUtils.isEmpty(patentId)) {
             throw new BusinessException("请先选择要删除的专利！");
@@ -79,6 +85,7 @@ public class PatentManageServiceImpl implements IPatentManageService {
         patentMapper.deleteByPrimaryKey(patentId);
     }
 
+    @Override
     public void update(Patent patent) {
         String time = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
         patent.setLastUpdateTime(time);
@@ -157,7 +164,8 @@ public class PatentManageServiceImpl implements IPatentManageService {
     /**
      * 获取专利费用清单
      */
-    public void getPatentExpenseList(List<String> patentIds, String cpmpanyType) {
+    @Override
+    public void getPatentExpenseList(List<String> patentIds, String companyType, HttpServletResponse response) {
         Word07Writer writer = new Word07Writer();
         writer.addText(ParagraphAlignment.CENTER, new Font("微软雅黑", Font.PLAIN, 22), "专利费用结算单");
         writer.addText(new Font("宋体", Font.PLAIN, 30), "公司名称");
@@ -174,7 +182,7 @@ public class PatentManageServiceImpl implements IPatentManageService {
                 contentMap.put("费用类型", "费用合计");
                 contentMap.put("费用（单位：元）", String.valueOf(sumFee));
             } else {
-                Patent patent = patentMapper.selectByPrimaryKey(patentIds.get(i));
+                Patent patent = patentMapper.selectByPatentId(patentIds.get(i));
                 contentMap.put("序号", String.valueOf(i + 1));
                 contentMap.put("类型", PatentEnum.getNameByType(patent.getPatentType()));
                 contentMap.put("专利申请号", patent.getPatentId());
@@ -193,13 +201,19 @@ public class PatentManageServiceImpl implements IPatentManageService {
         writer.addText(new Font("宋体", Font.PLAIN, 12), "   祝商祺，谢谢！");
         //填写乙方信息
         List<InsideInfo> infos = YamlUtils.read(List.class, "/company");
-        InsideInfo insideInfo = infos.stream().filter(i -> i.getCompanyType().equals(Integer.parseInt(cpmpanyType))).findFirst().get();
+        InsideInfo insideInfo = infos.stream().filter(i -> i.getCompanyType().equals(Integer.parseInt(companyType))).findFirst().get();
         writer.addText(new Font("宋体", Font.PLAIN, 12), "   单位名称：" + insideInfo.getCompanyName());
         writer.addText(new Font("宋体", Font.PLAIN, 12), "   开户行：" + insideInfo.getBank());
         writer.addText(new Font("宋体", Font.PLAIN, 12), "   账号：" + insideInfo.getBankNo());
         writer.addText(new Font("宋体", Font.PLAIN, 12), "                              " + insideInfo.getCompanyName());
         writer.addText(new Font("宋体", Font.PLAIN, 12), "                              " + DateUtil.format(new Date(), "yyyy-MM-dd"));
-        writer.flush(FileUtil.file("D:\\test\\专利费用清单.docx"));
+
+        response.setHeader("Content-Disposition", "attachment;filename=patentInfo.docx");
+        try (ServletOutputStream out = response.getOutputStream();) {
+            writer.flush(out, true);
+        } catch (IOException e) {
+            log.info("error message", e);
+        }
         writer.close();
     }
 

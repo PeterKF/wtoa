@@ -3,6 +3,7 @@ package com.wtkj.oa.service;
 import com.wtkj.oa.common.config.PageInfo;
 import com.wtkj.oa.entity.Patent;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 public interface IPatentManageService {
@@ -14,5 +15,5 @@ public interface IPatentManageService {
 
     PageInfo<Patent> list(Patent patent);
 
-    void getPatentExpenseList(List<String> patentIds, String cpmpanyType);
+    void getPatentExpenseList(List<String> patentIds, String companyType, HttpServletResponse response);
 }

@@ -10,6 +10,7 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 @Api(description = "专利管理")
@@ -49,8 +50,9 @@ public class PatentManageController {
 
     @ApiOperation("导出专利清单")
     @PostMapping(value = "/export/list")
-    public ResponseMsg exportPatentList(List<String> patentIds, String cpmpanyType) {
-        // patentManageService.getPatentExpenseList(patentIds, cpmpanyType);
+    public ResponseMsg exportPatentList(@RequestBody List<String> patentIds,@RequestParam String companyType,
+                                        HttpServletResponse response) {
+         patentManageService.getPatentExpenseList(patentIds, companyType,response);
         return ResponseUtils.success();
     }
 }

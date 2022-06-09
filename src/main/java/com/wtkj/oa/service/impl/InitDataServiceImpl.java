@@ -14,6 +14,7 @@ import com.wtkj.oa.entity.Contract;
 import com.wtkj.oa.entity.ContractDate;
 import com.wtkj.oa.entity.Patent;
 import com.wtkj.oa.exception.BusinessException;
+import com.wtkj.oa.service.ICompanyManageService;
 import com.wtkj.oa.service.IContractManageService;
 import com.wtkj.oa.service.IHTContractService;
 import com.wtkj.oa.service.InitDataService;
@@ -66,6 +67,9 @@ public class InitDataServiceImpl implements InitDataService {
 
     @Resource
     private IHTContractService htContractServiceImpl;
+
+    @Resource
+    private ICompanyManageService companyManageService;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -335,6 +339,7 @@ public class InitDataServiceImpl implements InitDataService {
      *
      * @param response
      */
+    @Override
     public void exportCompanyInfo(HttpServletResponse response) {
         List<Company> companyList = companyMapper.companyInfo();
         if (CollUtil.isEmpty(companyList)) {
@@ -383,9 +388,10 @@ public class InitDataServiceImpl implements InitDataService {
      *
      * @param response
      */
+    @Override
     public void exportPatentInfo(HttpServletResponse response) {
         List<Patent> patentList = patentMapper.listByName(null);
-        if (CollUtil.isNotEmpty(patentList)) {
+        if (CollUtil.isEmpty(patentList)) {
             return;
         }
 
@@ -396,7 +402,12 @@ public class InitDataServiceImpl implements InitDataService {
             patentMap.put("专利编号", patent.getPatentId());
             patentMap.put("专利名称", patent.getPatentName());
             patentMap.put("客户名称", patent.getCompanyName());
-            patentMap.put("项目经理", patent.getUserName());
+            Map<String, String> companyMap = companyManageService.getCompanyMap();
+            String userName = "";
+            if (CollUtil.isNotEmpty(companyMap)){
+                 userName = companyMap.get(patent.getCompanyName());
+            }
+            patentMap.put("项目经理", userName);
             patentMap.put("专利类型", PatentEnum.getNameByType(patent.getPatentType()));
             mapList.add(patentMap);
         }
