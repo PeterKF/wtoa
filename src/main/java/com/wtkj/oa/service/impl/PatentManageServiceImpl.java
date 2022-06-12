@@ -50,6 +50,7 @@ public class PatentManageServiceImpl implements IPatentManageService {
     @Resource
     private ICompanyManageService companyManageService;
 
+    @Override
     public void addPatent(Patent patent) {
         if (StringUtils.isEmpty(patent.getCompanyId())) {
             throw new BusinessException("请选择一个客户！");
@@ -79,7 +80,7 @@ public class PatentManageServiceImpl implements IPatentManageService {
 
     @Override
     public void delete(String patentId) {
-        if (StringUtils.isEmpty(patentId)) {
+        if (CharSequenceUtil.isEmpty(patentId)) {
             throw new BusinessException("请先选择要删除的专利！");
         }
         patentMapper.deleteByPrimaryKey(patentId);
@@ -95,7 +96,7 @@ public class PatentManageServiceImpl implements IPatentManageService {
     @Override
     public PageInfo<Patent> list(Patent patent) {
         List<Patent> patents;
-        if (StringUtils.isEmpty(patent.getPatentName())) {
+        if (CharSequenceUtil.isEmpty(patent.getPatentName())) {
             patents = patentMapper.listByName(null);
         } else {
             patents = patentMapper.listLikeName(patent.getPatentName());
@@ -124,8 +125,8 @@ public class PatentManageServiceImpl implements IPatentManageService {
             }
 
             if (!CollectionUtils.isEmpty(patentList)) {
-                if (!StringUtils.isEmpty(patent.getCompanyName())) {
-                    patentList = patentList.stream().filter(p -> !StringUtils.isEmpty(p.getCompanyName())
+                if (!CharSequenceUtil.isEmpty(patent.getCompanyName())) {
+                    patentList = patentList.stream().filter(p -> !CharSequenceUtil.isEmpty(p.getCompanyName())
                             && p.getCompanyName().contains(patent.getCompanyName())).collect(Collectors.toList());
                 }
                 //通过年份过滤

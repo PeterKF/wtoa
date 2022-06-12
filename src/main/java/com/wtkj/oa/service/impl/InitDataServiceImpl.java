@@ -396,16 +396,17 @@ public class InitDataServiceImpl implements InitDataService {
         }
 
         List<Map<String, Object>> mapList = new ArrayList<>(patentList.size());
+        Map<String, String> companyMap = companyManageService.getCompanyMap();
+        String userName = "";
         for (Patent patent : patentList) {
             Map<String, Object> patentMap = new LinkedHashMap();
             patentMap.put("年份", patent.getApplicationDate().split("-")[0]);
             patentMap.put("专利编号", patent.getPatentId());
             patentMap.put("专利名称", patent.getPatentName());
             patentMap.put("客户名称", patent.getCompanyName());
-            Map<String, String> companyMap = companyManageService.getCompanyMap();
-            String userName = "";
-            if (CollUtil.isNotEmpty(companyMap)){
-                 userName = companyMap.get(patent.getCompanyName());
+
+            if (CollUtil.isNotEmpty(companyMap)) {
+                userName = companyMap.get(patent.getCompanyName());
             }
             patentMap.put("项目经理", userName);
             patentMap.put("专利类型", PatentEnum.getNameByType(patent.getPatentType()));

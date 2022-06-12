@@ -49,10 +49,10 @@ public class PatentManageController {
     }
 
     @ApiOperation("导出专利清单")
-    @PostMapping(value = "/export/list")
-    public ResponseMsg exportPatentList(@RequestBody List<String> patentIds,@RequestParam String companyType,
+    @GetMapping(value = "/export/list")
+    public ResponseMsg exportPatentList(@RequestParam List<String> patentIds, @RequestParam String companyType,
                                         HttpServletResponse response) {
-         patentManageService.getPatentExpenseList(patentIds, companyType,response);
+        patentManageService.getPatentExpenseList(patentIds, companyType, response);
         return ResponseUtils.success();
     }
 }
