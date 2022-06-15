@@ -131,8 +131,8 @@ public class PatentManageServiceImpl implements IPatentManageService {
                 }
                 //通过年份过滤
                 if (CharSequenceUtil.isNotEmpty(year)) {
-                    patentList = patentList.stream().filter(p -> CharSequenceUtil.isNotEmpty(p.getYear())
-                            && p.getYear().split("-")[0].equals(year)).collect(Collectors.toList());
+                    patentList = patentList.stream().filter(p -> CharSequenceUtil.isNotEmpty(p.getApplicationDate())
+                            && p.getApplicationDate().split("-")[0].equals(year)).collect(Collectors.toList());
                 }
 
                 Map<String, String> companyMap = companyManageService.getCompanyMap();
