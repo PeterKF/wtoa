@@ -11,6 +11,8 @@
         <result column="user_id" property="userId" javaType="java.lang.String" jdbcType="VARCHAR"/>
         <result column="collection" property="collection" javaType="java.lang.String" jdbcType="VARCHAR"/>
         <result column="payment" property="payment" javaType="java.lang.String" jdbcType="VARCHAR"/>
+        <result column="agency_fee" property="agencyFee" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+        <result column="official_fee" property="officialFee" javaType="java.lang.Integer" jdbcType="INTEGER"/>
         <result column="application_date" property="applicationDate" javaType="java.lang.String" jdbcType="VARCHAR"/>
         <result column="authorization_date" property="authorizationDate" javaType="java.lang.String" jdbcType="DATE"/>
         <result column="create_time" property="createTime" javaType="java.lang.String" jdbcType="TIMESTAMP"/>
@@ -18,7 +20,7 @@
     </resultMap>
 
     <sql id="Base_Column_List">
-        p.id, p.patent_id, p.company_id, c.company_name, p.patent_name, p.patent_type, p.user_id,
+        p.id, p.patent_id, p.company_id, c.company_name, p.patent_name, p.patent_type, p.user_id, p.agency_fee, p.official_fee
         p.collection, p.payment, p.application_date, p.authorization_date,p.create_time, p.last_update_time
     </sql>
 
@@ -58,12 +60,13 @@
 
     <insert id="insert" parameterType="com.wtkj.oa.entity.Patent">
     insert into patent_info (id, patent_id, company_id, patent_name,
-      patent_type, user_id, collection,
+      patent_type, user_id, collection, agency_fee, official_fee,
       payment, application_date, authorization_date,
       create_time, last_update_time)
     values (#{id,jdbcType=VARCHAR},#{patentId,jdbcType=VARCHAR}, #{companyId,jdbcType=VARCHAR},
       #{patentName,jdbcType=VARCHAR}, #{patentType,jdbcType=INTEGER}, #{userId,jdbcType=VARCHAR},
-      #{collection,jdbcType=VARCHAR}, #{payment,jdbcType=VARCHAR}, #{applicationDate,jdbcType=VARCHAR},
+      #{collection,jdbcType=VARCHAR}, #{agencyFee,jdbcType=INTEGER}, #{officialFee,jdbcType=INTEGER},
+      #{payment,jdbcType=VARCHAR}, #{applicationDate,jdbcType=VARCHAR},
       #{authorizationDate,jdbcType=DATE}, #{createTime,jdbcType=TIMESTAMP}, #{lastUpdateTime,jdbcType=TIMESTAMP})
   </insert>
 
@@ -180,6 +183,12 @@
             </if>
             <if test="payment != null">
                 payment = #{payment,jdbcType=VARCHAR},
+            </if>
+            <if test="officialFee != null">
+                official_fee = #{officialFee,jdbcType=INTEGER},
+            </if>
+            <if test="agencyFee != null">
+                agency_fee = #{agencyFee,jdbcType=INTEGER},
             </if>
             <if test="applicationDate != null">
                 application_date = #{applicationDate,jdbcType=DATE},
