@@ -142,9 +142,9 @@ public class PatentManageServiceImpl implements IPatentManageService {
                     }
                 }
 
-                if (StrUtil.isNotEmpty(patent.getUserName())) {
+                if (CharSequenceUtil.isNotEmpty(patent.getUserName())) {
                     List<String> useNames = Arrays.asList(patent.getUserName().split(","));
-                    patentList = patentList.stream().filter(p -> StrUtil.isNotEmpty(p.getUserName())
+                    patentList = patentList.stream().filter(p -> CharSequenceUtil.isNotEmpty(p.getUserName())
                             && useNames.contains(p.getUserName())).collect(Collectors.toList());
                 }
                 return new PageInfo<>(patent.getPageNum(), patent.getPageSize(), patentList);
@@ -155,7 +155,7 @@ public class PatentManageServiceImpl implements IPatentManageService {
 
     private void getPatentList(List<Patent> patents, List<Patent> patentList, Map<String, String> idMap, String userId) {
         for (Patent p : patents) {
-            if (!CollectionUtils.isEmpty(idMap) && !StringUtils.isEmpty(idMap.get(p.getCompanyId()))
+            if (!CollectionUtils.isEmpty(idMap) && CharSequenceUtil.isNotEmpty(idMap.get(p.getCompanyId()))
                     && idMap.get(p.getCompanyId()).equals(userId)) {
                 patentList.add(p);
             }
@@ -190,7 +190,7 @@ public class PatentManageServiceImpl implements IPatentManageService {
                 contentMap.put("专利名称", patent.getPatentName());
                 contentMap.put("费用类型", "实用代理费 " + patent.getAgencyFee() + "+" + "申请费 " + patent.getOfficialFee());
                 contentMap.put("费用（单位：元）", String.valueOf(patent.getAgencyFee() + patent.getOfficialFee()));
-                sumFee = sumFee + patent.getAgencyFee() + patent.getOfficialFee();
+                sumFee = sumFee + Integer.parseInt(patent.getAgencyFee()) + Integer.parseInt(patent.getOfficialFee());
             }
             contentList.add(contentMap);
         }

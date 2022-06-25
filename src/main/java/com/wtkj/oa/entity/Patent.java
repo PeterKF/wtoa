@@ -42,10 +42,10 @@ public class Patent implements Serializable {
     private String payment;
 
     //代理费
-    private Integer agencyFee = 0;
+    private String agencyFee;
 
     //官费
-    private Integer officialFee = 0;
+    private String officialFee;
 
     //收款日期
     private String collectionDate;
