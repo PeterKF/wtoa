@@ -21,6 +21,8 @@ public interface ICompanyManageService {
 
     List<String> getCompanyNames();
 
+    List<Company> getCompanyList(Company company);
+
     Map<String, String> getCompanyMap();
 
     Map<String, String> getIdMap();

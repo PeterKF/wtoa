@@ -132,6 +132,7 @@ public class InitDataServiceImpl implements InitDataService {
         return "添加客户数：" + count + "条！";
     }
 
+    @Override
     @Transactional(rollbackFor = Exception.class)
     public void deletePatents(MultipartFile file) {
         try {
@@ -298,6 +299,7 @@ public class InitDataServiceImpl implements InitDataService {
      * @param fileType
      * @param response
      */
+    @Override
     public void exportExcel(String fileType, HttpServletResponse response) {
         ExcelWriter writer = ExcelUtil.getWriter(true);
         List<String> titles = new ArrayList<>();
@@ -340,8 +342,8 @@ public class InitDataServiceImpl implements InitDataService {
      * @param response
      */
     @Override
-    public void exportCompanyInfo(HttpServletResponse response) {
-        List<Company> companyList = companyMapper.companyInfo();
+    public void exportCompanyInfo(Company company, HttpServletResponse response) {
+        List<Company> companyList = companyManageService.getCompanyList(company);
         if (CollUtil.isEmpty(companyList)) {
             return;
         }

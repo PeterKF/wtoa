@@ -100,6 +100,12 @@ public class CompanyManageServiceImpl implements ICompanyManageService {
      */
     @Override
     public PageInfo<Company> list(Company company) {
+        List<Company> companies = getCompanyList(company);
+        return new PageInfo<>(company.getPageNum(), company.getPageSize(), companies);
+    }
+
+    @Override
+    public List<Company> getCompanyList(Company company) {
         List<Company> companies = companyMapper.listByName(company.getCompanyName());
         if (!CollectionUtils.isEmpty(companies)) {
             if (!StringUtils.isEmpty(company.getUserId())) {
@@ -134,7 +140,7 @@ public class CompanyManageServiceImpl implements ICompanyManageService {
                         && useNames.contains(c.getUserName())).collect(Collectors.toList());
             }
         }
-        return new PageInfo<>(company.getPageNum(), company.getPageSize(), companies);
+        return companies;
     }
 
 
