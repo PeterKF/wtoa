@@ -95,6 +95,11 @@ public class PatentManageServiceImpl implements IPatentManageService {
 
     @Override
     public PageInfo<Patent> list(Patent patent) {
+        List<Patent> patentList = getPatents(patent);
+        return new PageInfo<>(patent.getPageNum(), patent.getPageSize(), patentList);
+    }
+
+    private List<Patent> getPatents(Patent patent) {
         List<Patent> patents;
         if (CharSequenceUtil.isEmpty(patent.getPatentName())) {
             patents = patentMapper.listByName(null);
@@ -147,10 +152,9 @@ public class PatentManageServiceImpl implements IPatentManageService {
                     patentList = patentList.stream().filter(p -> CharSequenceUtil.isNotEmpty(p.getUserName())
                             && useNames.contains(p.getUserName())).collect(Collectors.toList());
                 }
-                return new PageInfo<>(patent.getPageNum(), patent.getPageSize(), patentList);
             }
         }
-        return new PageInfo<>(patent.getPageNum(), patent.getPageSize(), patentList);
+        return patentList;
     }
 
     private void getPatentList(List<Patent> patents, List<Patent> patentList, Map<String, String> idMap, String userId) {
