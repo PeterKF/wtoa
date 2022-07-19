@@ -15,5 +15,7 @@ public interface IPatentManageService {
 
     PageInfo<Patent> list(Patent patent);
 
+    List<Patent> getPatents(Patent patent);
+
     void getPatentExpenseList(List<String> patentIds, String companyType, HttpServletResponse response);
 }

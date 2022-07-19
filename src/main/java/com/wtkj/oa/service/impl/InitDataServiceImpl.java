@@ -14,10 +14,7 @@ import com.wtkj.oa.entity.Contract;
 import com.wtkj.oa.entity.ContractDate;
 import com.wtkj.oa.entity.Patent;
 import com.wtkj.oa.exception.BusinessException;
-import com.wtkj.oa.service.ICompanyManageService;
-import com.wtkj.oa.service.IContractManageService;
-import com.wtkj.oa.service.IHTContractService;
-import com.wtkj.oa.service.InitDataService;
+import com.wtkj.oa.service.*;
 import com.wtkj.oa.utils.RandomStringUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.util.Strings;
@@ -70,6 +67,9 @@ public class InitDataServiceImpl implements InitDataService {
 
     @Resource
     private ICompanyManageService companyManageService;
+
+    @Resource
+    private IPatentManageService patentManageService;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -391,8 +391,8 @@ public class InitDataServiceImpl implements InitDataService {
      * @param response
      */
     @Override
-    public void exportPatentInfo(HttpServletResponse response) {
-        List<Patent> patentList = patentMapper.listByName(null);
+    public void exportPatentInfo(Patent p, HttpServletResponse response) {
+        List<Patent> patentList = patentManageService.getPatents(p);
         if (CollUtil.isEmpty(patentList)) {
             return;
         }

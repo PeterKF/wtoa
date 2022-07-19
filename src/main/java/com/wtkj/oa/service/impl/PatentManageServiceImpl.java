@@ -99,7 +99,7 @@ public class PatentManageServiceImpl implements IPatentManageService {
         return new PageInfo<>(patent.getPageNum(), patent.getPageSize(), patentList);
     }
 
-    private List<Patent> getPatents(Patent patent) {
+    public List<Patent> getPatents(Patent patent) {
         List<Patent> patents;
         if (CharSequenceUtil.isEmpty(patent.getPatentName())) {
             patents = patentMapper.listByName(null);

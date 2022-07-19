@@ -2,6 +2,7 @@ package com.wtkj.oa.controller;
 
 import com.wtkj.oa.common.config.ResponseMsg;
 import com.wtkj.oa.entity.Company;
+import com.wtkj.oa.entity.Patent;
 import com.wtkj.oa.service.InitDataService;
 import com.wtkj.oa.utils.ResponseUtils;
 import io.swagger.annotations.Api;
@@ -66,8 +67,8 @@ public class InitDataController {
 
     @ApiOperation("导出专利信息")
     @GetMapping(value = "/export/patentInfo")
-    public ResponseMsg exportPatentInfo(HttpServletResponse response) {
-        initDataService.exportPatentInfo(response);
+    public ResponseMsg exportPatentInfo(Patent patent, HttpServletResponse response) {
+        initDataService.exportPatentInfo(patent, response);
         return ResponseUtils.success();
     }
 }

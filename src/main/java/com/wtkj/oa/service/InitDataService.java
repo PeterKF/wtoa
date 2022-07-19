@@ -1,6 +1,7 @@
 package com.wtkj.oa.service;
 
 import com.wtkj.oa.entity.Company;
+import com.wtkj.oa.entity.Patent;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
@@ -19,5 +20,5 @@ public interface InitDataService {
 
     void exportCompanyInfo(Company company, HttpServletResponse response);
 
-    void exportPatentInfo(HttpServletResponse response);
+    void exportPatentInfo(Patent patent, HttpServletResponse response);
 }
