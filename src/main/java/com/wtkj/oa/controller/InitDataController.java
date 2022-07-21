@@ -60,14 +60,27 @@ public class InitDataController {
 
     @ApiOperation("导出客户信息")
     @GetMapping(value = "/export/companyInfo")
-    public ResponseMsg exportCompanyInfo(Company company, HttpServletResponse response) {
+    public ResponseMsg exportCompanyInfo(@RequestParam(required = false) String companyName,
+                                         @RequestParam(required = true) String userId,
+                                         @RequestParam(required = false) String userName,
+                                         @RequestParam(required = false) String region,
+                                         HttpServletResponse response) {
+        Company company = new Company().setUserId(userId).setCompanyName(companyName).setRegion(region)
+                .setUserName(userName);
         initDataService.exportCompanyInfo(company, response);
         return ResponseUtils.success();
     }
 
     @ApiOperation("导出专利信息")
     @GetMapping(value = "/export/patentInfo")
-    public ResponseMsg exportPatentInfo(Patent patent, HttpServletResponse response) {
+    public ResponseMsg exportPatentInfo(@RequestParam(required = false) String companyName,
+                                        @RequestParam(required = false) String patentName,
+                                        @RequestParam(required = true) String userId,
+                                        @RequestParam(required = false) String userName,
+                                        @RequestParam(required = false) String year,
+                                        HttpServletResponse response) {
+        Patent patent = new Patent().setUserId(userId).setCompanyName(companyName).setPatentName(patentName)
+                .setUserName(userName).setYear(year);
         initDataService.exportPatentInfo(patent, response);
         return ResponseUtils.success();
     }
