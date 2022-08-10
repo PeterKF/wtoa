@@ -55,4 +55,11 @@ public class PatentManageController {
         patentManageService.getPatentExpenseList(patentIds, companyType, response);
         return ResponseUtils.success();
     }
+
+    @ApiOperation("获取专利清单内容")
+    @GetMapping(value = "/patent/detail")
+    public ResponseMsg getPatntDetail(@RequestParam String companyId, @RequestParam String companyType,
+                                      @RequestParam List<String> patentIds) {
+        return ResponseUtils.success(patentManageService.getPatentDetail(companyId, companyType, patentIds));
+    }
 }

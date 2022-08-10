@@ -3,17 +3,18 @@ package com.wtkj.oa.service.impl;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.io.FileUtil;
+import cn.hutool.core.io.IoUtil;
 import cn.hutool.core.text.CharSequenceUtil;
 import cn.hutool.core.util.StrUtil;
+import cn.hutool.poi.excel.ExcelUtil;
+import cn.hutool.poi.excel.ExcelWriter;
 import cn.hutool.poi.word.Word07Writer;
 import com.github.pagehelper.PageHelper;
 import com.wtkj.oa.common.config.PageInfo;
 import com.wtkj.oa.common.constant.PatentEnum;
 import com.wtkj.oa.dao.PatentMapper;
 import com.wtkj.oa.dao.UserMapper;
-import com.wtkj.oa.entity.InsideInfo;
-import com.wtkj.oa.entity.Patent;
-import com.wtkj.oa.entity.User;
+import com.wtkj.oa.entity.*;
 import com.wtkj.oa.exception.BusinessException;
 import com.wtkj.oa.service.ICompanyManageService;
 import com.wtkj.oa.service.IPatentManageService;
@@ -169,88 +170,110 @@ public class PatentManageServiceImpl implements IPatentManageService {
     /**
      * 获取专利费用清单
      */
-    @Override
     public void getPatentExpenseList(List<String> patentIds, String companyType, HttpServletResponse response) {
-        Word07Writer writer = new Word07Writer();
-        writer.addText(ParagraphAlignment.CENTER, new Font("微软雅黑", Font.PLAIN, 22), "专利费用结算单");
-        writer.addText(new Font("宋体", Font.PLAIN, 30), "公司名称");
-        writer.addText(new Font("宋体", Font.PLAIN, 30), "    您好！贵公司近期需要缴纳的专利费用清单如下：");
-        List<Map<String, String>> contentList = new ArrayList<>();
         if (CollUtil.isEmpty(patentIds)) {
             throw new BusinessException("请选择要导出的专利清单");
         }
 
-        Integer sumFee = 0;
+        ExcelWriter writer = ExcelUtil.getWriter();
+        writer.merge(patentIds.size() - 1, "专 利 费 用 结 算 单");
+        writer.merge(patentIds.size() - 1, "公司名称");
+        writer.merge(patentIds.size() - 1, "  您好！贵公司近期需要缴纳的专利费用清单如下：");
+        List<Map<String, Object>> patentList = new ArrayList<Map<String, Object>>();
         for (int i = 0; i < patentIds.size(); i++) {
-            LinkedHashMap<String, String> contentMap = new LinkedHashMap<>();
-            if (i == patentIds.size() - 1) {
-                contentMap.put("费用类型", "费用合计");
-                contentMap.put("费用（单位：元）", String.valueOf(sumFee));
-            } else {
-                Patent patent = patentMapper.selectByPatentId(patentIds.get(i));
-                contentMap.put("序号", String.valueOf(i + 1));
-                contentMap.put("类型", PatentEnum.getNameByType(patent.getPatentType()));
-                contentMap.put("专利申请号", patent.getPatentId());
-                contentMap.put("专利名称", patent.getPatentName());
-                contentMap.put("费用类型", "实用代理费 " + patent.getAgencyFee() + "+" + "申请费 " + patent.getOfficialFee());
-                contentMap.put("费用（单位：元）", String.valueOf(patent.getAgencyFee() + patent.getOfficialFee()));
-                sumFee = sumFee + Integer.parseInt(patent.getAgencyFee()) + Integer.parseInt(patent.getOfficialFee());
-            }
-            contentList.add(contentMap);
+            Patent patent = patentMapper.selectByPatentId(patentIds.get(i));
+            Map<String, Object> patentMap = new HashMap<String, Object>();
+            patentMap.put("序号", i + 1);
+            patentMap.put("类型", PatentEnum.getNameByType(patent.getPatentType()));
+            patentMap.put("专利申请号", patent.getPatentId());
+            patentMap.put("专利名称", patent.getPatentName());
+            patentMap.put("实用代理费(元)", patent.getAgencyFee());
+            patentMap.put("申请官费(元)", patent.getOfficialFee());
+            patentMap.put("费用(元)", Integer.parseInt(patent.getAgencyFee()) + Integer.parseInt(patent.getOfficialFee()));
+            patentList.add(patentMap);
         }
-        writer.addTable(contentList);
-        writer.addText(new Font("宋体", Font.PLAIN, 12), "说明：");
-        writer.addText(new Font("宋体", Font.PLAIN, 12), "1、专利申请结算费用包括：专利申请代理费、申请费、实审费、办理登记费、年费等国家知识产权局收取的相关行政事业收费，由我方代收代缴；");
-        writer.addText(new Font("宋体", Font.PLAIN, 12), "2、按照约定，当收到“专利受理通知书”，企业需要支付费用合计￥12600元，请务必尽快安排费用付款。");
-        writer.addText(new Font("宋体", Font.PLAIN, 12), "3、因专利权人未及时安排费用导致专利视为撤回或终止，我公司概不负责，请谅解。");
-        writer.addText(new Font("宋体", Font.PLAIN, 12), "   祝商祺，谢谢！");
+        writer.merge(patentList.size() + 3, patentList.size() + 3, 0, 4,
+                "费  用  合  计", true);
+        writer.write(patentList, true);
+        writer.merge(patentList.size() + 4, patentList.size() + 4, 0, 6,
+                "说明：", true);
+        writer.merge(patentList.size() + 5, patentList.size() + 5, 0, 7,
+                "    1、专利申请结算费用包括：专利申请代理费、申请费、实审费、办理登记费、年费等国家知识产权局收取的相关行政" +
+                        "事业收费，由我方代收代缴；", true);
+        writer.merge(patentList.size() + 6, patentList.size() + 6, 0, 6,
+                "    2、按照约定，当收到“专利受理通知书”，企业需要支付费用合计￥12600元，请务必尽快安排费用付款。" +
+                        "", true);
+        writer.merge(patentList.size() + 7, patentList.size() + 7, 0, 6,
+                "    3、因专利权人未及时安排费用导致专利视为撤回或终止，我公司概不负责，请谅解。" +
+                        "", true);
+        writer.merge(patentList.size() + 8, patentList.size() + 8, 0, 6,
+                "    祝商祺，谢谢！" +
+                        "", true);
         //填写乙方信息
         List<InsideInfo> infos = YamlUtils.read(List.class, "/company");
         InsideInfo insideInfo = infos.stream().filter(i -> i.getCompanyType().equals(Integer.parseInt(companyType))).findFirst().get();
-        writer.addText(new Font("宋体", Font.PLAIN, 12), "   单位名称：" + insideInfo.getCompanyName());
-        writer.addText(new Font("宋体", Font.PLAIN, 12), "   开户行：" + insideInfo.getBank());
-        writer.addText(new Font("宋体", Font.PLAIN, 12), "   账号：" + insideInfo.getBankNo());
-        writer.addText(new Font("宋体", Font.PLAIN, 12), "                              " + insideInfo.getCompanyName());
-        writer.addText(new Font("宋体", Font.PLAIN, 12), "                              " + DateUtil.format(new Date(), "yyyy-MM-dd"));
-
-        response.setHeader("Content-Disposition", "attachment;filename=patentInfo.docx");
-        try (ServletOutputStream out = response.getOutputStream();) {
+        writer.merge(patentList.size() + 9, patentList.size() + 9, 0, 1,
+                "    单位名称：\t\n", true);
+        writer.merge(patentList.size() + 9, patentList.size() + 9, 2, 7,
+                insideInfo.getCompanyName(), true);
+        writer.merge(patentList.size() + 10, patentList.size() + 10, 0, 1,
+                "    开 户 行：\t\n", true);
+        writer.merge(patentList.size() + 10, patentList.size() + 10, 2, 7,
+                insideInfo.getBank(), true);
+        writer.merge(patentList.size() + 11, patentList.size() + 11, 0, 1,
+                "    账  　号：\t\n", true);
+        writer.merge(patentList.size() + 11, patentList.size() + 11, 2, 7,
+                insideInfo.getAccountNo(), true);
+        writer.merge(patentList.size() + 12, patentList.size() + 12, 0, 1,
+                "    行    号：\t\n", true);
+        writer.merge(patentList.size() + 12, patentList.size() + 12, 2, 7,
+                insideInfo.getBankNo(), true);
+        //response为HttpServletResponse对象
+        response.setContentType("application/vnd.ms-excel;charset=utf-8");
+        response.setHeader("Content-Disposition", "attachment;filename=test.xls");
+        ServletOutputStream out = null;
+        try {
+            out = response.getOutputStream();
             writer.flush(out, true);
+            // 关闭writer，释放内存
+            writer.close();
+            IoUtil.close(out);
         } catch (IOException e) {
-            log.info("error message", e);
+            e.printStackTrace();
         }
-        writer.close();
     }
 
-    public static void main(String[] args) {
-        Word07Writer writer = new Word07Writer();
-        writer.addText(ParagraphAlignment.CENTER, new Font("微软雅黑", Font.PLAIN, 22), "专利费用结算单");
-        writer.addText(new Font("宋体", Font.PLAIN, 12), "公司名称");
-        writer.addText(new Font("宋体", Font.PLAIN, 12), "    您好！贵公司近期需要缴纳的专利费用清单如下：");
-        List<LinkedHashMap<String, String>> contentList = new ArrayList<>();
-        LinkedHashMap<String, String> contentMap = new LinkedHashMap<>();
-        contentMap.put("序号", "1");
-        contentMap.put("类型", "实用");
-        contentMap.put("专利申请号", "12345678");
-        contentMap.put("专利名称", "dasdfa");
-        contentMap.put("费用类型", "qwer23r");
-        contentMap.put("费用（单位：元）", "1000");
-        LinkedHashMap<String, String> contentMap2 = new LinkedHashMap<>();
-        contentMap2.put("序号", "2");
-        contentMap2.put("类型", "实用");
-        contentMap2.put("专利申请号", "23432234");
-        contentMap2.put("专利名称", "1234qwe");
-        contentMap2.put("费用类型", "1234qwer");
-        contentMap2.put("费用（单位：元）", "2000");
-        contentList.add(contentMap);
-        contentList.add(contentMap2);
-        writer.addTable(contentList);
-        writer.addText(new Font("宋体", Font.PLAIN, 12), "说明：");
-        writer.addText(new Font("宋体", Font.PLAIN, 12), "1、专利申请结算费用包括：专利申请代理费、申请费、实审费、办理登记费、年费等国家知识产权局收取的相关行政事业收费，由我方代收代缴；");
-        writer.addText(new Font("宋体", Font.PLAIN, 12), "2、按照约定，当收到“专利受理通知书”，企业需要支付费用合计￥12600元，请务必尽快安排费用付款。");
-        writer.addText(new Font("宋体", Font.PLAIN, 12), "3、因专利权人未及时安排费用导致专利视为撤回或终止，我公司概不负责，请谅解。");
-        writer.addText(new Font("宋体", Font.PLAIN, 12), "  祝商祺，谢谢！");
-        writer.flush(FileUtil.file("D:\\test\\wordWrite.docx"));
-        writer.close();
+    /**
+     * 生成专利结算清单
+     *
+     * @param companyId   甲方公司id
+     * @param companyType 乙方公司id
+     * @param patentIds   合同id
+     * @return
+     */
+    public PatentDetail getPatentDetail(String companyId, String companyType, List<String> patentIds) {
+        if (CollUtil.isEmpty(patentIds)) {
+            throw new BusinessException("请选择要导出的专利清单");
+        }
+        PatentDetail detail = new PatentDetail();
+        //甲方信息
+        Company company = companyManageService.selectOne(companyId);
+        if (company == null) {
+            throw new BusinessException("请选择专利所在的公司");
+        }
+        detail.setCompanyName(company.getCompanyName());
+        List<Patent> patentList = new ArrayList<Patent>(patentIds.size());
+        for (int i = 0; i < patentIds.size(); i++) {
+            Patent patent = patentMapper.selectByPatentId(patentIds.get(i));
+            patentList.add(patent);
+        }
+        detail.setPatentList(patentList);
+        //乙方信息
+        List<InsideInfo> infos = YamlUtils.read(List.class, "/company");
+        InsideInfo insideInfo = infos.stream().filter(i -> i.getCompanyType()
+                .equals(Integer.parseInt(companyType))).findFirst().get();
+        detail.setInsideInfo(insideInfo);
+        return detail;
     }
+
 }
