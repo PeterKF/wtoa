@@ -16,6 +16,8 @@ public class PatentDetail {
 
     private List<Patent> patentList;
 
+    private Integer sumFee;
+
     private InsideInfo insideInfo;
 
     private String currentDate;

@@ -57,8 +57,8 @@ public class PatentManageController {
     }
 
     @ApiOperation("获取专利清单内容")
-    @GetMapping(value = "/patent/detail")
-    public ResponseMsg getPatntDetail(@RequestParam String companyId, @RequestParam String companyType,
+    @PostMapping(value = "/detail")
+    public ResponseMsg getPatentDetail(@RequestParam String companyId, @RequestParam String companyType,
                                       @RequestParam List<String> patentIds) {
         return ResponseUtils.success(patentManageService.getPatentDetail(companyId, companyType, patentIds));
     }

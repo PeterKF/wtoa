@@ -31,6 +31,8 @@ public class Patent implements Serializable {
 
     private Integer patentType;
 
+    private String type;
+
     private String userId;
 
     private String userName;

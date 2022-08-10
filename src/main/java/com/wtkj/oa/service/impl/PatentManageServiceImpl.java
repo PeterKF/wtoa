@@ -251,6 +251,7 @@ public class PatentManageServiceImpl implements IPatentManageService {
      * @param patentIds   合同id
      * @return
      */
+    @Override
     public PatentDetail getPatentDetail(String companyId, String companyType, List<String> patentIds) {
         if (CollUtil.isEmpty(patentIds)) {
             throw new BusinessException("请选择要导出的专利清单");
