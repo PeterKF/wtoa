@@ -49,6 +49,8 @@ public class Patent implements Serializable {
     //官费
     private String officialFee = "0";
 
+    private String expense;
+
     //收款日期
     private String collectionDate;
 
