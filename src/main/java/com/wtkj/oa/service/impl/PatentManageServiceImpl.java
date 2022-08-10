@@ -273,6 +273,8 @@ public class PatentManageServiceImpl implements IPatentManageService {
         InsideInfo insideInfo = infos.stream().filter(i -> i.getCompanyType()
                 .equals(Integer.parseInt(companyType))).findFirst().get();
         detail.setInsideInfo(insideInfo);
+        String date = new SimpleDateFormat("yyyy/MM/dd").format(new Date());
+        detail.setCurrentDate(date);
         return detail;
     }
 
