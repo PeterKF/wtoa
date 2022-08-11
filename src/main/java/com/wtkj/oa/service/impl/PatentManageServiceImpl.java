@@ -267,6 +267,8 @@ public class PatentManageServiceImpl implements IPatentManageService {
         Integer sumFee = 0;
         for (int i = 0; i < patentIds.size(); i++) {
             Patent patent = patentMapper.selectByPatentId(patentIds.get(i));
+            String type = PatentEnum.getNameByType(patent.getPatentType());
+            patent.setType(type);
             patent.setExpense(Integer.parseInt(patent.getAgencyFee()) + Integer.parseInt(patent.getOfficialFee()));
             sumFee += patent.getExpense();
             patentList.add(patent);
@@ -282,5 +284,6 @@ public class PatentManageServiceImpl implements IPatentManageService {
         detail.setCurrentDate(date);
         return detail;
     }
+
 
 }
