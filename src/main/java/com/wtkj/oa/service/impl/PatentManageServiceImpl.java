@@ -264,10 +264,14 @@ public class PatentManageServiceImpl implements IPatentManageService {
         }
         detail.setCompanyName(company.getCompanyName());
         List<Patent> patentList = new ArrayList<Patent>(patentIds.size());
+        Integer sumFee = 0;
         for (int i = 0; i < patentIds.size(); i++) {
             Patent patent = patentMapper.selectByPatentId(patentIds.get(i));
+            patent.setExpense(Integer.parseInt(patent.getAgencyFee()) + Integer.parseInt(patent.getOfficialFee()));
+            sumFee += patent.getExpense();
             patentList.add(patent);
         }
+        detail.setSumFee(sumFee);
         detail.setPatentList(patentList);
         //乙方信息
         List<InsideInfo> infos = YamlUtils.read(List.class, "/company");
