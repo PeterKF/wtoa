@@ -3,6 +3,7 @@ package com.wtkj.oa.controller;
 
 import com.wtkj.oa.common.config.ResponseMsg;
 import com.wtkj.oa.entity.Patent;
+import com.wtkj.oa.entity.RequestPramBody;
 import com.wtkj.oa.service.IPatentManageService;
 import com.wtkj.oa.utils.ResponseUtils;
 import io.swagger.annotations.Api;
@@ -58,8 +59,8 @@ public class PatentManageController {
 
     @ApiOperation("获取专利清单内容")
     @PostMapping(value = "/detail")
-    public ResponseMsg getPatentDetail(@RequestParam String companyId, @RequestParam String companyType,
-                                      @RequestParam List<String> patentIds) {
-        return ResponseUtils.success(patentManageService.getPatentDetail(companyId, companyType, patentIds));
+    public ResponseMsg getPatentDetail(@RequestBody RequestPramBody request) {
+        return ResponseUtils.success(patentManageService.getPatentDetail(request.getCompanyId(), request.getCompanyType(),
+                request.getPatentIds()));
     }
 }
