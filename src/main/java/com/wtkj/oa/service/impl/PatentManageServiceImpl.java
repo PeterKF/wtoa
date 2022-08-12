@@ -267,6 +267,9 @@ public class PatentManageServiceImpl implements IPatentManageService {
         Integer sumFee = 0;
         for (int i = 0; i < patentIds.size(); i++) {
             Patent patent = patentMapper.selectByPatentId(patentIds.get(i));
+            if (!companyId.equals(patent.getCompanyId())) {
+                throw new IllegalArgumentException("选择的合同必须是在同一家公司下");
+            }
             String type = PatentEnum.getNameByType(patent.getPatentType());
             patent.setType(type);
             patent.setExpense(Integer.parseInt(patent.getAgencyFee()) + Integer.parseInt(patent.getOfficialFee()));
