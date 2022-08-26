@@ -424,8 +424,6 @@ public class InitDataServiceImpl implements InitDataService {
         //所有列宽度自适应
         writer.autoSizeColumnAll();
 
-        //response为HttpServletResponse对象
-        // response.setContentType("application/vnd.ms-excel;charset=utf-8");
         response.setHeader("Content-Disposition", "attachment;filename=patentInfo.xlsx");
         try (ServletOutputStream out = response.getOutputStream();) {
             writer.flush(out, true);
