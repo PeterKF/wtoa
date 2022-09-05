@@ -63,7 +63,8 @@ public class ContractDetailsServiceImpl implements IContractDetailsService {
         contractManageService.completeList(contracts);
         if (!CollectionUtils.isEmpty(contracts)) {
             for (Contract c : contracts) {
-                if (!ObjectUtils.isEmpty(c.getBusinessType()) && !isEmpty(c.getContractType()) && !ObjectUtils.isEmpty(c.getServiceDetails())) {
+                if (!ObjectUtils.isEmpty(c.getBusinessType()) && !isEmpty(c.getContractType()) &&
+                        !ObjectUtils.isEmpty(c.getServiceDetails())) {
                     //高新技术
                     if (c.getBusinessType().equals(1)) {
                         if (!isEmpty(c.getContractType())) {
@@ -82,66 +83,7 @@ public class ContractDetailsServiceImpl implements IContractDetailsService {
                                 } else {
                                     detail.setEarlyFee(BigDecimal.valueOf(0));
 
-                                    switch (t) {
-                                        case "2":
-                                            detail.setUnitFee(Integer.valueOf((c.getServiceDetails().getCountryTecFee())));
-                                            break;
-                                        case "3":
-                                            detail.setUnitFee(Integer.valueOf((c.getServiceDetails().getProvinceTecFee())));
-                                            break;
-                                        case "4":
-                                            detail.setUnitFee(Integer.valueOf((c.getServiceDetails().getCityTecFee())));
-                                            break;
-                                        case "5":
-                                            //企业研发费加计扣除
-                                            String contractMatter = c.getContractMatter();
-                                            if (StrUtil.isNotEmpty(contractMatter)) {
-                                                detail.setNumber(Float.parseFloat(contractMatter));
-                                            }
-                                            detail.setUnitFee(Integer.valueOf(c.getServiceDetails().getEnterpriseTecFee()));
-                                            break;
-                                        case "6":
-                                            if (!isEmpty(c.getServiceDetails().getPatentFee())) {
-                                                ContractDetail c1 = new ContractDetail("发明专利");
-                                                c1.setContractId(c.getContractId());
-                                                if (cd != null) {
-                                                    c1.setStatus(cd.getStatus());
-                                                }
-                                                c1.setUnitFee(Integer.valueOf(c.getServiceDetails().getPatentFee()));
-                                                contractDetails.add(c1);
-                                            }
-                                            if (!isEmpty(c.getServiceDetails().getPracticalFee())) {
-                                                ContractDetail c2 = new ContractDetail("实用新型");
-                                                c2.setContractId(c.getContractId());
-                                                if (cd != null) {
-                                                    c2.setStatus(cd.getStatus());
-                                                }
-                                                c2.setUnitFee(Integer.valueOf(c.getServiceDetails().getPracticalFee()));
-                                                contractDetails.add(c2);
-                                            }
-                                            if (!isEmpty(c.getServiceDetails().getAppearanceFee())) {
-                                                ContractDetail c3 = new ContractDetail("外观专利");
-                                                c3.setContractId(c.getContractId());
-                                                if (cd != null) {
-                                                    c3.setStatus(cd.getStatus());
-                                                }
-                                                c3.setUnitFee(Integer.valueOf(c.getServiceDetails().getAppearanceFee()));
-                                                contractDetails.add(c3);
-                                            }
-                                            if (!isEmpty(c.getServiceDetails().getSoftFee())) {
-                                                ContractDetail c4 = new ContractDetail("软件著作权");
-                                                c4.setContractId(c.getContractId());
-                                                if (cd != null) {
-                                                    c4.setStatus(cd.getStatus());
-                                                }
-                                                c4.setUnitFee(Integer.valueOf(c.getServiceDetails().getSoftFee()));
-                                                contractDetails.add(c4);
-                                            }
-                                            break;
-                                        default:
-                                            detail.setUnitFee(Integer.valueOf((c.getServiceDetails().getGuidanceFee())));
-
-                                    }
+                                    getContractDetails(contractDetails, c, t, detail, cd);
                                 }
                                 detail.setContractId(c.getContractId());
                                 detail.setType(t);
@@ -173,6 +115,78 @@ public class ContractDetailsServiceImpl implements IContractDetailsService {
     }
 
     /**
+     * 获取除了高新合同以外的合同详情
+     *
+     * @param contractDetails
+     * @param c
+     * @param t
+     * @param detail
+     * @param cd
+     */
+    private void getContractDetails(List<ContractDetail> contractDetails, Contract c, String t, ContractDetail detail, ContractDate cd) {
+        switch (t) {
+            case "2":
+                detail.setUnitFee(Integer.valueOf((c.getServiceDetails().getCountryTecFee())));
+                break;
+            case "3":
+                detail.setUnitFee(Integer.valueOf((c.getServiceDetails().getProvinceTecFee())));
+                break;
+            case "4":
+                detail.setUnitFee(Integer.valueOf((c.getServiceDetails().getCityTecFee())));
+                break;
+            case "5":
+                //企业研发费加计扣除
+                String contractMatter = c.getContractMatter();
+                if (StrUtil.isNotEmpty(contractMatter)) {
+                    detail.setNumber(Float.parseFloat(contractMatter));
+                }
+                detail.setUnitFee(Integer.valueOf(c.getServiceDetails().getEnterpriseTecFee()));
+                break;
+            case "6":
+                if (!isEmpty(c.getServiceDetails().getPatentFee())) {
+                    ContractDetail c1 = new ContractDetail("发明专利");
+                    c1.setContractId(c.getContractId());
+                    if (cd != null) {
+                        c1.setStatus(cd.getStatus());
+                    }
+                    c1.setUnitFee(Integer.valueOf(c.getServiceDetails().getPatentFee()));
+                    contractDetails.add(c1);
+                }
+                if (!isEmpty(c.getServiceDetails().getPracticalFee())) {
+                    ContractDetail c2 = new ContractDetail("实用新型");
+                    c2.setContractId(c.getContractId());
+                    if (cd != null) {
+                        c2.setStatus(cd.getStatus());
+                    }
+                    c2.setUnitFee(Integer.valueOf(c.getServiceDetails().getPracticalFee()));
+                    contractDetails.add(c2);
+                }
+                if (!isEmpty(c.getServiceDetails().getAppearanceFee())) {
+                    ContractDetail c3 = new ContractDetail("外观专利");
+                    c3.setContractId(c.getContractId());
+                    if (cd != null) {
+                        c3.setStatus(cd.getStatus());
+                    }
+                    c3.setUnitFee(Integer.valueOf(c.getServiceDetails().getAppearanceFee()));
+                    contractDetails.add(c3);
+                }
+                if (!isEmpty(c.getServiceDetails().getSoftFee())) {
+                    ContractDetail c4 = new ContractDetail("软件著作权");
+                    c4.setContractId(c.getContractId());
+                    if (cd != null) {
+                        c4.setStatus(cd.getStatus());
+                    }
+                    c4.setUnitFee(Integer.valueOf(c.getServiceDetails().getSoftFee()));
+                    contractDetails.add(c4);
+                }
+                break;
+            default:
+                detail.setUnitFee(Integer.valueOf((c.getServiceDetails().getGuidanceFee())));
+
+        }
+    }
+
+    /**
      * 其它业务
      *
      * @param contractDetails 合同详情
@@ -195,13 +209,11 @@ public class ContractDetailsServiceImpl implements IContractDetailsService {
                         Float.parseFloat(c.getServiceDetails().getPercent()) / 100 : 1);
                 detail.setUnitFee(Integer.valueOf(Objects.toString(c.getContractMatter(), "0")));
             }
-        } else if (c.getBusinessType().equals(3)) {
+        } else if (c.getBusinessType().equals(3) && "3".equals(c.getContractType())) {
             //企业研发费加计扣除
-            if ("3".equals(c.getContractType())) {
-                detail.setNumber(StrUtil.isNotEmpty(c.getServiceDetails().getPercent()) ?
-                        Float.parseFloat(c.getServiceDetails().getPercent()) / 100 : 1);
-                detail.setUnitFee(Integer.valueOf(Objects.toString(c.getContractMatter(), "0")));
-            }
+            detail.setNumber(StrUtil.isNotEmpty(c.getServiceDetails().getPercent()) ?
+                    Float.parseFloat(c.getServiceDetails().getPercent()) / 100 : 1);
+            detail.setUnitFee(Integer.valueOf(Objects.toString(c.getContractMatter(), "0")));
         }
 
         //前端付款
