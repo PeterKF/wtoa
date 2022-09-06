@@ -21,7 +21,6 @@ public class LoggerInterceptor implements HandlerInterceptor {
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
         log.info("----------------------LoggerInterceptor---------------------");
         if (log.isInfoEnabled()) {
-
             // 默认记录后台接口请求日志记录
             String url = request.getRequestURL().toString();
             String method = request.getMethod();
@@ -30,10 +29,9 @@ public class LoggerInterceptor implements HandlerInterceptor {
 
             log.info(String.format("请求参数, url: %s, method: %s, uri: %s, params: %s ", url, method, uri, queryString));
 
-            RepeatedlyReadRequestWrapper requestWrapper;
             if (request instanceof RepeatedlyReadRequestWrapper) {
                 // 签名处理过程 start....
-                requestWrapper = (RepeatedlyReadRequestWrapper) request;
+                RepeatedlyReadRequestWrapper requestWrapper = (RepeatedlyReadRequestWrapper) request;
                 if (requestWrapper.isBodyNotNull()) {
                     log.info("请求Body: {} ", getBodyString(requestWrapper));
                 }
