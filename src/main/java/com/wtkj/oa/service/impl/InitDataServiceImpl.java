@@ -306,7 +306,8 @@ public class InitDataServiceImpl implements InitDataService {
         String fileName = "";
         if ("1".equals(fileType)) {
             fileName = "客户名单.xlsx";
-            titles = CollUtil.newArrayList("客户ID(默认不填)", "年份", "客户名称", "统一社会信用代码", "客户地址", "项目经理", "联系人", "联系电话", "企业负责人", "负责人电话", "所属地区");
+            titles = CollUtil.newArrayList("客户ID(默认不填)", "年份", "客户名称", "统一社会信用代码", "客户地址",
+                    "项目经理", "联系人", "联系电话", "企业负责人", "负责人电话", "所属地区");
         } else if ("2".equals(fileType)) {
             fileName = "专利清单.xlsx";
             titles = CollUtil.newArrayList("申请号", "申请日", "公司名称", "申请名称", "类型");
@@ -375,7 +376,6 @@ public class InitDataServiceImpl implements InitDataService {
         writer.autoSizeColumnAll();
 
         //response为HttpServletResponse对象
-        // response.setContentType("application/vnd.ms-excel;charset=utf-8");
         response.setHeader("Content-Disposition", "attachment;filename=companyInfo.xlsx");
         try (ServletOutputStream out = response.getOutputStream();) {
             writer.flush(out, true);
