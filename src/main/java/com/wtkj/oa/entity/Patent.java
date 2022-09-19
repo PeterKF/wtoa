@@ -21,7 +21,7 @@ public class Patent implements Serializable {
     private String companyId;
 
     /**
-     * 年份：根据专利申请日开判断
+     * 年份：根据专利申请日来判断
      */
     private String year;
 
