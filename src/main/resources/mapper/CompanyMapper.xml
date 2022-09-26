@@ -92,7 +92,8 @@
         FROM
         company_info c
         LEFT JOIN user_info u ON c.user_id = u.user_id
-        order by c.create_time desc
+        order by c.create_time desc,
+                 c.last_update_time desc
     </select>
 
     <!--      (
@@ -133,14 +134,15 @@
     insert into company_info (company_id, credit_code, company_name, address,
       contact, telephone, city,
       area, county, user_id,
-      assistant_id, director, phone, region, last_update_time ,year
+      assistant_id, director, phone, region,create_time,last_update_time ,year
       )
     values (#{companyId,jdbcType=VARCHAR}, #{creditCode,jdbcType=VARCHAR},
       #{companyName,jdbcType=VARCHAR}, #{address,jdbcType=VARCHAR},
       #{contact,jdbcType=VARCHAR}, #{telephone,jdbcType=VARCHAR}, #{city,jdbcType=VARCHAR},
       #{area,jdbcType=VARCHAR}, #{county,jdbcType=VARCHAR}, #{userId,jdbcType=VARCHAR},
       #{assistantId,jdbcType=VARCHAR}, #{director,jdbcType=VARCHAR}, #{phone,jdbcType=VARCHAR},
-      #{region,jdbcType=VARCHAR}, #{lastUpdateTime,jdbcType=TIMESTAMP}, #{year,jdbcType=VARCHAR})
+      #{region,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP},#{lastUpdateTime,jdbcType=TIMESTAMP},
+      #{year,jdbcType=VARCHAR})
   </insert>
 
     <update id="updateByPrimaryKeySelective" parameterType="com.wtkj.oa.entity.Company">
