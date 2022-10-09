@@ -92,6 +92,12 @@
         FROM
         company_info c
         LEFT JOIN user_info u ON c.user_id = u.user_id
+        WHERE EXISTS (SELECT
+                              1
+                      FROM
+                              contract_info t
+                      WHERE
+                              t.company_id = c.company_id)
         order by c.create_time desc,
                  c.last_update_time desc
     </select>
@@ -207,7 +213,7 @@
         <if test="companyName != null">
             and c.company_name like "%"#{companyName,jdbcType=VARCHAR}"%"
         </if>
-        order by c.last_update_time desc
+        ORDER BY c.last_update_time DESC
     </select>
 
     <select id="listByIds" resultMap="BaseResultMap" parameterType="java.util.List">
