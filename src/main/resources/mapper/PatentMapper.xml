@@ -166,6 +166,9 @@
     <update id="updateByPrimaryKeySelective" parameterType="com.wtkj.oa.entity.Patent">
         update patent_info
         <set>
+            <if test="patentId != null">
+                patent_id = #{patentId,jdbcType=VARCHAR},
+            </if>
             <if test="companyId != null">
                 company_id = #{companyId,jdbcType=VARCHAR},
             </if>
@@ -203,7 +206,7 @@
                 last_update_time = #{lastUpdateTime,jdbcType=TIMESTAMP},
             </if>
         </set>
-        where patent_id = #{patentId,jdbcType=VARCHAR}
+        where id = #{id,jdbcType=VARCHAR}
     </update>
 
     <select id="listByName" resultMap="BaseResultMap" parameterType="java.lang.String">
