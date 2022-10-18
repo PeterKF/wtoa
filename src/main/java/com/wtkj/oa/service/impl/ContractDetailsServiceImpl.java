@@ -78,7 +78,7 @@ public class ContractDetailsServiceImpl implements IContractDetailsService {
 
                                 detail.setNumber(1);
                                 if ("1".equals(t)) {
-                                    detail.setUnitFee(Integer.valueOf(c.getServiceDetails().getSumFee()));
+                                    detail.setUnitFee(Double.valueOf(c.getServiceDetails().getSumFee()));
                                     detail.setEarlyFee(new BigDecimal(c.getServiceDetails().getBeforeFee()));
                                 } else {
                                     detail.setEarlyFee(BigDecimal.valueOf(0));
@@ -126,13 +126,13 @@ public class ContractDetailsServiceImpl implements IContractDetailsService {
     private void getContractDetails(List<ContractDetail> contractDetails, Contract c, String t, ContractDetail detail, ContractDate cd) {
         switch (t) {
             case "2":
-                detail.setUnitFee(Integer.valueOf((c.getServiceDetails().getCountryTecFee())));
+                detail.setUnitFee(Double.valueOf((c.getServiceDetails().getCountryTecFee())));
                 break;
             case "3":
-                detail.setUnitFee(Integer.valueOf((c.getServiceDetails().getProvinceTecFee())));
+                detail.setUnitFee(Double.valueOf((c.getServiceDetails().getProvinceTecFee())));
                 break;
             case "4":
-                detail.setUnitFee(Integer.valueOf((c.getServiceDetails().getCityTecFee())));
+                detail.setUnitFee(Double.valueOf((c.getServiceDetails().getCityTecFee())));
                 break;
             case "5":
                 //企业研发费加计扣除
@@ -140,7 +140,7 @@ public class ContractDetailsServiceImpl implements IContractDetailsService {
                 if (StrUtil.isNotEmpty(contractMatter)) {
                     detail.setNumber(Float.parseFloat(contractMatter));
                 }
-                detail.setUnitFee(Integer.valueOf(c.getServiceDetails().getEnterpriseTecFee()));
+                detail.setUnitFee(Double.valueOf(c.getServiceDetails().getEnterpriseTecFee()));
                 break;
             case "6":
                 if (!isEmpty(c.getServiceDetails().getPatentFee())) {
@@ -149,7 +149,7 @@ public class ContractDetailsServiceImpl implements IContractDetailsService {
                     if (cd != null) {
                         c1.setStatus(cd.getStatus());
                     }
-                    c1.setUnitFee(Integer.valueOf(c.getServiceDetails().getPatentFee()));
+                    c1.setUnitFee(Double.valueOf(c.getServiceDetails().getPatentFee()));
                     contractDetails.add(c1);
                 }
                 if (!isEmpty(c.getServiceDetails().getPracticalFee())) {
@@ -158,7 +158,7 @@ public class ContractDetailsServiceImpl implements IContractDetailsService {
                     if (cd != null) {
                         c2.setStatus(cd.getStatus());
                     }
-                    c2.setUnitFee(Integer.valueOf(c.getServiceDetails().getPracticalFee()));
+                    c2.setUnitFee(Double.valueOf(c.getServiceDetails().getPracticalFee()));
                     contractDetails.add(c2);
                 }
                 if (!isEmpty(c.getServiceDetails().getAppearanceFee())) {
@@ -167,7 +167,7 @@ public class ContractDetailsServiceImpl implements IContractDetailsService {
                     if (cd != null) {
                         c3.setStatus(cd.getStatus());
                     }
-                    c3.setUnitFee(Integer.valueOf(c.getServiceDetails().getAppearanceFee()));
+                    c3.setUnitFee(Double.valueOf(c.getServiceDetails().getAppearanceFee()));
                     contractDetails.add(c3);
                 }
                 if (!isEmpty(c.getServiceDetails().getSoftFee())) {
@@ -176,12 +176,12 @@ public class ContractDetailsServiceImpl implements IContractDetailsService {
                     if (cd != null) {
                         c4.setStatus(cd.getStatus());
                     }
-                    c4.setUnitFee(Integer.valueOf(c.getServiceDetails().getSoftFee()));
+                    c4.setUnitFee(Double.valueOf(c.getServiceDetails().getSoftFee()));
                     contractDetails.add(c4);
                 }
                 break;
             default:
-                detail.setUnitFee(Integer.valueOf((c.getServiceDetails().getGuidanceFee())));
+                detail.setUnitFee(Double.valueOf((c.getServiceDetails().getGuidanceFee())));
 
         }
     }
@@ -199,7 +199,7 @@ public class ContractDetailsServiceImpl implements IContractDetailsService {
             BeanUtils.copyProperties(cd, detail);
         }
 
-        detail.setUnitFee(Integer.parseInt((c.getServiceDetails().getExpense())));
+        detail.setUnitFee(Double.valueOf((c.getServiceDetails().getExpense())));
 
         //默认为1
         if (c.getBusinessType().equals(2)) {
@@ -207,13 +207,13 @@ public class ContractDetailsServiceImpl implements IContractDetailsService {
             if (c.getContractType().equals("3")) {
                 detail.setNumber(StrUtil.isNotEmpty(c.getServiceDetails().getPercent()) ?
                         Float.parseFloat(c.getServiceDetails().getPercent()) / 100 : 1);
-                detail.setUnitFee(Integer.valueOf(Objects.toString(c.getContractMatter(), "0")));
+                detail.setUnitFee(Double.valueOf(Objects.toString(c.getContractMatter(), "0")));
             }
         } else if (c.getBusinessType().equals(3) && "3".equals(c.getContractType())) {
             //企业研发费加计扣除
             detail.setNumber(StrUtil.isNotEmpty(c.getServiceDetails().getPercent()) ?
                     Float.parseFloat(c.getServiceDetails().getPercent()) / 100 : 1);
-            detail.setUnitFee(Integer.valueOf(Objects.toString(c.getContractMatter(), "0")));
+            detail.setUnitFee(Double.valueOf(Objects.toString(c.getContractMatter(), "0")));
         }
 
         //前端付款

@@ -15,7 +15,7 @@ public class ContractDetail implements Serializable {
     private String contractItem;
 
     //单价
-    private Integer unitFee;
+    private Double unitFee;
 
     //数量
     private float number = 1;
@@ -88,11 +88,11 @@ public class ContractDetail implements Serializable {
         this.contractItem = contractItem;
     }
 
-    public Integer getUnitFee() {
+    public Double getUnitFee() {
         return unitFee;
     }
 
-    public void setUnitFee(Integer unitFee) {
+    public void setUnitFee(Double unitFee) {
         this.unitFee = unitFee;
     }
 
