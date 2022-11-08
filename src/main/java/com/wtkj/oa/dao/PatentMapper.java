@@ -29,4 +29,6 @@ public interface PatentMapper {
     List<Patent> listLikeName(@Param("patentName") String patentName);
 
     int updateByPrimaryKeySelective(Patent record);
+
+    int updateByPatentId(Patent record);
 }

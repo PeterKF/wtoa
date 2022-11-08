@@ -209,6 +209,49 @@
         where id = #{id,jdbcType=VARCHAR}
     </update>
 
+    <update id="updateByPatentId" parameterType="com.wtkj.oa.entity.Patent">
+        update patent_info
+        <set>
+            <if test="companyId != null">
+                company_id = #{companyId,jdbcType=VARCHAR},
+            </if>
+            <if test="patentName != null">
+                patent_name = #{patentName,jdbcType=VARCHAR},
+            </if>
+            <if test="patentType != null">
+                patent_type = #{patentType,jdbcType=INTEGER},
+            </if>
+            <if test="userId != null">
+                user_id = #{userId,jdbcType=VARCHAR},
+            </if>
+            <if test="collection != null">
+                collection = #{collection,jdbcType=VARCHAR},
+            </if>
+            <if test="payment != null">
+                payment = #{payment,jdbcType=VARCHAR},
+            </if>
+            <if test="officialFee != null">
+                official_fee = #{officialFee,jdbcType=VARCHAR},
+            </if>
+            <if test="agencyFee != null">
+                agency_fee = #{agencyFee,jdbcType=VARCHAR},
+            </if>
+            <if test="applicationDate != null">
+                application_date = #{applicationDate,jdbcType=DATE},
+            </if>
+            <if test="authorizationDate != null">
+                authorization_date = #{authorizationDate,jdbcType=DATE},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="lastUpdateTime != null">
+                last_update_time = #{lastUpdateTime,jdbcType=TIMESTAMP},
+            </if>
+        </set>
+        where patent_id = #{patentId,jdbcType=VARCHAR}
+    </update>
+
     <select id="listByName" resultMap="BaseResultMap" parameterType="java.lang.String">
         select
         <include refid="Base_Column_List"/>

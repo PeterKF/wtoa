@@ -194,7 +194,7 @@ public class InitDataServiceImpl implements InitDataService {
                 if (ids.stream().noneMatch(id -> id.equals(patent.getPatentId()))) {
                     patents.add(patent);
                 } else {
-                    patentMapper.updateByPrimaryKeySelective(patent);
+                    patentMapper.updateByPatentId(patent);
                 }
             }
 
@@ -311,12 +311,12 @@ public class InitDataServiceImpl implements InitDataService {
             titles = CollUtil.newArrayList("客户ID(默认不填)", "年份", "客户名称", "统一社会信用代码", "客户地址",
                     "项目经理", "联系人", "联系电话", "企业负责人", "负责人电话", "所属地区");
         } else if ("2".equals(fileType)) {
+            fileName = "浙江省中小型企业合同清单.xlsx";
+            titles = CollUtil.newArrayList("客户名称", "客户经理", "乙方公司地区", "完成时间");
+        } else {
             fileName = "专利清单.xlsx";
             titles = CollUtil.newArrayList("申请号", "申请日", "公司名称", "申请名称", "专利类型", "代理费", "官费",
                     "应付费用", "应付金额");
-        } else {
-            fileName = "浙江省中小型企业合同清单.xlsx";
-            titles = CollUtil.newArrayList("客户名称", "客户经理", "乙方公司地区", "完成时间");
         }
         try {
             fileName = URLEncoder.encode(fileName, String.valueOf(StandardCharsets.UTF_8));
