@@ -1,7 +1,6 @@
 package com.wtkj.oa.common.interceptors;
 
 import com.wtkj.oa.common.config.RepeatedlyReadRequestWrapper;
-import org.apache.catalina.connector.RequestFacade;
 import org.apache.tomcat.util.http.fileupload.servlet.ServletFileUpload;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

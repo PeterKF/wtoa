@@ -1,17 +1,12 @@
 package com.wtkj.oa.service.impl;
 
 
-import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.StrUtil;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.wtkj.oa.common.config.PageInfo;
-import com.wtkj.oa.common.constant.GXEnum;
-import com.wtkj.oa.dao.CompanyMapper;
 import com.wtkj.oa.dao.ContractDateMapper;
 import com.wtkj.oa.dao.ContractMapper;
 import com.wtkj.oa.dao.UserMapper;
-import com.wtkj.oa.entity.Contract;
 import com.wtkj.oa.entity.ContractDate;
 import com.wtkj.oa.entity.User;
 import com.wtkj.oa.service.ICompanyManageService;
