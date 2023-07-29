@@ -2,13 +2,10 @@ package com.wtkj.oa.entity;
 
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.wtkj.oa.common.constant.ContractEnum;
 import com.wtkj.oa.common.constant.GXEnum;
 import lombok.Data;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 import lombok.experimental.Accessors;
 
 import java.io.Serializable;
@@ -19,8 +16,6 @@ import java.io.Serializable;
 @Data
 @Accessors(chain = true)
 @NoArgsConstructor
-@Getter
-@Setter
 @TableName("contract_date")
 public class ContractDate implements Serializable {
 

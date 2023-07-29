@@ -11,7 +11,6 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @EnableConfigurationProperties
 @SpringBootApplication
 @EnableSwagger2
-@MapperScan("com.wtkj.oa.dao")
 public class App {
 
     public static void main(String[] args) {

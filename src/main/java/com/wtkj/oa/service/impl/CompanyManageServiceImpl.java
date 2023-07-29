@@ -110,6 +110,7 @@ public class CompanyManageServiceImpl implements ICompanyManageService {
         if (!CollectionUtils.isEmpty(companies)) {
             if (!StringUtils.isEmpty(company.getUserId())) {
                 List<User> users = userMapper.list();
+                //每个业务员只能看到自己和助手管理的公司，管理员可以看到所有的公司
                 if (!CollectionUtils.isEmpty(users)) {
                     String roleName = users.stream().filter(u -> u.getUserId().equals(company.getUserId())).findFirst().get().getRoleName();
                     if (roleName.equals("管理员") || roleName.equals("财务主管") || roleName.equals("财务助理")) {
@@ -191,11 +192,12 @@ public class CompanyManageServiceImpl implements ICompanyManageService {
     }
 
     public static void main(String[] args) {
-        List<InsideInfo> infos = YamlUtils.read(List.class, "/company");
+        /*List<InsideInfo> infos = YamlUtils.read(List.class, "/company");
         for (InsideInfo i : infos) {
             if (i.getCompanyType().equals(1)) {
                 System.out.println(i.getAddress());
             }
-        }
+        }*/
+
     }
 }
