@@ -13,6 +13,7 @@ import javax.annotation.Resource;
 
 @Api(description = "用户及角色管理")
 @RestController
+@CrossOrigin(origins = "*")
 public class UserManageController {
 
     @Resource

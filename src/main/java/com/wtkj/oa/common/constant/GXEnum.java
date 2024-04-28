@@ -2,12 +2,13 @@ package com.wtkj.oa.common.constant;
 
 public enum GXEnum {
     A("高新技术企业", "1"),
-    B("国家级科技型中小企业", "2"),
-    C("省科技型中小企业", "3"),
+    B("科技型中小企业评价", "2"),
+    C("省级科技型中小企业", "3"),
     D("市级高新技术企业研发中心", "4"),
     E("企业研发费加计扣除", "5"),
     F("知识产权代理服务", "6"),
-    G("企业研发费财务辅导", "7");
+    G("企业研发费财务辅导", "7"),
+    H("企业研发费加计扣除", "10");
 
     GXEnum(String name, String contractType) {
         this.name = name;
@@ -36,6 +37,14 @@ public enum GXEnum {
 
     public static String getNameByType(String contractType) {
         for (GXEnum e : GXEnum.values()) {
+            if(contractType.length()>1 && contractType.substring(0,2).equals("10") && contractType.substring(0,2).equals(e.getContractType())){
+                return contractType.substring(3,contractType.length())+" "+e.getName();
+            }
+
+            if(contractType.length()>1 &&  contractType.substring(0,1).equals("5") && contractType.substring(0,1).equals(e.getContractType())){
+                return contractType.substring(2,contractType.length())+" "+e.getName();
+            }
+
             if (contractType.equals(e.getContractType())) {
                 return e.getName();
             }

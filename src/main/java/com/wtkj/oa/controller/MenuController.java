@@ -13,6 +13,7 @@ import javax.annotation.Resource;
 @Api(description = "菜单权限管理")
 @RestController
 @RequestMapping("/menu")
+@CrossOrigin(origins = "*")
 public class MenuController {
     @Resource
     private IMenuService menuService;

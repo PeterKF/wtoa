@@ -2,11 +2,13 @@ package com.wtkj.oa.service.impl;
 
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.text.CharSequenceUtil;
+import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.poi.excel.ExcelReader;
 import cn.hutool.poi.excel.ExcelUtil;
 import cn.hutool.poi.excel.ExcelWriter;
 import cn.hutool.poi.excel.StyleSet;
+import com.wtkj.oa.common.config.PageInfo;
 import com.wtkj.oa.common.constant.PatentEnum;
 import com.wtkj.oa.dao.*;
 import com.wtkj.oa.entity.Company;
@@ -23,6 +25,7 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.util.SheetUtil;
 import org.apache.poi.xssf.streaming.SXSSFSheet;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -71,6 +74,8 @@ public class InitDataServiceImpl implements InitDataService {
     @Resource
     private IPatentManageService patentManageService;
 
+    @Autowired
+    private TaskMatterServiceImpl taskMatterService;
     @Override
     @Transactional(rollbackFor = Exception.class)
     public String initCompanies(MultipartFile file) {
@@ -85,19 +90,19 @@ public class InitDataServiceImpl implements InitDataService {
                 for (int i = 1; i < objectList.size(); i++) {
                     List<Object> objects = objectList.get(i);
                     List<String> comNames = new ArrayList<>();
-                    String companyId = String.valueOf(objects.get(0));
+                    String companyId = ObjectUtil.isNull(objects.get(0))?null:String.valueOf(objects.get(0));
                     if (CharSequenceUtil.isEmpty(companyId)) {
                         //客户id为空时，新增客户
                         Company company = new Company().setCompanyId(RandomStringUtils.getNextVal())
-                                .setYear(String.valueOf(objects.get(1)))
-                                .setCompanyName(String.valueOf(objects.get(2)))
-                                .setCreditCode(String.valueOf(objects.get(3)))
-                                .setAddress(String.valueOf(objects.get(4)))
-                                .setContact(String.valueOf(objects.get(6)))
-                                .setTelephone(String.valueOf(objects.get(7)))
-                                .setDirector(String.valueOf(objects.get(8)))
-                                .setPhone(String.valueOf(objects.get(9)))
-                                .setRegion(String.valueOf(objects.get(10)));
+                                .setYear(ObjectUtil.isNull(objects.get(1))?null:String.valueOf(objects.get(1)))
+                                .setCompanyName(ObjectUtil.isNull(objects.get(2))?null:String.valueOf(objects.get(2)))
+                                .setCreditCode(ObjectUtil.isNull(objects.get(3))?null:String.valueOf(objects.get(3)))
+                                .setAddress(ObjectUtil.isNull(objects.get(4))?null:String.valueOf(objects.get(4)))
+                                .setContact(ObjectUtil.isNull(objects.get(6))?null:String.valueOf(objects.get(6)))
+                                .setTelephone(ObjectUtil.isNull(objects.get(7))?null:String.valueOf(objects.get(7)))
+                                .setDirector(ObjectUtil.isNull(objects.get(8))?null:String.valueOf(objects.get(8)))
+                                .setPhone(ObjectUtil.isNull(objects.get(9))?null:String.valueOf(objects.get(9))).setCreateTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()))
+                                .setRegion(ObjectUtil.isNull(objects.get(10))?null:String.valueOf(objects.get(10)));
                         if (CollUtil.isEmpty(comNames) || !comNames.contains(company.getCompanyName())) {
                             comNames.add(company.getCompanyName());
                             String userId = userMapper.getIdByName(String.valueOf(objects.get(5)));
@@ -108,15 +113,18 @@ public class InitDataServiceImpl implements InitDataService {
                     } else {
                         //客户id不为空时，编辑客户
                         Company company = new Company().setCompanyId(companyId)
-                                .setYear(String.valueOf(objects.get(1)))
-                                .setCompanyName(String.valueOf(objects.get(2)))
-                                .setCreditCode(String.valueOf(objects.get(3)))
-                                .setAddress(String.valueOf(objects.get(4)))
-                                .setContact(String.valueOf(objects.get(6)))
-                                .setTelephone(String.valueOf(objects.get(7)))
-                                .setDirector(String.valueOf(objects.get(8)))
-                                .setPhone(String.valueOf(objects.get(9)))
-                                .setRegion(String.valueOf(objects.get(10)));
+                                .setYear(ObjectUtil.isNull(objects.get(1))?null:String.valueOf(objects.get(1)))
+                                .setCompanyName(ObjectUtil.isNull(objects.get(2))?null:String.valueOf(objects.get(2)))
+                                .setCreditCode(ObjectUtil.isNull(objects.get(3))?null:String.valueOf(objects.get(3)))
+                                .setAddress(ObjectUtil.isNull(objects.get(4))?null:String.valueOf(objects.get(4)))
+                                .setContact(ObjectUtil.isNull(objects.get(6))?null:String.valueOf(objects.get(6)))
+                                .setTelephone(ObjectUtil.isNull(objects.get(7))?null:String.valueOf(objects.get(7)))
+                                .setDirector(ObjectUtil.isNull(objects.get(8))?null:String.valueOf(objects.get(8)))
+                                .setPhone(ObjectUtil.isNull(objects.get(9))?null:String.valueOf(objects.get(9)))
+                                .setRegion(ObjectUtil.isNull(objects.get(10))?null:String.valueOf(objects.get(10)));
+                        if(ObjectUtil.isNotNull(objects.get(11))){
+                            company.setCreateTime(String.valueOf(objects.get(11)));
+                        }
                         String userId = userMapper.getIdByName(String.valueOf(objects.get(5)));
                         company.setUserId(userId);
                         companyMapper.updateByPrimaryKeySelective(company);
@@ -428,6 +436,56 @@ public class InitDataServiceImpl implements InitDataService {
         writer.autoSizeColumnAll();
 
         response.setHeader("Content-Disposition", "attachment;filename=patentInfo.xlsx");
+        try (ServletOutputStream out = response.getOutputStream();) {
+            writer.flush(out, true);
+        } catch (IOException e) {
+            log.info("error message", e);
+        }
+        writer.close();
+    }
+
+    @Override
+    public void exportTaskInfo(ContractDate contractDate, HttpServletResponse response) {
+        List<ContractDate> contractDates = taskMatterService.taskListNoPage(contractDate);
+        if (CollUtil.isEmpty(contractDates)) {
+            return;
+        }
+
+        List<Map<String, Object>> mapList = new ArrayList<>(contractDates.size());
+        Map<String, String> companyMap = companyManageService.getCompanyMap();
+        String userName = "";
+        for (ContractDate c : contractDates) {
+            Map<String, Object> patentMap = new LinkedHashMap();
+            String status="";
+            patentMap.put("企业名称", c.getCompanyName());
+            patentMap.put("客户经理", c.getUserName());
+            patentMap.put("业务事项", c.getName());
+            switch (c.getStatus()){
+                case 0:status="待签订";
+                break;
+                case 1:status="待上传";
+                    break;
+                case 2:status="执行中（已上传）";
+                    break;
+                case 3:status="已完成";
+                    break;
+            }
+            patentMap.put("完成时间", c.getCompleteDate());
+
+            patentMap.put("完成状态", status);
+            mapList.add(patentMap);
+        }
+
+        ExcelWriter writer = com.wtkj.oa.common.config.ExcelWriter.getBigWriter();
+        Font font = writer.createFont();
+        //设置字体
+        font.setFontName("宋体");
+        writer.getStyleSet().setFont(font, true);
+        writer.write(mapList, true);
+        //所有列宽度自适应
+        writer.autoSizeColumnAll();
+
+        response.setHeader("Content-Disposition", "attachment;filename=taskInfo.xlsx");
         try (ServletOutputStream out = response.getOutputStream();) {
             writer.flush(out, true);
         } catch (IOException e) {

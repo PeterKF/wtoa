@@ -269,6 +269,11 @@ public class ContractManageServiceImpl implements IContractManageService {
         }
 
         for (Contract c : contracts) {
+            if(org.apache.commons.lang3.StringUtils.isNotBlank(c.getFileName())){
+                c.setUploadStatus(1);
+            }else {
+                c.setUploadStatus(0);
+            }
             if (c.getBusinessType().equals(1)) {
                 List<ContractDate> dateList = new ArrayList<>();
                 String[] strs = c.getContractType().split(",");
@@ -283,6 +288,12 @@ public class ContractManageServiceImpl implements IContractManageService {
                 String completeDate = contractMapper.getDateByType(c.getContractId(), c.getContractType());
                 dateList.add(new ContractDate(c.getContractId(), "合同完成时间", c.getContractType(), completeDate));
                 c.setDateList(dateList);
+                if (c.getBusinessType().equals(3) && "3".equals(c.getContractType())) {
+                    ServiceDetail serviceDetails = serviceDetailMapper.selectByForeignKey(c.getContractId());
+                    //企业研发费加计扣除
+                    c.setNumber(StrUtil.isNotEmpty(serviceDetails.getPercent()) ?
+                            Float.parseFloat(serviceDetails.getPercent()) / 100 : 1);
+                }
             }
         }
         return contracts;

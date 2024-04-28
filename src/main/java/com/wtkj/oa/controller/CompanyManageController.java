@@ -13,6 +13,7 @@ import javax.annotation.Resource;
 @Api(description = "客户管理")
 @RestController
 @RequestMapping("/company")
+@CrossOrigin(origins = "*")
 public class CompanyManageController {
 
     @Resource

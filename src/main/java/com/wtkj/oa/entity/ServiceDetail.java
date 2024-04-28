@@ -75,12 +75,14 @@ public class ServiceDetail implements Serializable {
 
     private String percent;
 
+    private String period1;
+
     public ServiceDetail() {
     }
 
     public ServiceDetail(String serviceId, String serviceName, String period, String year, String expense, String contractId,
                          String sumFee, String beforeFee, String countryTecFee, String provinceTecFee, String cityTecFee,
-                         String enterpriseTecFee, String patentMatters, String guidanceFee) {
+                         String enterpriseTecFee, String patentMatters, String guidanceFee,String period1) {
         this.serviceId = serviceId;
         this.serviceName = serviceName;
         this.period = period;
@@ -95,6 +97,7 @@ public class ServiceDetail implements Serializable {
         this.enterpriseTecFee = enterpriseTecFee;
         this.patentMatters = patentMatters;
         this.guidanceFee = guidanceFee;
+        this.period1 = period1;
     }
 
     public String getServiceId() {

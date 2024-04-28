@@ -17,6 +17,7 @@ import java.util.List;
 @Api(description = "专利管理")
 @RestController
 @RequestMapping("/patent")
+@CrossOrigin(origins = "*")
 public class PatentManageController {
 
     @Resource

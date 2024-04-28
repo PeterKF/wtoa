@@ -90,6 +90,8 @@ public class Contract implements Serializable {
 
     private int pageNum;
 
+    private float number = 1;
+
     public Contract(String contractId, Integer contractStatus) {
         this.contractId = contractId;
         this.contractStatus = contractStatus;

@@ -25,5 +25,5 @@ public interface CompanyMapper {
 
     List<Company> listByIds(List<String> list);
 
-    List<Company> listByName(String companyName);
+    List<Company> listByName(String companyName,Integer companyStatus);
 }

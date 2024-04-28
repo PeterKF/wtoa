@@ -2,6 +2,7 @@ package com.wtkj.oa.utils;
 
 import com.esotericsoftware.yamlbeans.YamlReader;
 import com.esotericsoftware.yamlbeans.YamlWriter;
+import com.wtkj.oa.entity.InsideInfo;
 import com.wtkj.oa.exception.BusinessException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,6 +11,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.util.List;
 
 /**
  * Yaml文件读写静态方法
@@ -46,7 +48,7 @@ public class YamlUtils {
         }
     }
 
-  /*  public static <T> T readWithOutSuffix(Class<T> classType, String fileName) {
+   public static <T> T readWithOutSuffix(Class<T> classType, String fileName) {
         try {
             //读取yml文件
             YamlReader reader = new YamlReader(new FileReader(FILE_PATH + fileName));
@@ -79,12 +81,12 @@ public class YamlUtils {
     }
 
 
-    *//**
+    /**
      * 将一个实例写入一个.yml文件
      *
      * @param obj      入参实例
      * @param fileName 文件名称
-     *//*
+     */
     public static void write(Object obj, String fileName) {
         try {
             YamlWriter writer = new YamlWriter(new FileWriter(FILE_PATH + fileName + YAML_SUFFIX));
@@ -110,6 +112,10 @@ public class YamlUtils {
         }
     }
 
+    public static void main(String[] args) {
+        List<InsideInfo> infoList = YamlUtils.read(List.class, "company");
+        System.out.println(infoList);
+    }
 
     public static void writeNoFilePath(Object obj, String fileName) {
         try {
@@ -159,5 +165,5 @@ public class YamlUtils {
 
     public static String getFilePath() {
         return FILE_PATH;
-    }*/
+    }
 }

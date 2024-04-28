@@ -80,6 +80,12 @@ public class ContractDate implements Serializable {
     @TableField("user_id")
     private String userId;
 
+    @TableField("region")
+    private String region;
+
+    @TableField("contract_year")
+    private String contractYear;
+
     public String getName() {
         if (this.businessType == null) {
             return name;

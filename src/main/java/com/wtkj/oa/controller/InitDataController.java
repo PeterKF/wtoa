@@ -2,6 +2,7 @@ package com.wtkj.oa.controller;
 
 import com.wtkj.oa.common.config.ResponseMsg;
 import com.wtkj.oa.entity.Company;
+import com.wtkj.oa.entity.ContractDate;
 import com.wtkj.oa.entity.Patent;
 import com.wtkj.oa.service.InitDataService;
 import com.wtkj.oa.utils.ResponseUtils;
@@ -21,6 +22,7 @@ import javax.servlet.http.HttpServletResponse;
 @Api(description = "初始化数据")
 @RestController
 @RequestMapping("/init")
+@CrossOrigin(origins = "*")
 public class InitDataController {
 
     @Resource
@@ -82,6 +84,14 @@ public class InitDataController {
         Patent patent = new Patent().setUserId(userId).setCompanyName(companyName).setPatentName(patentName)
                 .setUserName(userName).setYear(year);
         initDataService.exportPatentInfo(patent, response);
+        return ResponseUtils.success();
+    }
+
+    @ApiOperation("导出任务管理")
+    @PostMapping(value = "/export/taskInfo")
+    public ResponseMsg exportPatentInfo(@RequestBody ContractDate contractDate,
+                                        HttpServletResponse response) {
+        initDataService.exportTaskInfo(contractDate, response);
         return ResponseUtils.success();
     }
 }

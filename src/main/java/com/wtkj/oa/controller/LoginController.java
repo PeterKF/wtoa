@@ -12,6 +12,7 @@ import javax.annotation.Resource;
 
 @Api(description = "登录接口")
 @RestController
+@CrossOrigin(origins = "*")
 public class LoginController {
     @Resource
     private ILoginService loginService;

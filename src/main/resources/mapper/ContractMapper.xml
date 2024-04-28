@@ -19,6 +19,7 @@
         <result column="collection_date" property="collectionDate" javaType="java.sql.Date" jdbcType="DATE"/>
         <result column="file_name" javaType="java.lang.String" property="fileName" jdbcType="VARCHAR"/>
         <result column="contract_matter" javaType="java.lang.String" property="contractMatter" jdbcType="VARCHAR"/>
+        <result column="company_type" javaType="java.lang.String" property="companyType" jdbcType="VARCHAR"/>
     </resultMap>
 
     <resultMap id="ResultMap" type="com.wtkj.oa.entity.ContractDate">
@@ -62,6 +63,7 @@
                 t.billing_date,
                 t.collection_date,
                 t.file_name,
+                t.company_type,
                 t.contract_matter
     </sql>
 
@@ -112,14 +114,14 @@
         insert into contract_info (contract_id, contract_name, business_type, contract_type,
                                    company_id, user_id, contract_file,
                                    contract_status, invoice_status, collection_status,
-                                   create_time, last_update_time, billing_date, collection_date, contract_matter)
+                                   create_time, last_update_time, billing_date, collection_date, contract_matter,company_type)
         values (#{contractId,jdbcType=VARCHAR}, #{contractName,jdbcType=VARCHAR}, #{businessType,jdbcType=INTEGER},
                 #{contractType,jdbcType=INTEGER}, #{companyId,jdbcType=VARCHAR}, #{userId,jdbcType=VARCHAR},
                 #{contractFile,jdbcType=VARCHAR},
                 #{contractStatus,jdbcType=INTEGER}, #{invoiceStatus,jdbcType=INTEGER},
                 #{collectionStatus,jdbcType=INTEGER},
                 #{createTime,jdbcType=TIMESTAMP}, #{lastUpdateTime,jdbcType=TIMESTAMP}, #{billingDate,jdbcType=DATE},
-                #{collectionDate,jdbcType=DATE}, #{contractMatter,jdbcType=VARCHAR})
+                #{collectionDate,jdbcType=DATE}, #{contractMatter,jdbcType=VARCHAR},#{companyType})
     </insert>
 
     <update id="updateByPrimaryKeySelective" parameterType="com.wtkj.oa.entity.Contract">
@@ -170,6 +172,9 @@
             <if test="contractMatter != null">
                 contract_matter = #{contractMatter,jdbcType=VARCHAR},
             </if>
+            <if test="companyType!=null and companyType!=''">
+                company_type=#{companyType},
+            </if>
         </set>
         where contract_id = #{contractId,jdbcType=VARCHAR}
     </update>
@@ -213,10 +218,10 @@
     </delete>
 
     <insert id="addDate" parameterType="com.wtkj.oa.entity.ContractDate">
-        insert into contract_date(contract_id, type, complete_date, company_id, status)
+        insert into contract_date(contract_id, type, complete_date, company_id, status,contract_year)
         values (#{contractId,jdbcType=VARCHAR}, #{type,jdbcType=VARCHAR},
                 #{completeDate,jdbcType=VARCHAR}, #{companyId,jdbcType=VARCHAR},
-                #{status,jdbcType=INTEGER})
+                #{status,jdbcType=INTEGER},#{contractYear,jdbcType=INTEGER})
     </insert>
 
     <insert id="batchInsert" parameterType="java.util.List">
@@ -252,7 +257,7 @@
             <if test="collectionStatusBefore != null">
                 collection_status_before = #{collectionStatusBefore,jdbcType=INTEGER},
             </if>
-            <if test="collectionDateBefore != null">
+            <if test="collectionDateBefore != ''">
                 collection_date_before = #{collectionDateBefore,jdbcType=VARCHAR},
             </if>
             <if test="billingStatusAfter != null">
@@ -264,7 +269,7 @@
             <if test="collectionStatusAfter != null">
                 collection_status_after = #{collectionStatusAfter,jdbcType=INTEGER},
             </if>
-            <if test="collectionDateAfter != null">
+            <if test="collectionDateAfter != ''">
                 collection_date_after = #{collectionDateAfter,jdbcType=VARCHAR},
             </if>
             <if test="completeDate != null">

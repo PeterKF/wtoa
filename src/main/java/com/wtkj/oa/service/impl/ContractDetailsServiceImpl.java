@@ -2,12 +2,12 @@ package com.wtkj.oa.service.impl;
 
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.StrUtil;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 import com.wtkj.oa.common.constant.ContractEnum;
 import com.wtkj.oa.common.constant.GXEnum;
-import com.wtkj.oa.dao.CompanyMapper;
-import com.wtkj.oa.dao.ContractMapper;
-import com.wtkj.oa.dao.PatentMapper;
-import com.wtkj.oa.dao.UserMapper;
+import com.wtkj.oa.dao.*;
+import com.wtkj.oa.entity.Company;
 import com.wtkj.oa.entity.Contract;
 import com.wtkj.oa.entity.ContractDate;
 import com.wtkj.oa.entity.ContractDetail;
@@ -55,6 +55,8 @@ public class ContractDetailsServiceImpl implements IContractDetailsService {
 
     @Resource
     private PatentMapper patentMapper;
+    @Resource
+    private ContractDateMapper contractDateMapper;
 
     @Override
     public List<ContractDetail> list(String companyId) {
@@ -106,10 +108,11 @@ public class ContractDetailsServiceImpl implements IContractDetailsService {
                     } else {
                         getOtherBusiness(contractDetails, c);
                     }
-                    contractDetails = contractDetails.stream().sorted(Comparator.comparing(detail -> detail.getType(),
-                            Comparator.nullsLast(String::compareTo))).collect(Collectors.toList());
                 }
             }
+            contractDetails = contractDetails.stream().sorted(Comparator.comparing(ContractDetail::getCompleteDate,
+                    Comparator.nullsFirst(String::compareTo)).thenComparing(detail -> detail.getType(),
+                    Comparator.nullsFirst(String::compareTo)).reversed()).collect(Collectors.toList());
         }
         return contractDetails;
     }
@@ -124,6 +127,14 @@ public class ContractDetailsServiceImpl implements IContractDetailsService {
      * @param cd
      */
     private void getContractDetails(List<ContractDetail> contractDetails, Contract c, String t, ContractDetail detail, ContractDate cd) {
+        Boolean flag=true;
+        if(t.length()>1 && t.substring(0,1).equals("5")){
+            t="5";
+        }
+        if(t.length()>1 && t.substring(0,2).equals("10")){
+            flag=false;
+            t="5";
+        }
         switch (t) {
             case "2":
                 detail.setUnitFee(Double.valueOf((c.getServiceDetails().getCountryTecFee())));
@@ -136,10 +147,16 @@ public class ContractDetailsServiceImpl implements IContractDetailsService {
                 break;
             case "5":
                 //企业研发费加计扣除
-                String contractMatter = c.getContractMatter();
-                if (StrUtil.isNotEmpty(contractMatter)) {
-                    detail.setNumber(Float.parseFloat(contractMatter));
-                }
+                    if(flag){
+                        ContractDate contractDate = contractDateMapper.selectOne(new QueryWrapper<>(new ContractDate().setContractId(c.getContractId()).setType(t)).select("contract_year"));
+                        if(contractDate==null){
+
+                        }else {
+                            detail.setNumber(Float.parseFloat(contractDate.getContractYear()==null?"1":contractDate.getContractYear()));
+                        }
+                    }else {
+                        detail.setNumber(Float.parseFloat(c.getServiceDetails().getPercent()==null?"1":c.getServiceDetails().getPercent()));
+                    }
                 detail.setUnitFee(Double.valueOf(c.getServiceDetails().getEnterpriseTecFee()));
                 break;
             case "6":
@@ -180,6 +197,10 @@ public class ContractDetailsServiceImpl implements IContractDetailsService {
                     contractDetails.add(c4);
                 }
                 break;
+            case "10":
+                detail.setUnitFee(0d);
+                detail.setNumber(Float.valueOf(c.getServiceDetails().getPercent()));
+                break;
             default:
                 detail.setUnitFee(Double.valueOf((c.getServiceDetails().getGuidanceFee())));
 
@@ -206,13 +227,13 @@ public class ContractDetailsServiceImpl implements IContractDetailsService {
             //各级科技项目
             if (c.getContractType().equals("3")) {
                 detail.setNumber(StrUtil.isNotEmpty(c.getServiceDetails().getPercent()) ?
-                        Float.parseFloat(c.getServiceDetails().getPercent()) / 100 : 1);
+                        Float.parseFloat(c.getServiceDetails().getPercent())  : 1);
                 detail.setUnitFee(Double.valueOf(Objects.toString(c.getContractMatter(), "0")));
             }
         } else if (c.getBusinessType().equals(3) && "3".equals(c.getContractType())) {
             //企业研发费加计扣除
             detail.setNumber(StrUtil.isNotEmpty(c.getServiceDetails().getPercent()) ?
-                    Float.parseFloat(c.getServiceDetails().getPercent()) / 100 : 1);
+                    Float.parseFloat(c.getServiceDetails().getPercent()) : 1);
             detail.setUnitFee(Double.valueOf(Objects.toString(c.getContractMatter(), "0")));
         }
 
@@ -248,7 +269,9 @@ public class ContractDetailsServiceImpl implements IContractDetailsService {
             throw new BusinessException("请先上传合同附件，再修改合同状态");
         }
         contractMapper.updateContractDate(contractDate);
-
+        if(contractDate.getStatus()==5){
+            companyMapper.updateByPrimaryKeySelective(new Company().setCompanyId(contract.getCompanyId()).setCompanyStatus(0));
+        }
         List<Integer> status = contractMapper.getStatusById(contractDate.getContractId());
         if (CollUtil.isNotEmpty(status)) {
             Integer max = Collections.max(status);
@@ -289,6 +312,7 @@ public class ContractDetailsServiceImpl implements IContractDetailsService {
         String fileName = "";
         try {
             fileName = new String(file.getOriginalFilename().getBytes(StandardCharsets.UTF_8), StandardCharsets.UTF_8);
+            fileName=fileName+ IdWorker.getId();
             f = new File(System.getProperty("user.dir") + "/resource/contract/", fileName);
         } catch (Exception e) {
             e.printStackTrace();

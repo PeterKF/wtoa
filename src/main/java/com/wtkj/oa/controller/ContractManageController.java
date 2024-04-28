@@ -23,6 +23,7 @@ import javax.servlet.http.HttpServletResponse;
 @Api(description = "合同管理")
 @RestController
 @RequestMapping("/contract")
+@CrossOrigin(origins = "*")
 public class ContractManageController {
     @Resource
     private IContractManageService contractManageService;

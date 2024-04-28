@@ -89,9 +89,13 @@ public class HTContractServiceImpl implements IHTContractService {
             result = result.replace("{city}", "杭州");
             InsideInfo hzInfo = infoList.get(0);
             result = getInsideInfo(result, hzInfo);
-        } else {
+        } else if(companyType == 2){
             result = result.replace("{city}", "台州");
             InsideInfo zhInfo = infoList.get(1);
+            result = getInsideInfo(result, zhInfo);
+        }else {
+            result = result.replace("{city}", "台州");
+            InsideInfo zhInfo = infoList.get(2);
             result = getInsideInfo(result, zhInfo);
         }
         return result;

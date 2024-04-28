@@ -3,7 +3,7 @@
 <mapper namespace="com.wtkj.oa.dao.ContractDateMapper">
     <select id="taskMatterList" resultType="com.wtkj.oa.entity.ContractDate" parameterType="com.wtkj.oa.entity.ContractDate">
         SELECT
-        d.*, c.company_name,
+        d.*, c.company_name,c.region,
         u.user_name,
         u.user_id,
         t.business_type,
@@ -31,6 +31,9 @@
         </if>
         <if test="companyName != null and companyName != ''">
             and c.company_name like "%"#{companyName,jdbcType=VARCHAR}"%"
+        </if>
+        <if test="region!=null and region!=''">
+            and c.region  like concat('%',#{region},'%')
         </if>
     </sql>
 </mapper>

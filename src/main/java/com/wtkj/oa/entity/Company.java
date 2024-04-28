@@ -1,6 +1,7 @@
 package com.wtkj.oa.entity;
 
 
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
@@ -70,4 +71,6 @@ public class Company implements Serializable {
     private int pageSize;
 
     private int pageNum;
+    @ApiModelProperty("公司状态 0归档 1未归档")
+    private Integer companyStatus;
 }

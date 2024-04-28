@@ -24,7 +24,7 @@
 
     <sql id="Base_Column_List">
         c.company_id, c.company_name, c.address, c.contact, c.telephone, c.city, c.area, c.county, c.user_id, u.user_name,
-        c.assistant_id, c.director, c.phone, c.credit_code, c.region, c.last_update_time,c.create_time,c.year
+        c.assistant_id, c.director, c.phone, c.credit_code, c.region, c.last_update_time,c.create_time,c.year,c.company_status
     </sql>
 
     <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
@@ -199,6 +199,9 @@
             <if test="lastUpdateTime != null">
                 last_update_time = #{lastUpdateTime,jdbcType=TIMESTAMP},
             </if>
+            <if test="companyStatus!=null">
+                company_status=#{companyStatus}
+            </if>
         </set>
         where company_id = #{companyId,jdbcType=VARCHAR}
     </update>
@@ -213,7 +216,10 @@
         <if test="companyName != null">
             and c.company_name like "%"#{companyName,jdbcType=VARCHAR}"%"
         </if>
-        ORDER BY c.last_update_time DESC
+        <if test="companyStatus != null">
+            and c.company_status =#{companyStatus}
+        </if>
+        ORDER BY c.last_update_time asc
     </select>
 
     <select id="listByIds" resultMap="BaseResultMap" parameterType="java.util.List">

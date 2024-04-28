@@ -84,7 +84,7 @@ public class CompanyManageServiceImpl implements ICompanyManageService {
         if (StringUtils.isEmpty(companyName)) {
             companies = companyMapper.list();
         } else {
-            companies = companyMapper.listByName(companyName);
+            companies = companyMapper.listByName(companyName,null);
         }
         if (!ObjectUtils.isEmpty(agentFlag) && agentFlag.equals(1)) {
             companies = this.listByStatus();
@@ -106,7 +106,7 @@ public class CompanyManageServiceImpl implements ICompanyManageService {
 
     @Override
     public List<Company> getCompanyList(Company company) {
-        List<Company> companies = companyMapper.listByName(company.getCompanyName());
+        List<Company> companies = companyMapper.listByName(company.getCompanyName(),company.getCompanyStatus());
         if (!CollectionUtils.isEmpty(companies)) {
             if (!StringUtils.isEmpty(company.getUserId())) {
                 List<User> users = userMapper.list();
@@ -141,6 +141,7 @@ public class CompanyManageServiceImpl implements ICompanyManageService {
                         && useNames.contains(c.getUserName())).collect(Collectors.toList());
             }
         }
+        companies.sort(Comparator.comparing(Company::getCompanyStatus,Comparator.nullsFirst(Integer::compareTo)).thenComparing(Company::getCreateTime,Comparator.nullsFirst(String::compareTo)).reversed());
         return companies;
     }
 
