@@ -311,7 +311,8 @@
                billing_status_after,
                billing_date_after,
                collection_status_after,
-               collection_date_after
+               collection_date_after,
+               contract_year
         FROM contract_date t
         where contract_id = #{contractId,jdbcType=VARCHAR}
           and type = #{type,jdbcType=VARCHAR}

@@ -279,8 +279,11 @@ public class ContractManageServiceImpl implements IContractManageService {
                 String[] strs = c.getContractType().split(",");
                 for (String str : strs) {
                     String completeDate = contractMapper.getDateByType(c.getContractId(), str);
-
-                    dateList.add(new ContractDate(c.getContractId(), GXEnum.getNameByType(str), str, completeDate));
+                    ContractDate status = contractMapper.getStatus(c.getContractId(), str);
+                    ContractDate contractDate = new ContractDate(c.getContractId(), GXEnum.getNameByType(str), str, completeDate);
+                    if(ObjectUtil.isNotNull(status))
+                        contractDate.setContractYear(contractDate.getContractYear());
+                    dateList.add(contractDate);
                 }
                 c.setDateList(dateList);
             } else {
