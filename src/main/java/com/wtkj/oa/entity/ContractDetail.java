@@ -109,7 +109,7 @@ public class ContractDetail implements Serializable {
     public BigDecimal getSumFee() {
         if (StringUtils.isNotBlank(this.number) && !"0".equals(this.number)  && this.unitFee != null) {
             if("%".equals(this.number.substring(this.number.length()-1))){
-                sumFee = BigDecimal.valueOf(Float.valueOf(number.substring(0,this.number.length()-1)) * unitFee).setScale(2, RoundingMode.HALF_UP);
+                sumFee = BigDecimal.valueOf(Float.valueOf(number.substring(0,this.number.length()-1)) * unitFee/100).setScale(2, RoundingMode.HALF_UP);
             }else {
                 sumFee = BigDecimal.valueOf(Float.valueOf(number) * unitFee).setScale(2, RoundingMode.HALF_UP);
             }
