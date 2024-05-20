@@ -15,7 +15,6 @@ import com.wtkj.oa.exception.BusinessException;
 import com.wtkj.oa.service.IContractDetailsService;
 import com.wtkj.oa.service.IContractManageService;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.poi.ss.formula.functions.T;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -78,7 +77,7 @@ public class ContractDetailsServiceImpl implements IContractDetailsService {
                                     BeanUtils.copyProperties(cd, detail);
                                 }
 
-                                detail.setNumber(1);
+                                detail.setNumber("1");
                                 if ("1".equals(t)) {
                                     detail.setUnitFee(Double.valueOf(c.getServiceDetails().getSumFee()));
                                     detail.setEarlyFee(new BigDecimal(c.getServiceDetails().getBeforeFee()));
@@ -152,10 +151,10 @@ public class ContractDetailsServiceImpl implements IContractDetailsService {
                         if(contractDate==null){
 
                         }else {
-                            detail.setNumber(Float.parseFloat(contractDate.getContractYear()==null?"1":contractDate.getContractYear()));
+                            detail.setNumber(contractDate.getContractYear()==null?"1":contractDate.getContractYear());
                         }
                     }else {
-                        detail.setNumber(Float.parseFloat(c.getServiceDetails().getPercent()==null?"1":c.getServiceDetails().getPercent()));
+                        detail.setNumber(c.getServiceDetails().getPercent()==null?"1":c.getServiceDetails().getPercent()+"%");
                     }
                 detail.setUnitFee(Double.valueOf(c.getServiceDetails().getEnterpriseTecFee()));
                 break;
@@ -199,7 +198,7 @@ public class ContractDetailsServiceImpl implements IContractDetailsService {
                 break;
             case "10":
                 detail.setUnitFee(0d);
-                detail.setNumber(Float.valueOf(c.getServiceDetails().getPercent()));
+                detail.setNumber(c.getServiceDetails().getPercent()+"%");
                 break;
             default:
                 detail.setUnitFee(Double.valueOf((c.getServiceDetails().getGuidanceFee())));
@@ -227,13 +226,13 @@ public class ContractDetailsServiceImpl implements IContractDetailsService {
             //各级科技项目
             if (c.getContractType().equals("3")) {
                 detail.setNumber(StrUtil.isNotEmpty(c.getServiceDetails().getPercent()) ?
-                        Float.parseFloat(c.getServiceDetails().getPercent())  : 1);
+                        c.getServiceDetails().getPercent()+"%"  : "1");
                 detail.setUnitFee(Double.valueOf(Objects.toString(c.getContractMatter(), "0")));
             }
         } else if (c.getBusinessType().equals(3) && "3".equals(c.getContractType())) {
             //企业研发费加计扣除
             detail.setNumber(StrUtil.isNotEmpty(c.getServiceDetails().getPercent()) ?
-                    Float.parseFloat(c.getServiceDetails().getPercent()) : 1);
+                    c.getServiceDetails().getPercent()+"%" : "1");
             detail.setUnitFee(Double.valueOf(Objects.toString(c.getContractMatter(), "0")));
         }
 

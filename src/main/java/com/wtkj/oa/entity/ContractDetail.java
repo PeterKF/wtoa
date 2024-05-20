@@ -1,5 +1,7 @@
 package com.wtkj.oa.entity;
 
+import org.apache.commons.lang3.StringUtils;
+
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -18,7 +20,7 @@ public class ContractDetail implements Serializable {
     private Double unitFee;
 
     //数量
-    private float number = 1;
+    private String number = "1";
 
     //总价
     private BigDecimal sumFee = BigDecimal.valueOf(0);
@@ -96,17 +98,21 @@ public class ContractDetail implements Serializable {
         this.unitFee = unitFee;
     }
 
-    public float getNumber() {
+    public String getNumber() {
         return number;
     }
 
-    public void setNumber(float number) {
+    public void setNumber(String number) {
         this.number = number;
     }
 
     public BigDecimal getSumFee() {
-        if (this.number != 0 && this.unitFee != null) {
-            sumFee = BigDecimal.valueOf(number * unitFee).setScale(2, RoundingMode.HALF_UP);
+        if (StringUtils.isNotBlank(this.number) && "0".equals(this.number)  && this.unitFee != null) {
+            if("%".equals(this.number.substring(this.number.length()-1))){
+                sumFee = BigDecimal.valueOf(Float.valueOf(number.substring(0,this.number.length()-1)) * unitFee).setScale(2, RoundingMode.HALF_UP);
+            }else {
+                sumFee = BigDecimal.valueOf(Float.valueOf(number) * unitFee).setScale(2, RoundingMode.HALF_UP);
+            }
         }
         return sumFee;
     }
