@@ -174,6 +174,15 @@ public class ContractManageServiceImpl implements IContractManageService {
                     contract.setContractStatus(1);
                 }
             }
+        }else {
+            List<ContractDate> dateList = contractMapper.getDateList(contract.getContractId());
+            List<String> dateTypes = dateList.stream().map(ContractDate::getType).collect(Collectors.toList());
+            List<String> strings = Arrays.asList(contract.getContractType().split(","));
+            dateTypes.forEach(a->{
+                if(!strings.contains(a)){
+                    contractMapper.deleteDate(contract.getContractId(), a);
+                }
+            });
         }
 
         if (!ObjectUtils.isEmpty(contract.getServiceDetails())) {
