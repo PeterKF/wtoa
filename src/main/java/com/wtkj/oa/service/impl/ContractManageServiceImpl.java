@@ -290,8 +290,9 @@ public class ContractManageServiceImpl implements IContractManageService {
                     String completeDate = contractMapper.getDateByType(c.getContractId(), str);
                     ContractDate status = contractMapper.getStatus(c.getContractId(), str);
                     ContractDate contractDate = new ContractDate(c.getContractId(), GXEnum.getNameByType(str), str, completeDate);
-                    if(ObjectUtil.isNotNull(status))
+                    if(ObjectUtil.isNotNull(status)) {
                         contractDate.setContractYear(status.getContractYear());
+                    }
                     dateList.add(contractDate);
                 }
                 c.setDateList(dateList);
@@ -309,6 +310,13 @@ public class ContractManageServiceImpl implements IContractManageService {
             }
         }
         return contracts;
+    }
+
+    public static void main(String[] args) {
+        String[] strs = "aaaa".split(",");
+        for (String str:strs){
+            System.out.println(str);
+        }
     }
 
 
