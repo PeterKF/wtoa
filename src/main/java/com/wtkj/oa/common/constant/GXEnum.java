@@ -37,12 +37,12 @@ public enum GXEnum {
 
     public static String getNameByType(String contractType) {
         for (GXEnum e : GXEnum.values()) {
-            if(contractType.length()>1 && contractType.substring(0,2).equals("10") && contractType.substring(0,2).equals(e.getContractType())){
-                return contractType.substring(3,contractType.length())+" "+e.getName();
-            }
-
-            if(contractType.length()>1 &&  contractType.substring(0,1).equals("5") && contractType.substring(0,1).equals(e.getContractType())){
-                return contractType.substring(2,contractType.length())+" "+e.getName();
+            if (contractType.contains("-")) {
+                String type = contractType.split("-")[0];
+                String year = contractType.split("-")[1];
+                if (type.equals(e.getContractType())) {
+                    return year + " " + e.getName();
+                }
             }
 
             if (contractType.equals(e.getContractType())) {
