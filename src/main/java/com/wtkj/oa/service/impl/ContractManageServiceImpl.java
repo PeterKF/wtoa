@@ -71,6 +71,8 @@ public class ContractManageServiceImpl implements IContractManageService {
 
     private final static String HTML_PATH = "htmlFile/";
 
+    private final static Integer BUSINESS_TYPE_GX = 2;
+
     /**
      * 读取word文件的内容
      *
@@ -100,7 +102,7 @@ public class ContractManageServiceImpl implements IContractManageService {
             throw new BusinessException("请先选择一个客户！");
         }
 
-        String contractName = "";
+        String contractName;
         if (contract.getBusinessType().equals(1)) {
             contractName = ContractEnum.getNameByType(1, "1");
         } else {
@@ -126,6 +128,9 @@ public class ContractManageServiceImpl implements IContractManageService {
             String time = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
             contract.setCreateTime(time);
             contract.setLastUpdateTime(time);
+            if (BUSINESS_TYPE_GX.equals(contract.getBusinessType()) && GXEnum.F.getContractType().equals(contract.getContractType())) {
+                contractMapper.deleteDate(contract.getContractId(), contract.getContractType());
+            }
             contractMapper.insert(contract);
         } else {
             throw new BusinessException("请填写合同内容！");
